@@ -1,0 +1,24 @@
+{
+  "name": "pcell-portal",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "concurrently \"cd client && npm run dev\" \"cd server && npm run dev\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GeekHaven/PCell-Portal.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/GeekHaven/PCell-Portal/issues"
+  },
+  "homepage": "https://github.com/GeekHaven/PCell-Portal#readme",
+  "dependencies": {
+    "concurrently": "^8.0.1"
+  }
+}
