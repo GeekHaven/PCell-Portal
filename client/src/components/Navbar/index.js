@@ -24,11 +24,12 @@ export default function Navbar() {
   return (
     <AppBar
       position="fixed"
-      color="background"
-      className="fixed bg-none shadow-none backdrop-blur"
+      className="fixed bg-none shadow-none"
       sx={{
         borderBottom: '1px solid',
         borderColor: 'divider',
+        backgroundColor: 'bgclear',
+        backdropFilter: 'blur(8px)',
       }}
     >
       <Container

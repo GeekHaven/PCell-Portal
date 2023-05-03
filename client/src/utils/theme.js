@@ -14,6 +14,7 @@ export function getTheme(mode) {
               default: '#fefeff',
               paper: '#fefeff',
             },
+            bgclear: '#fefeffcc',
           }
         : {
             primary: {
@@ -23,6 +24,7 @@ export function getTheme(mode) {
               default: '#0B1829',
               paper: '#0B1829',
             },
+            bgclear: 'rgba(11, 24, 41, 0.8)',
           }),
     },
     typography: {
