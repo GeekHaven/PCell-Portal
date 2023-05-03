@@ -7,7 +7,7 @@ const User = sequelize.define('User', {
     type: DataTypes.STRING,
     allowNull: false,
   },
-  rollNum: {
+  rollNumber: {
     type: DataTypes.STRING,
     allowNull: false,
   },
@@ -27,7 +27,7 @@ const User = sequelize.define('User', {
     allowNull: false,
   },
   completedCredits: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     allowNull: false,
   },
 });

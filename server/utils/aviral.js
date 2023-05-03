@@ -29,10 +29,10 @@ export const getAviralData = async (username, password) => {
           res.data['last_name'],
 
         semester: res.data['semester'],
-        rollNum: res.data['student_id'],
+        rollNumber: res.data['student_id'],
         mobile: res.data['phone'],
         cgpa: res.data['cgpi'],
-        completedCredits: res.data['completed_total'],
+        completedCredits: `${res.data['completed_total']} / ${res.data['total_credits']}`,
       };
     })
     .catch((err) => console.log(err.message));

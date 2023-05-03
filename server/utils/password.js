@@ -15,6 +15,17 @@ export function getJwt(object, expiresIn = '30d') {
   return token;
 }
 
+export  function verifyJwt(token) {
+  const secret = process.env.SECRET;
+  const options = {
+    algorithms: ['HS256'],
+  };
+  // Verify the JWT
+  const decoded = jwt.verify(token, secret, options);
+
+  return decoded;
+}
+
 export function verifyPassword(username, password) {
   if (process.env.USE_AVIRAL === 'true') {
     return verifyAviralPassword(username, password);

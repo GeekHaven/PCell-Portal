@@ -1,6 +1,6 @@
 import express from "express";
 const app = express();
-import db from "./sql.config.js"
+import db from "./config/sql.config.js"
 
 const initApp = async () => {
   try {
