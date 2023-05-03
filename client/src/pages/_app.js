@@ -43,7 +43,9 @@ export default function App({ Component, pageProps }) {
               },
             },
             <>
-              {!Component.hideNavbar && <Navbar open={open} />}
+              {!Component.hideNavbar && (
+                <Navbar open={open} setOpen={setOpen} />
+              )}
               {!Component.hideDrawer && (
                 <Drawer open={open} setOpen={setOpen} />
               )}
@@ -56,7 +58,10 @@ export default function App({ Component, pageProps }) {
                     minHeight: '100vh',
                     display: 'flex',
                     flexDirection: 'column',
+                    flexGrow: 1,
+                    p: 3,
                   },
+                  className: 'w-full md:ml-[200px]',
                 },
                 <>
                   {!Component.hideNavbar && <DrawerHeader />}
