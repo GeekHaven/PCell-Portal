@@ -1,6 +1,6 @@
 import jwt from 'jsonwebtoken';
-import { response_401, response_500 } from '../utils/responseCodes';
-import User from '../models/user.model';
+import { response_401, response_500 } from '../utils/responseCodes.js';
+import User from '../models/user.model.js';
 
 export async function verifyUser(req, res, next) {
   const token = req.headers['authorization'];

@@ -1,7 +1,8 @@
 import dotenv from 'dotenv';
 dotenv.config();
 import jwt from 'jsonwebtoken';
-import { verifyAviralPassword } from './aviral';
+import { verifyAviralPassword } from './aviral.js';
+import { authenticateLdap } from './ldap.js';
 export function getJwt(object, expiresIn = '30d') {
   const secret = process.env.SECRET;
   const options = {
@@ -15,7 +16,7 @@ export function getJwt(object, expiresIn = '30d') {
   return token;
 }
 
-export  function verifyJwt(token) {
+export function verifyJwt(token) {
   const secret = process.env.SECRET;
   const options = {
     algorithms: ['HS256'],
