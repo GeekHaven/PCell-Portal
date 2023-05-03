@@ -1,5 +1,5 @@
 import {
-  AppBar as MuiAppBar,
+  AppBar,
   Container,
   Typography,
   Toolbar,
@@ -18,25 +18,7 @@ import ThemeSwitch from './ThemeSwitch';
 
 const drawerWidth = 200;
 
-const AppBar = styled(MuiAppBar, {
-  shouldForwardProp: (prop) => prop !== 'open',
-})(({ theme, open }) => ({
-  zIndex: theme.zIndex.drawer + 1,
-  transition: theme.transitions.create(['width', 'margin'], {
-    easing: theme.transitions.easing.sharp,
-    duration: theme.transitions.duration.leavingScreen,
-  }),
-  ...(open && {
-    marginLeft: drawerWidth,
-    width: `calc(100% - ${drawerWidth}px)`,
-    transition: theme.transitions.create(['width', 'margin'], {
-      easing: theme.transitions.easing.sharp,
-      duration: theme.transitions.duration.enteringScreen,
-    }),
-  }),
-}));
-
-export default function Navbar({ open }) {
+export default function Navbar({ open, setOpen }) {
   let { theme, toggleTheme } = useContext(ThemeContext);
   let [menuOpen, setMenuOpen] = useState(false);
   let [sideMenuOpen, setSideMenuOpen] = useState(false);
@@ -55,7 +37,7 @@ export default function Navbar({ open }) {
         backdropFilter: 'blur(8px)',
       }}
     >
-      <Toolbar>
+      <Toolbar className="md:ml-[200px]">
         <Container
           maxWidth="xl"
           className="flex flex-row md:justify-between px-0 items-center"
@@ -65,7 +47,7 @@ export default function Navbar({ open }) {
             aria-controls="menu-appbar"
             aria-haspopup="true"
             ref={sideMenuRef}
-            onClick={() => setSideMenuOpen(true)}
+            onClick={() => setOpen(!open)}
             color="primary"
             className="md:hidden mr-4"
           >
