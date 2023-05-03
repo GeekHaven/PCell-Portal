@@ -20,5 +20,8 @@
   "homepage": "https://github.com/GeekHaven/PCell-Portal#readme",
   "dependencies": {
     "concurrently": "^8.0.1"
+  },
+  "devDependencies": {
+    "prettier": "^2.8.8"
   }
 }
