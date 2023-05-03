@@ -1,28 +1,32 @@
-import { createTheme } from "@mui/material/styles";
+import { createTheme } from '@mui/material/styles';
 
 export function getTheme(mode) {
   return createTheme({
     palette: {
       mode,
-      ...(mode === "light"
+      title: '#0172E4',
+      ...(mode === 'light'
         ? {
             primary: {
-              main: "#017eff",
+              main: '#017eff',
             },
             background: {
-              default: "#fefeff",
-              paper: "#fefeff",
+              default: '#fefeff',
+              paper: '#fefeff',
             },
           }
         : {
             primary: {
-              main: "#66b2ff",
+              main: '#66b2ff',
             },
             background: {
-              default: "#0B1829",
-              paper: "#0B1829",
+              default: '#0B1829',
+              paper: '#0B1829',
             },
           }),
+    },
+    typography: {
+      fontFamily: '"IBM Plex Sans", sans-serif',
     },
   });
 }
