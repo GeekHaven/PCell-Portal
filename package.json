@@ -20,6 +20,7 @@
   "homepage": "https://github.com/GeekHaven/PCell-Portal#readme",
   "dependencies": {
     "concurrently": "^8.0.1",
+    "ldapjs": "^3.0.2",
     "sequelize": "^6.31.1"
   }
 }
