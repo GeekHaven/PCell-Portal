@@ -22,9 +22,13 @@ export default function App({ Component, pageProps }) {
   let [mode, setMode] = useState('dark');
   let theme = useMemo(() => getTheme(mode), [mode]);
 
+  function toggleTheme() {
+    setMode((prevMode) => (prevMode === 'dark' ? 'light' : 'dark'));
+  }
+
   return (
     <StyledEngineProvider injectFirst>
-      <ThemeContext.Provider value={{ mode, setMode }}>
+      <ThemeContext.Provider value={{ theme, toggleTheme }}>
         <ThemeProvider theme={theme}>
           <CssBaseline />
           {!Component.hideNavbar && <Navbar />}

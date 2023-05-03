@@ -28,5 +28,8 @@ export function getTheme(mode) {
     typography: {
       fontFamily: '"IBM Plex Sans", sans-serif',
     },
+    shape: {
+      borderRadius: 8,
+    },
   });
 }
