@@ -6,7 +6,6 @@ import {
   Menu,
   MenuItem,
   IconButton,
-  Avatar,
 } from '@mui/material';
 import { useContext, useState, useRef } from 'react';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
@@ -24,6 +23,7 @@ export default function Navbar() {
 
   return (
     <AppBar
+      position="fixed"
       color="background"
       className="fixed bg-none shadow-none backdrop-blur"
       sx={{
