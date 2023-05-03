@@ -16,9 +16,11 @@ export async function logIn(req, res) {
     if (!username || !password)
       return response_400(res, 'Username or password missing');
 
-    if (await verifyPassword(username, password))
+    if (!await verifyPassword(username, password))
       return response_400(res, 'Invalid password');
-    const user = await User.findOne({ rollNumber: username?.toUpperCase() });
+    const user = await User.findOne({
+      where: { rollNumber: username?.toUpperCase() },
+    });
 
     if (!user) {
       const userData = await getAviralData(username, password);

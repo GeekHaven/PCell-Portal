@@ -2,8 +2,7 @@ import express from 'express';
 import db from './config/sql.config.js';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import userRouter from './routes/v1/user.route.js';
-import authRouter from './routes/v1/auth.route.js';
+import morgan from 'morgan';
 import routes from './routes/index.js';
 dotenv.config();
 
@@ -12,12 +11,13 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
+app.use(morgan('dev'));
 app.use('/api', routes);
 
 const initApp = async () => {
   try {
     await db.authenticate();
+    await db.sync();
     console.log('Database Connected');
     app.listen(
       process.env.PORT ? process.env.PORT : 8080,
