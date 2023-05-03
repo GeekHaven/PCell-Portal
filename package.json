@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/GeekHaven/PCell-Portal#readme",
   "dependencies": {
-    "concurrently": "^8.0.1"
+    "concurrently": "^8.0.1",
+    "sequelize": "^6.31.1"
   }
 }
