@@ -44,7 +44,11 @@ export default function App({ Component, pageProps }) {
             },
             <>
               {!Component.hideNavbar && (
-                <Navbar open={open} setOpen={setOpen} />
+                <Navbar
+                  open={open}
+                  setOpen={setOpen}
+                  noSidebarMargin={Component.hideDrawer}
+                />
               )}
               {!Component.hideDrawer && (
                 <Drawer open={open} setOpen={setOpen} />

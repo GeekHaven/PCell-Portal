@@ -18,7 +18,7 @@ import ThemeSwitch from './ThemeSwitch';
 
 const drawerWidth = 200;
 
-export default function Navbar({ open, setOpen }) {
+export default function Navbar({ open, setOpen, noSidebarMargin }) {
   let { theme, toggleTheme } = useContext(ThemeContext);
   let [menuOpen, setMenuOpen] = useState(false);
   let [sideMenuOpen, setSideMenuOpen] = useState(false);
@@ -37,22 +37,24 @@ export default function Navbar({ open, setOpen }) {
         backdropFilter: 'blur(8px)',
       }}
     >
-      <Toolbar className="md:ml-[200px]">
+      <Toolbar className={noSidebarMargin ? undefined : 'md:ml-[200px]'}>
         <Container
           maxWidth="xl"
           className="flex flex-row md:justify-between px-0 items-center"
         >
-          <IconButton
-            size="large"
-            aria-controls="menu-appbar"
-            aria-haspopup="true"
-            ref={sideMenuRef}
-            onClick={() => setOpen(!open)}
-            color="primary"
-            className="md:hidden mr-4"
-          >
-            <MenuIcon />
-          </IconButton>
+          {!noSidebarMargin && (
+            <IconButton
+              size="large"
+              aria-controls="menu-appbar"
+              aria-haspopup="true"
+              ref={sideMenuRef}
+              onClick={() => setOpen(!open)}
+              color="primary"
+              className="md:hidden mr-4"
+            >
+              <MenuIcon />
+            </IconButton>
+          )}
           <Menu
             anchorEl={sideMenuRef.current}
             open={sideMenuOpen}
