@@ -52,9 +52,14 @@ export default function App({ Component, pageProps }) {
                 Container,
                 {
                   maxWidth: 'xl',
+                  sx: {
+                    minHeight: '100vh',
+                    display: 'flex',
+                    flexDirection: 'column',
+                  },
                 },
                 <>
-                  {!Component.hideDrawer && <DrawerHeader />}
+                  {!Component.hideNavbar && <DrawerHeader />}
                   <Component {...pageProps} />
                 </>
               )}
