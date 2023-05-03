@@ -5,7 +5,7 @@ const BASE_URL = 'https://aviral.iiita.ac.in/api/';
 export const getAviralData = async (username, password) => {
   let data = {};
   await axios
-    .post(BASE_URL + 'login/', { username, password })
+    .post(BASE_URL + 'login/', { username: username?.toLowerCase(), password })
     .then((res) => {
       if (res.data['user_group']) {
         return {
@@ -42,7 +42,7 @@ export const getAviralData = async (username, password) => {
 export const verifyAviralPassword = async (username, password) => {
   let flag = false;
   await axios
-    .post(BASE_URL + 'login/', { username, password })
+    .post(BASE_URL + 'login/', { username: username?.toLowerCase(), password })
     .then((res) => {
       if (res.data['user_group']) flag = true;
     })

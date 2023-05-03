@@ -4,7 +4,7 @@ config();
 
 const CONN_STRING = 'dc=iiita,dc=ac,dc=in';
 
-export const authenticateLdap = async (username, password) => {
+export async function authenticateLdap(username, password) {
   const client = new Client({
     url: process.env.LDAP_SERVER,
   });

@@ -1,8 +1,8 @@
-import { DataTypes } from "sequelize";
+import { DataTypes } from 'sequelize';
 
-import sequelize from "../config/sql.config.js";
+import sequelize from '../config/sql.config.js';
 
-const User = sequelize.define("User", {
+const User = sequelize.define('User', {
   name: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -25,7 +25,11 @@ const User = sequelize.define("User", {
   currentSem: {
     type: DataTypes.INTEGER,
     allowNull: false,
-  },  
+  },
+  completedCredits: {
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
 });
 
 export default User;
