@@ -1,7 +1,7 @@
 import {Client} from "ldapts";
 const CONN_STRING = "dc=iiita,dc=ac,dc=in";
 
-const authenticate = async (username, password) => {
+export const authenticateLdap = async (username, password) => {
   const client = new Client({
     url: "ldap://172.31.1.41",
   });
