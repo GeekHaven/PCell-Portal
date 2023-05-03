@@ -4,12 +4,14 @@ import '@fontsource/oswald';
 
 import { useMemo, useState } from 'react';
 import { ThemeProvider } from '@mui/material/styles';
-import { Container, CssBaseline } from '@mui/material';
+import { Container, CssBaseline, Box } from '@mui/material';
 import { StyledEngineProvider } from '@mui/material/styles';
 
 import ThemeContext from '@/contexts/theme.context';
 import Navbar from '@/components/Navbar';
+import Drawer from '@/components/Drawer';
 import { getTheme } from '@/utils/theme';
+import DrawerHeader from '@/components/DrawerHeader';
 
 function conditionalWrapper(condition, Parent, parentProps, Children) {
   if (condition) {
@@ -19,6 +21,7 @@ function conditionalWrapper(condition, Parent, parentProps, Children) {
 }
 
 export default function App({ Component, pageProps }) {
+  const [open, setOpen] = useState(false);
   let [mode, setMode] = useState('dark');
   let theme = useMemo(() => getTheme(mode), [mode]);
 
@@ -31,14 +34,31 @@ export default function App({ Component, pageProps }) {
       <ThemeContext.Provider value={{ theme, toggleTheme }}>
         <ThemeProvider theme={theme}>
           <CssBaseline />
-          {!Component.hideNavbar && <Navbar />}
           {conditionalWrapper(
-            !Component.isFullWidth,
-            Container,
+            !Component.hideContainer,
+            Box,
             {
-              maxWidth: 'xl',
+              sx: {
+                display: 'flex',
+              },
             },
-            <Component {...pageProps} />
+            <>
+              {!Component.hideNavbar && <Navbar open={open} />}
+              {!Component.hideDrawer && (
+                <Drawer open={open} setOpen={setOpen} />
+              )}
+              {conditionalWrapper(
+                !Component.isFullWidth,
+                Container,
+                {
+                  maxWidth: 'xl',
+                },
+                <>
+                  {!Component.hideDrawer && <DrawerHeader />}
+                  <Component {...pageProps} />
+                </>
+              )}
+            </>
           )}
         </ThemeProvider>
       </ThemeContext.Provider>
