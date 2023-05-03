@@ -3,10 +3,17 @@ import "@fontsource/ibm-plex-sans";
 
 import { useMemo, useState } from "react";
 import { ThemeProvider } from "@mui/material/styles";
-import { CssBaseline } from "@mui/material";
+import { Container, CssBaseline } from "@mui/material";
 
 import ThemeContext from "@/contexts/theme.context";
 import { getTheme } from "@/utils/theme";
+
+function conditionalWrapper(condition, Parent, parentProps, Children) {
+  if (condition) {
+    return <Parent {...parentProps}>{Children}</Parent>;
+  }
+  return Children;
+}
 
 export default function App({ Component, pageProps }) {
   let [mode, setMode] = useState("dark");
@@ -16,7 +23,15 @@ export default function App({ Component, pageProps }) {
     <ThemeContext.Provider value={{ mode, setMode }}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <Component {...pageProps} />
+        {/* {!Component.hideNavbar && <Navbar/>} */}
+        {conditionalWrapper(
+          !Component.isFullWidth,
+          Container,
+          {
+            maxWidth: "xl",
+          },
+          <Component {...pageProps} />
+        )}
       </ThemeProvider>
     </ThemeContext.Provider>
   );
