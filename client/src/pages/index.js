@@ -44,7 +44,7 @@ export default function Home() {
           className="z-10 flex flex-grow items-center justify-center"
         >
           <div
-            className="z-10 relative w-full flex-grow flex flex-col-reverse gap-12 md:gap-0 md:grid"
+            className="z-10 relative w-full flex-grow flex flex-col-reverse gap-12 p-2 md:p-16 md:gap-0 md:grid"
             style={{
               gridTemplateColumns: '6fr 5fr',
             }}
