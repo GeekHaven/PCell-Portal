@@ -40,6 +40,11 @@ const UserSchema = Schema({
     type: String,
     required: true,
   },
+
+  isAdmin: {
+    type: Boolean,
+    default: false,
+  }
 });
 
 export default model('User', UserSchema);

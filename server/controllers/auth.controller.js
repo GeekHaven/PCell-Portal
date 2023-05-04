@@ -53,9 +53,13 @@ export async function isUser(req, res) {
   if (!token) return response_200(res, { status: false });
   try {
     const decoded = jwt.verify(token, process.env.SECRET);
-    const user = await User.exists({ rollNumber: decoded.payload.rollNumber });
+    const user = await User.findOne({ rollNumber: decoded.payload.rollNumber });
     if (!user) return response_200(res, "OK", { status: false });
-    return response_200(res, 'OK', { status: true });
+    return response_200(res, 'OK', {
+      status: true,
+      rollNumber: user.rollNumber,
+      isAdmin: user.isAdmin,
+    });
   } catch (err) {
     return response_500(res, err);
   }
