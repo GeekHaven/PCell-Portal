@@ -4,11 +4,17 @@ import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
 import { useRouter } from 'next/router';
 
 import vector from '@/assets/vectors/home.svg';
+import SEO from '@/components/SEO';
 
 export default function Home() {
   let router = useRouter();
   return (
     <>
+      <SEO
+        title="Placements · IIITA"
+        desc="Get your dream job! On the Placement Cell Online Portal of IIIT Allahabad."
+        img={vector.src}
+      />
       <div
         style={{
           height: '25vmax',
