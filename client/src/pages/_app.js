@@ -68,7 +68,9 @@ export default function App({ Component, pageProps }) {
                   className: 'w-full md:ml-[200px]',
                 },
                 <>
-                  {!Component.hideNavbar && <DrawerHeader />}
+                  {!Component.isFullWidth && !Component.hideNavbar && (
+                    <DrawerHeader />
+                  )}
                   <Component {...pageProps} />
                 </>
               )}

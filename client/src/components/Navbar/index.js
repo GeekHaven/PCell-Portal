@@ -9,9 +9,11 @@ import {
   IconButton,
 } from '@mui/material';
 import { useContext, useState, useRef } from 'react';
+import { useRouter } from 'next/router';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import MenuIcon from '@mui/icons-material/Menu';
 import { styled } from '@mui/material/styles';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 import ThemeContext from '@/contexts/theme.context';
 import ThemeSwitch from './ThemeSwitch';
@@ -19,6 +21,7 @@ import ThemeSwitch from './ThemeSwitch';
 const drawerWidth = 200;
 
 export default function Navbar({ open, setOpen, noSidebarMargin }) {
+  let router = useRouter();
   let { theme, toggleTheme } = useContext(ThemeContext);
   let [menuOpen, setMenuOpen] = useState(false);
   let [sideMenuOpen, setSideMenuOpen] = useState(false);
@@ -40,52 +43,27 @@ export default function Navbar({ open, setOpen, noSidebarMargin }) {
       <Toolbar className={noSidebarMargin ? undefined : 'md:ml-[200px]'}>
         <Container
           maxWidth="xl"
-          className="flex flex-row md:justify-between px-0 items-center"
+          className="flex flex-row justify-between px-0 items-center"
         >
           {!noSidebarMargin && (
             <IconButton
               size="large"
-              aria-controls="menu-appbar"
-              aria-haspopup="true"
-              ref={sideMenuRef}
-              onClick={() => setOpen(!open)}
               color="primary"
               className="md:hidden mr-4"
+              onClick={() => setOpen(!open)}
             >
               <MenuIcon />
             </IconButton>
           )}
-          <Menu
-            anchorEl={sideMenuRef.current}
-            open={sideMenuOpen}
-            onClose={() => setSideMenuOpen(false)}
-            anchorOrigin={{
-              vertical: 'bottom',
-              horizontal: 'left',
-            }}
-            transformOrigin={{
-              vertical: 'top',
-              horizontal: 'left',
-            }}
-          >
-            <MenuItem>
-              Theme
-              <ThemeSwitch
-                sx={{ ml: 1 }}
-                small
-                checked={theme.palette.mode === 'dark'}
-                onClick={toggleTheme}
-              />
-            </MenuItem>
-            <MenuItem onClick={() => setSideMenuOpen(false)}>
-              My Profile
-            </MenuItem>
-          </Menu>
+
           <Typography
             variant="h5"
             fontFamily={'"Oswald", sans-serif;'}
             color="title"
-            className="justify-self-center md:justify-self-start block md:hidden"
+            className="justify-self-center md:justify-self-start block md:hidden cursor-pointer"
+            onClick={() => {
+              router.push('/');
+            }}
           >
             IIITA Placement Portal
           </Typography>
@@ -93,7 +71,10 @@ export default function Navbar({ open, setOpen, noSidebarMargin }) {
             variant="h4"
             fontFamily={'"Oswald", sans-serif;'}
             color="title"
-            className="justify-self-center md:justify-self-start hidden md:block"
+            className="justify-self-center md:justify-self-start hidden md:block cursor-pointer"
+            onClick={() => {
+              router.push('/');
+            }}
           >
             IIITA Placement Portal
           </Typography>
@@ -102,13 +83,16 @@ export default function Navbar({ open, setOpen, noSidebarMargin }) {
               checked={theme.palette.mode === 'dark'}
               onClick={toggleTheme}
             />
-            {/* <Button
-            variant="outlined"
-            className="normal-case font-semibold tracking-wider border-2"
-          >
-            Log In
-          </Button> */}
-            <>
+            <Button
+              variant="outlined"
+              className="normal-case font-semibold tracking-wider border-2"
+              onClick={() => {
+                router.push('/login');
+              }}
+            >
+              Log In
+            </Button>
+            {/* <>
               <Button
                 color="primary"
                 className="text-lg"
@@ -139,8 +123,45 @@ export default function Navbar({ open, setOpen, noSidebarMargin }) {
                 </MenuItem>
                 <MenuItem onClick={() => setMenuOpen(false)}>Logout</MenuItem>
               </Menu>
-            </>
+            </> */}
           </div>
+          <IconButton
+            size="large"
+            color="primary"
+            aria-controls="menu-appbar"
+            aria-haspopup="true"
+            ref={sideMenuRef}
+            onClick={() => setSideMenuOpen(!sideMenuOpen)}
+            className="md:hidden"
+          >
+            <AccountCircleIcon />
+          </IconButton>
+          <Menu
+            anchorEl={sideMenuRef.current}
+            open={sideMenuOpen}
+            onClose={() => setSideMenuOpen(false)}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'left',
+            }}
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'left',
+            }}
+          >
+            <MenuItem>
+              Theme
+              <ThemeSwitch
+                sx={{ ml: 1 }}
+                small
+                checked={theme.palette.mode === 'dark'}
+                onClick={toggleTheme}
+              />
+            </MenuItem>
+            <MenuItem onClick={() => setSideMenuOpen(false)}>
+              My Profile
+            </MenuItem>
+          </Menu>
         </Container>
       </Toolbar>
     </AppBar>
