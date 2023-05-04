@@ -7,6 +7,8 @@ import { ThemeProvider } from '@mui/material/styles';
 import { Container, CssBaseline, Box } from '@mui/material';
 import { StyledEngineProvider } from '@mui/material/styles';
 
+import { QueryClient, QueryClientProvider } from 'react-query';
+
 import ThemeContext from '@/contexts/theme.context';
 import Navbar from '@/components/Navbar';
 import Drawer from '@/components/Drawer';
@@ -20,6 +22,8 @@ function conditionalWrapper(condition, Parent, parentProps, Children) {
   return Children;
 }
 
+const queryClient = new QueryClient();
+
 export default function App({ Component, pageProps }) {
   const [open, setOpen] = useState(false);
   let [mode, setMode] = useState('dark');
@@ -30,54 +34,56 @@ export default function App({ Component, pageProps }) {
   }
 
   return (
-    <StyledEngineProvider injectFirst>
-      <ThemeContext.Provider value={{ theme, toggleTheme }}>
-        <ThemeProvider theme={theme}>
-          <CssBaseline />
-          {conditionalWrapper(
-            !Component.hideContainer,
-            Box,
-            {
-              sx: {
-                display: 'flex',
-              },
-            },
-            <>
-              {!Component.hideNavbar && (
-                <Navbar
-                  open={open}
-                  setOpen={setOpen}
-                  noSidebarMargin={Component.hideDrawer}
-                />
-              )}
-              {!Component.hideDrawer && (
-                <Drawer open={open} setOpen={setOpen} />
-              )}
-              {conditionalWrapper(
-                !Component.isFullWidth,
-                Container,
-                {
-                  maxWidth: 'xl',
-                  sx: {
-                    minHeight: '100vh',
-                    display: 'flex',
-                    flexDirection: 'column',
-                    flexGrow: 1,
-                    p: 3,
-                  },
-                  className: 'w-full md:ml-[200px]',
+    <QueryClientProvider client={queryClient}>
+      <StyledEngineProvider injectFirst>
+        <ThemeContext.Provider value={{ theme, toggleTheme }}>
+          <ThemeProvider theme={theme}>
+            <CssBaseline />
+            {conditionalWrapper(
+              !Component.hideContainer,
+              Box,
+              {
+                sx: {
+                  display: 'flex',
                 },
-                <>
-                  {!Component.isFullWidth && !Component.hideNavbar && (
-                    <DrawerHeader />
-                  )}
-                  <Component {...pageProps} />
-                </>
-              )}
-            </>
-          )}
-        </ThemeProvider>
-      </ThemeContext.Provider>
-    </StyledEngineProvider>
+              },
+              <>
+                {!Component.hideNavbar && (
+                  <Navbar
+                    open={open}
+                    setOpen={setOpen}
+                    noSidebarMargin={Component.hideDrawer}
+                  />
+                )}
+                {!Component.hideDrawer && (
+                  <Drawer open={open} setOpen={setOpen} />
+                )}
+                {conditionalWrapper(
+                  !Component.isFullWidth,
+                  Container,
+                  {
+                    maxWidth: 'xl',
+                    sx: {
+                      minHeight: '100vh',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      flexGrow: 1,
+                      p: 3,
+                    },
+                    className: 'w-full md:ml-[200px]',
+                  },
+                  <>
+                    {!Component.isFullWidth && !Component.hideNavbar && (
+                      <DrawerHeader />
+                    )}
+                    <Component {...pageProps} />
+                  </>
+                )}
+              </>
+            )}
+          </ThemeProvider>
+        </ThemeContext.Provider>
+      </StyledEngineProvider>
+    </QueryClientProvider>
   );
 }

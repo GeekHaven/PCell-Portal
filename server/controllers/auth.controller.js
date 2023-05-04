@@ -49,11 +49,11 @@ export async function logIn(req, res) {
 }
 
 export async function isUser(req, res) {
-  const token = req.headers['Authorization'];
+  const token = req.header('Authorization');
   if (!token) return response_200(res, { status: false });
   try {
     const decoded = jwt.verify(token, process.env.SECRET);
-    const user = await User.exists({ rollNumber: decoded.rollNumber });
+    const user = await User.exists({ rollNumber: decoded.payload.rollNumber });
     if (!user) return response_200(res, { status: false });
     return response_200(res, { status: true });
   } catch (err) {
