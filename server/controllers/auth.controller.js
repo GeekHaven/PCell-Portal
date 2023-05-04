@@ -13,6 +13,7 @@ import { getAviralData } from '../utils/aviral.js';
 
 export async function logIn(req, res) {
   try {
+    console.log(req.body);
     const { username, password } = req.body;
     if (!username || !password)
       return response_400(res, 'Username or password missing');
@@ -38,11 +39,21 @@ export async function logIn(req, res) {
       });
       newUser.save();
       const token = getJwt({ rollNumber: username, name: newUser.name });
-      return response_201(res, 'OK', {token});
+      return response_201(res, 'OK', {
+        token,
+        status: true,
+        rollNumber: newUser.rollNumber,
+        isAdmin: newUser.isAdmin,
+      });
     }
 
     const token = getJwt({ rollNumber: username, name: user.name });
-    return response_200(res, 'OK', { token });
+    return response_200(res, 'OK', {
+      token,
+      status: true,
+      rollNumber: user.rollNumber,
+      isAdmin: user.isAdmin,
+    });
   } catch (err) {
     response_500(res, err);
   }
@@ -54,7 +65,7 @@ export async function isUser(req, res) {
   try {
     const decoded = jwt.verify(token, process.env.SECRET);
     const user = await User.findOne({ rollNumber: decoded.payload.rollNumber });
-    if (!user) return response_200(res, "OK", { status: false });
+    if (!user) return response_200(res, 'OK', { status: false });
     return response_200(res, 'OK', {
       status: true,
       rollNumber: user.rollNumber,

@@ -12,13 +12,13 @@ import { useContext, useState, useRef } from 'react';
 import { useRouter } from 'next/router';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import MenuIcon from '@mui/icons-material/Menu';
-import { styled } from '@mui/material/styles';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { useQuery, useQueryClient } from 'react-query';
 
+import { isUserAuthenticated } from '@/utils/API/auth';
+import { logout } from '@/utils/API/request';
 import ThemeContext from '@/contexts/theme.context';
 import ThemeSwitch from './ThemeSwitch';
-
-const drawerWidth = 200;
 
 export default function Navbar({ open, setOpen, noSidebarMargin }) {
   let router = useRouter();
@@ -27,6 +27,17 @@ export default function Navbar({ open, setOpen, noSidebarMargin }) {
   let [sideMenuOpen, setSideMenuOpen] = useState(false);
   let sideMenuRef = useRef(null);
   let menuRef = useRef(null);
+  let { data: user } = useQuery({
+    queryKey: 'user',
+    queryFn: isUserAuthenticated,
+    staleTime: 1000 * 60 * 60 * 24 * 30,
+  });
+  let queryClient = useQueryClient();
+
+  function handleLogout() {
+    logout();
+    queryClient.invalidateQueries('user');
+  }
 
   return (
     <AppBar
@@ -83,47 +94,57 @@ export default function Navbar({ open, setOpen, noSidebarMargin }) {
               checked={theme.palette.mode === 'dark'}
               onClick={toggleTheme}
             />
-            <Button
-              variant="outlined"
-              className="normal-case font-semibold tracking-wider border-2"
-              onClick={() => {
-                router.push('/login');
-              }}
-            >
-              Log In
-            </Button>
-            {/* <>
+            {user ? (
+              <>
+                <Button
+                  color="primary"
+                  className="text-lg"
+                  endIcon={<ArrowDropDownIcon />}
+                  ref={menuRef}
+                  aria-controls={menuOpen ? 'menu-list' : undefined}
+                  aria-haspopup="true"
+                  aria-expanded={menuOpen ? 'true' : undefined}
+                  onClick={() => setMenuOpen(true)}
+                >
+                  IEC2021002
+                </Button>
+                <Menu
+                  anchorEl={menuRef.current}
+                  open={menuOpen}
+                  onClose={() => setMenuOpen(false)}
+                  anchorOrigin={{
+                    vertical: 'bottom',
+                    horizontal: 'right',
+                  }}
+                  transformOrigin={{
+                    vertical: 'top',
+                    horizontal: 'right',
+                  }}
+                >
+                  <MenuItem onClick={() => setMenuOpen(false)}>
+                    My Profile
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      handleLogout();
+                      setMenuOpen(false);
+                    }}
+                  >
+                    Log Out
+                  </MenuItem>
+                </Menu>
+              </>
+            ) : (
               <Button
-                color="primary"
-                className="text-lg"
-                endIcon={<ArrowDropDownIcon />}
-                ref={menuRef}
-                aria-controls={menuOpen ? 'menu-list' : undefined}
-                aria-haspopup="true"
-                aria-expanded={menuOpen ? 'true' : undefined}
-                onClick={() => setMenuOpen(true)}
+                variant="outlined"
+                className="normal-case font-semibold tracking-wider border-2"
+                onClick={() => {
+                  router.push('/login');
+                }}
               >
-                IEC2021002
+                Log In
               </Button>
-              <Menu
-                anchorEl={menuRef.current}
-                open={menuOpen}
-                onClose={() => setMenuOpen(false)}
-                anchorOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'right',
-                }}
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-              >
-                <MenuItem onClick={() => setMenuOpen(false)}>
-                  My Profile
-                </MenuItem>
-                <MenuItem onClick={() => setMenuOpen(false)}>Logout</MenuItem>
-              </Menu>
-            </> */}
+            )}
           </div>
           <IconButton
             size="large"
@@ -158,9 +179,30 @@ export default function Navbar({ open, setOpen, noSidebarMargin }) {
                 onClick={toggleTheme}
               />
             </MenuItem>
-            <MenuItem onClick={() => setSideMenuOpen(false)}>
-              My Profile
-            </MenuItem>
+            {user ? (
+              <>
+                <MenuItem onClick={() => setSideMenuOpen(false)}>
+                  My Profile
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    handleLogout();
+                    setSideMenuOpen(false);
+                  }}
+                >
+                  Log Out
+                </MenuItem>
+              </>
+            ) : (
+              <MenuItem
+                onClick={() => {
+                  router.push('/login');
+                  setSideMenuOpen(false);
+                }}
+              >
+                Log In
+              </MenuItem>
+            )}
           </Menu>
         </Container>
       </Toolbar>
