@@ -70,7 +70,9 @@ const Dashboard = () => {
               variant="body1"
               className="font-bold"
               color={
-                cgpaValue < 7
+                cgpaValue === 6.9
+                  ? '#FFD700'
+                  : cgpaValue < 7
                   ? 'error.main'
                   : cgpaValue < 7.5
                   ? 'warning.main'
