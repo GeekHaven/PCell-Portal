@@ -1,13 +1,10 @@
 import React, { useState } from 'react';
-import Avatar from '@mui/material/Avatar';
-import { stringAvatar } from '@/utils/customAvatar';
 import {
   IconButton,
   Container,
   Typography,
   Tooltip,
   TextField,
-  InputAdornment,
   Box,
   ToggleButton,
   Button,
