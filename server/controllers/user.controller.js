@@ -23,11 +23,9 @@ export const updateCourseDetails = async (req, res) => {
     User.findOneAndUpdate(
       { rollNumber: req.user.rollNumber },
       {
-        $set: {
-          currentSem: userData.semester,
-          completedCredits: userData.completedCredits,
-          cgpa: userData.cgpa,
-        },
+        currentSem: userData.semester,
+        completedCredits: userData.completedCredits,
+        cgpa: userData.cgpa,
       }
     );
 

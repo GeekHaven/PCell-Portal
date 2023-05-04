@@ -1,41 +1,37 @@
-import { DataTypes } from 'sequelize';
+import { Schema, model } from 'mongoose';
+import mongoose from 'mongoose';
 
-import sequelize from '../config/sql.config.js';
-
-const User = sequelize.define(
-  'User',
-  {
-    name: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    rollNumber: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    mobile: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    cgpa: {
-      type: DataTypes.FLOAT,
-      allowNull: false,
-    },
-    resumeLink: {
-      type: DataTypes.STRING,
-    },
-    currentSem: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    completedCredits: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },  
+const UserSchema = Schema({
+  name: {
+    type: String,
+    required: true,
   },
-  {
-    tableName: 'current_users',
-  }
-);
+  rollNumber: {
+    type: String,
+    required: true,
+  },
 
-export default User;
+  mobile: {
+    type: String,
+    required: true,
+  },
+
+  cgpa: {
+    type: mongoose.SchemaTypes.Decimal128,
+    required: true,
+  },
+  resumeLink: {
+    type: String,
+    required: false,
+  },
+  currentSem: {
+    type: String,
+    required: true,
+  },
+  completedCredits: {
+    type: String,
+    required: true,
+  },
+});
+
+export default model('User', UserSchema);
