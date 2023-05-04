@@ -38,11 +38,11 @@ export async function logIn(req, res) {
       });
       newUser.save();
       const token = getJwt({ rollNumber: username, name: newUser.name });
-      return response_201(res, token);
+      return response_201(res, 'OK', {token});
     }
 
     const token = getJwt({ rollNumber: username, name: user.name });
-    return response_200(res, { token });
+    return response_200(res, 'OK', { token });
   } catch (err) {
     response_500(res, err);
   }
@@ -54,8 +54,8 @@ export async function isUser(req, res) {
   try {
     const decoded = jwt.verify(token, process.env.SECRET);
     const user = await User.exists({ rollNumber: decoded.payload.rollNumber });
-    if (!user) return response_200(res, { status: false });
-    return response_200(res, { status: true });
+    if (!user) return response_200(res, "OK", { status: false });
+    return response_200(res, 'OK', { status: true });
   } catch (err) {
     return response_500(res, err);
   }

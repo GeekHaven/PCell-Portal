@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { getLS, removeLS } from './localStorage';
 
-const API_URL = process.env.API_URL || 'http://localhost:8080';
+const API_URL = process.env.API_URL || 'http://localhost:8080/api/v1';
 
 const getAccessToken = () => getLS('jwt_token');
 
@@ -39,4 +39,8 @@ const update = async (endpoint, body, token = null) =>
 const remove = async (endpoint, token = null) =>
   axios.delete(API_URL + endpoint, getHeaders(token));
 
-export { getAccessToken, post, get, update, remove, API_URL, getHeaders };
+const logout = () => {
+  removeLS('jwt_token');
+};
+
+export { getAccessToken, post, get, update, remove, API_URL, getHeaders, logout };
