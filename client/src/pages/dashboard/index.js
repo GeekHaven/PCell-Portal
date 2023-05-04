@@ -11,6 +11,7 @@ import {
 } from '@mui/material';
 import CachedIcon from '@mui/icons-material/Cached';
 import CreateIcon from '@mui/icons-material/Create';
+import { styled } from '@mui/material/styles';
 
 const Dashboard = () => {
   const cgpaValue = 6.9;
@@ -119,17 +120,24 @@ const Dashboard = () => {
         </Container>
         <Container className="flex flex-nowrap jutify-around items-center gap-2">
           <TextField
-            disabled={mobile ? false : true}
+            disabled={!mobile}
             label="Mobile Number"
             defaultValue="8828065897"
             fullWidth
+            focused={mobile}
           />
 
           <ToggleButton
             value="check"
             selected={mobile}
             onChange={() => {
-              setMobile(!mobile);
+              setMobile((mobile) => {
+                if (mobile) {
+                  return false;
+                }
+                setResumeLink(false);
+                return true;
+              });
             }}
             className="p-3.5"
           >
@@ -138,17 +146,24 @@ const Dashboard = () => {
         </Container>
         <Container className="flex flex-nowrap jutify-around items-center gap-2">
           <TextField
-            disabled={resumeLink ? false : true}
+            disabled={!resumeLink}
             label="Resume Link"
             defaultValue="google drive link"
             fullWidth
+            focused={resumeLink}
           />
 
           <ToggleButton
             value="check"
             selected={resumeLink}
             onChange={() => {
-              setResumeLink(!resumeLink);
+              setResumeLink((resumeLink) => {
+                if (resumeLink) {
+                  return false;
+                }
+                setMobile(false);
+                return true;
+              });
             }}
             className="p-3.5"
           >

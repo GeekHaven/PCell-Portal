@@ -15,6 +15,9 @@ export function getTheme(mode) {
               paper: '#fefeff',
             },
             bgclear: '#fefeffcc',
+            text: {
+              disabled: 'rgba(0, 0, 0, 0.7)',
+            },
           }
         : {
             primary: {
