@@ -3,7 +3,7 @@ import { response_401, response_500 } from '../utils/responseCodes.js';
 import User from '../models/user.model.js';
 
 export async function verifyUser(req, res, next) {
-  const token = req.headers['authorization'];
+  const token = req.headers['Authorization'];
   if (!token) return response_401(res, 'Unauthorized');
   try {
     const decoded = jwt.verify(token, process.env.SECRET);

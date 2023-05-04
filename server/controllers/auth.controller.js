@@ -5,6 +5,7 @@ import {
   response_404,
   response_500,
 } from '../utils/responseCodes.js';
+import jwt from 'jsonwebtoken';
 
 import User from '../models/user.model.js';
 import { getJwt, verifyPassword } from '../utils/password.js';
@@ -32,6 +33,8 @@ export async function logIn(req, res) {
         cgpa: userData.cgpa,
         currentSem: userData.semester,
         completedCredits: userData.completedCredits,
+        program: userData.program,
+        admissionYear: userData.admissionYear,
       });
       newUser.save();
       const token = getJwt({ rollNumber: username, name: newUser.name });
@@ -42,5 +45,18 @@ export async function logIn(req, res) {
     return response_200(res, { token });
   } catch (err) {
     response_500(res, err);
+  }
+}
+
+export async function isUser(req, res) {
+  const token = req.headers['Authorization'];
+  if (!token) return response_200(res, { status: false });
+  try {
+    const decoded = jwt.verify(token, process.env.SECRET);
+    const user = await User.exists({ rollNumber: decoded.rollNumber });
+    if (!user) return response_200(res, { status: false });
+    return response_200(res, { status: true });
+  } catch (err) {
+    return response_500(res, err);
   }
 }

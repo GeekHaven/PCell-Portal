@@ -26,6 +26,8 @@ export const updateCourseDetails = async (req, res) => {
         currentSem: userData.semester,
         completedCredits: userData.completedCredits,
         cgpa: userData.cgpa,
+        program: userData.program,
+        admissionYear: userData.admissionYear,
       }
     );
 

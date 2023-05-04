@@ -32,6 +32,14 @@ const UserSchema = Schema({
     type: String,
     required: true,
   },
+  admissionYear: {
+    type: Number,
+    required: true,
+  },
+  program: {
+    type: String,
+    required: true,
+  },
 });
 
 export default model('User', UserSchema);
