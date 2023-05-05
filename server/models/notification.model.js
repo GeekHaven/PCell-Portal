@@ -15,5 +15,9 @@ const NotificationSchema=Schema({
     bannerImg:{
         type:String,
     },
+    target:{
+        type:String,
+        required:true,
+    },
 },{timestamps:true});
 export default model("Notification",NotificationSchema);
