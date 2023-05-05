@@ -44,3 +44,18 @@ export const updateCourseDetails = async (req, res) => {
     response_500(res, err);
   }
 };
+export const getUserGroups=async(req,res)=>{
+  try{
+    let programs = User.distinct('program');
+    let admissionYears = User.distinct('admissionYear');
+    Promise.all([programs, admissionYears]).then((values) => {
+      return response_200(res, 'OK', {
+        programs: values[0],
+        admissionYears: values[1],
+      });
+    });
+    
+  }catch(err){
+    response_500(res,err);
+  }
+}
