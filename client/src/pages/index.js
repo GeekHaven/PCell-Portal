@@ -3,11 +3,13 @@ import { Typography, Container, Button } from '@mui/material';
 import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
 import { useRouter } from 'next/router';
 
+import useUser from '@/customHooks/useUser';
 import vector from '@/assets/vectors/home.svg';
 import SEO from '@/components/SEO';
 
 export default function Home() {
   let router = useRouter();
+  let { user } = useUser();
   return (
     <>
       <SEO
@@ -69,7 +71,10 @@ export default function Home() {
                 variant="contained"
                 className="mx-auto md:mx-0  md:w-fit flex items-center"
                 endIcon={<ArrowRightAltIcon />}
-                onClick={() => router.push('/login')}
+                onClick={() => {
+                  if (!user) return router.push('/login');
+                  return router.push('/dashboard');
+                }}
               >
                 Get Started
               </Button>

@@ -13,7 +13,6 @@ import { getAviralData } from '../utils/aviral.js';
 
 export async function logIn(req, res) {
   try {
-    console.log(req.body);
     const { username, password } = req.body;
     if (!username || !password)
       return response_400(res, 'Username or password missing');
@@ -21,7 +20,7 @@ export async function logIn(req, res) {
     if (!(await verifyPassword(username, password)))
       return response_400(res, 'Invalid password');
     const user = await User.findOne({
-      where: { rollNumber: username?.toUpperCase() },
+      rollNumber: username?.toUpperCase(),
     });
 
     if (!user) {
@@ -38,7 +37,10 @@ export async function logIn(req, res) {
         admissionYear: userData.admissionYear,
       });
       newUser.save();
-      const token = getJwt({ rollNumber: username, name: newUser.name });
+      const token = getJwt({
+        rollNumber: newUser.rollNumber,
+        name: newUser.name,
+      });
       return response_201(res, 'OK', {
         token,
         status: true,
@@ -47,7 +49,7 @@ export async function logIn(req, res) {
       });
     }
 
-    const token = getJwt({ rollNumber: username, name: user.name });
+    const token = getJwt({ rollNumber: user.rollNumber, name: user.name });
     return response_200(res, 'OK', {
       token,
       status: true,

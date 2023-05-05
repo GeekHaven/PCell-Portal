@@ -180,19 +180,20 @@ export default function Navbar({ open, setOpen, noSidebarMargin }) {
               />
             </MenuItem>
             {user ? (
-              <>
-                <MenuItem onClick={() => setSideMenuOpen(false)}>
+              [
+                <MenuItem onClick={() => setSideMenuOpen(false)} key="profile">
                   My Profile
-                </MenuItem>
+                </MenuItem>,
                 <MenuItem
                   onClick={() => {
                     handleLogout();
                     setSideMenuOpen(false);
                   }}
+                  key="logout"
                 >
                   Log Out
-                </MenuItem>
-              </>
+                </MenuItem>,
+              ]
             ) : (
               <MenuItem
                 onClick={() => {

@@ -8,7 +8,15 @@ import {
 import { getAviralData } from '../utils/aviral.js';
 import { verifyPassword } from '../utils/password.js';
 
-export const getUserData = async (req, res) => req.user;
+export const getUserData = async (req, res) => {
+  let user = await User.findOne({ rollNumber: req.user.rollNumber }).lean();
+  delete user['_id'];
+  delete user['__v'];
+  delete user['createdAt'];
+  delete user['updatedAt'];
+  user['cgpa'] = Number(user['cgpa']).toFixed(2);
+  return response_200(res, 'OK', user);
+};
 
 export const updateCourseDetails = async (req, res) => {
   try {

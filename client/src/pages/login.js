@@ -93,6 +93,8 @@ export default function Login() {
               </Typography>
               <FormControl margin="dense" error={usernameError} required>
                 <OutlinedInput
+                  id="username"
+                  name="username"
                   placeholder="Username"
                   value={username}
                   onChange={(e) => {
@@ -101,12 +103,14 @@ export default function Login() {
                     else setUsernameError(false);
                   }}
                   fullWidth
-                  autoComplete="username"
+                  autoComplete="on"
                 />
               </FormControl>
 
               <FormControl margin="dense" error={passwordError} required>
                 <OutlinedInput
+                  id="password"
+                  name="password"
                   placeholder="Password"
                   value={password}
                   onChange={(e) => {
@@ -115,7 +119,7 @@ export default function Login() {
                     else setPasswordError(false);
                   }}
                   fullWidth
-                  autoComplete="current-password"
+                  autoComplete="on"
                   type={showPassword ? 'text' : 'password'}
                   endAdornment={
                     <InputAdornment position="end">
