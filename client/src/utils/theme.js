@@ -1,3 +1,4 @@
+
 import { createTheme } from '@mui/material/styles';
 
 export function getTheme(mode) {

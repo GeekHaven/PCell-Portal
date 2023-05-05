@@ -8,6 +8,7 @@ import {
 import { getAviralData } from '../utils/aviral.js';
 import { verifyPassword } from '../utils/password.js';
 
+
 export const getUserData = async (req, res) => {
   let user = await User.findOne({ rollNumber: req.user.rollNumber }).lean();
   delete user['_id'];
