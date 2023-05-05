@@ -13,7 +13,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 app.use('/api', routes);
-
 mongoose
   .connect(process.env.MONGO_CONNECTION_URL, {
     useNewUrlParser: true,
