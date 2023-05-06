@@ -106,7 +106,7 @@ export default function Navbar({ open, setOpen, noSidebarMargin }) {
                   aria-expanded={menuOpen ? 'true' : undefined}
                   onClick={() => setMenuOpen(true)}
                 >
-                  IEC2021002
+                  {user.rollNumber}
                 </Button>
                 <Menu
                   anchorEl={menuRef.current}
@@ -121,7 +121,12 @@ export default function Navbar({ open, setOpen, noSidebarMargin }) {
                     horizontal: 'right',
                   }}
                 >
-                  <MenuItem onClick={() => setMenuOpen(false)}>
+                  <MenuItem
+                    onClick={() => {
+                      router.push('/dashboard/profile');
+                      setMenuOpen(false);
+                    }}
+                  >
                     My Profile
                   </MenuItem>
                   <MenuItem
@@ -181,7 +186,13 @@ export default function Navbar({ open, setOpen, noSidebarMargin }) {
             </MenuItem>
             {user ? (
               [
-                <MenuItem onClick={() => setSideMenuOpen(false)} key="profile">
+                <MenuItem
+                  onClick={() => {
+                    router.push('/dashboard/profile');
+                    setSideMenuOpen(false);
+                  }}
+                  key="profile"
+                >
                   My Profile
                 </MenuItem>,
                 <MenuItem

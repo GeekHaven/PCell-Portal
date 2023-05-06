@@ -2,13 +2,13 @@ import Head from 'next/head';
 export default function SEO({ title, desc, img }) {
   return (
     <Head>
-      <title>{title}</title>
+      <title>{title + ' · Placements · IIITA'}</title>
       <meta
         name="viewport"
         content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
       />
       <meta name="theme-color" content="#ffffff" />
-      <meta name="title" content={title} />
+      <meta name="title" content={title + ' · Placements · IIITA'} />
       <meta name="description" content={desc} />
       <link rel="manifest" href="/manifest.json" />
       <link rel="shortcut icon" href="/favicon.ico" />
