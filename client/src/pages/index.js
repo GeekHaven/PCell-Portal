@@ -13,7 +13,7 @@ export default function Home() {
   return (
     <>
       <SEO
-        title="Placements · IIITA"
+        title="Home"
         desc="Get your dream job! On the Placement Cell Online Portal of IIIT Allahabad."
         img={vector.src}
       />

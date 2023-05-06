@@ -70,7 +70,7 @@ export default function Login() {
   return (
     <>
       <SEO
-        title="Login · Placements · IIITA"
+        title="Login"
         desc="Get your dream job! On the Placement Cell Online Portal of IIIT Allahabad."
         img={vector.src}
       />
