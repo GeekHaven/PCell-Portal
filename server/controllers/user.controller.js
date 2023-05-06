@@ -8,7 +8,6 @@ import {
 import { getAviralData } from '../utils/aviral.js';
 import { verifyPassword } from '../utils/password.js';
 
-
 export const getUserData = async (req, res) => {
   let user = await User.findOne({ rollNumber: req.user.rollNumber }).lean();
   delete user['_id'];
@@ -23,13 +22,13 @@ export const updateCourseDetails = async (req, res) => {
   try {
     const { password } = req.body;
 
-    if (await verifyPassword(req.user.rollNumber, password))
+    if (!(await verifyPassword(req.user.rollNumber, password)))
       return response_400(res, 'Invalid password');
 
     const userData = await getAviralData(req.user.rollNumber, password);
     if (!userData) return response_404(res, 'User not found');
 
-    User.findOneAndUpdate(
+    const updatedUser = User.findOneAndUpdate(
       { rollNumber: req.user.rollNumber },
       {
         currentSem: userData.semester,
@@ -40,13 +39,34 @@ export const updateCourseDetails = async (req, res) => {
       }
     );
 
-    return response_200(res, 'Course details updated successfully');
+    return response_200(res, 'OK', updatedUser);
+  } catch (err) {
+    return response_500(res, err);
+  }
+};
+
+export const saveChanges = async (req, res) => {
+  try {
+    const { password, mobile, resumeLink } = req.body;
+    console.log(req.body);
+    if (!(await verifyPassword(req.user.rollNumber, password)))
+      return response_400(res, 'Invalid password');
+
+    const updatedUser = await User.findOneAndUpdate(
+      { rollNumber: req.user.rollNumber },
+      {
+        mobile,
+        resumeLink,
+      }
+    );
+    return response_200(res, 'OK', { mobile, resumeLink });
   } catch (err) {
     response_500(res, err);
   }
 };
-export const getUserGroups=async(req,res)=>{
-  try{
+
+export const getUserGroups = async (req, res) => {
+  try {
     let programs = User.distinct('program');
     let admissionYears = User.distinct('admissionYear');
     Promise.all([programs, admissionYears]).then((values) => {
@@ -55,8 +75,7 @@ export const getUserGroups=async(req,res)=>{
         admissionYears: values[1],
       });
     });
-    
-  }catch(err){
-    response_500(res,err);
+  } catch (err) {
+    response_500(res, err);
   }
-}
+};

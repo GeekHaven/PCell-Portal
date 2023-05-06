@@ -12,11 +12,16 @@ import {
 } from '@mui/material';
 import CachedIcon from '@mui/icons-material/Cached';
 import CreateIcon from '@mui/icons-material/Create';
-import { useQuery } from 'react-query';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
 
 import FullLoader from '@/components/FullLoader';
 import useLoggedinUser from '@/customHooks/useLoggedinUser';
-import { getProfile } from '@/utils/API/dashboard/profile';
+import {
+  getProfile,
+  saveChanges,
+  updateCourseDetails,
+} from '@/utils/API/dashboard/profile';
+import { set } from 'nprogress';
 
 const Dashboard = () => {
   useLoggedinUser();
@@ -24,6 +29,7 @@ const Dashboard = () => {
   const [resumeLinkActive, setResumeLinkActive] = useState(false);
   const [mobile, setMobile] = useState('');
   const [resumeLink, setResumeLink] = useState('');
+  const [password, setPassword] = useState('');
   const {
     data: profile,
     isLoading,
@@ -39,12 +45,50 @@ const Dashboard = () => {
       (profile.resumeLink === resumeLink || !resumeLink)
     );
   }
+
+  const queryClient = useQueryClient();
+  const saveChangesMutation = useMutation(saveChanges, {
+    onSuccess: (data) => {
+      queryClient.setQueryData('profile', {
+        ...data,
+        mobile,
+        resumeLink,
+      });
+    },
+  });
+  const updateCourseDetailsMutation = useMutation(updateCourseDetails, {
+    onSuccess: (data) => {
+      queryClient.setQueryData('profile', {
+        ...data,
+        currentSem,
+        completedCredits,
+        cgpa,
+        program,
+        admissionYear,
+      });
+    },
+  });
+
+  async function handleCourseUpdate() {
+    updateCourseDetailsMutation.mutate({
+      password,
+    });
+  }
+  async function handleSaveChanges(e) {
+    e.preventDefault();
+    saveChangesMutation.mutate({
+      mobile,
+      resumeLink,
+    });
+  }
+
   useEffect(() => {
     if (!isLoading && profile) {
       setMobile(profile.mobile);
       setResumeLink(profile.resumeLink);
     }
   }, [isLoading, profile]);
+
   if (isLoading) return <FullLoader />;
   return (
     <>
@@ -66,7 +110,7 @@ const Dashboard = () => {
           </Typography>
           {!isError && (
             <Tooltip title="Update Course Details">
-              <IconButton>
+              <IconButton onClick={handleCourseUpdate}>
                 <CachedIcon className="text-2xl" />
               </IconButton>
             </Tooltip>
@@ -224,6 +268,7 @@ const Dashboard = () => {
                 variant="contained"
                 className="font-bold"
                 disabled={isSaveButtonDisabled()}
+                onClick={(e) => handleSaveChanges(e)}
               >
                 Save Changes
               </Button>
