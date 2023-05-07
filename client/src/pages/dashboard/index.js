@@ -1,283 +1,67 @@
-import React, { useState, useEffect } from 'react';
-import {
-  IconButton,
-  Container,
-  Typography,
-  Tooltip,
-  TextField,
-  Box,
-  ToggleButton,
-  Button,
-  Divider,
-} from '@mui/material';
-import CachedIcon from '@mui/icons-material/Cached';
-import CreateIcon from '@mui/icons-material/Create';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { Avatar, Container, Typography, Chip, Paper } from '@mui/material';
+import Image from 'next/image';
+import react from 'react';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import Box from '@mui/material/Box';
+import moment from 'moment';
 
-import FullLoader from '@/components/FullLoader';
-import useLoggedinUser from '@/customHooks/useLoggedinUser';
-import {
-  getProfile,
-  saveChanges,
-  updateCourseDetails,
-} from '@/utils/API/dashboard/profile';
-import { set } from 'nprogress';
-
-const Dashboard = () => {
-  useLoggedinUser();
-  const [mobileActive, setMobileActive] = useState(false);
-  const [resumeLinkActive, setResumeLinkActive] = useState(false);
-  const [mobile, setMobile] = useState('');
-  const [resumeLink, setResumeLink] = useState('');
-  const [password, setPassword] = useState('');
-  const {
-    data: profile,
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: 'profile',
-    queryFn: getProfile,
-    staleTime: 1000 * 60 * 60,
-  });
-  function isSaveButtonDisabled() {
-    return (
-      profile.mobile === mobile &&
-      (profile.resumeLink === resumeLink || !resumeLink)
-    );
-  }
-
-  const queryClient = useQueryClient();
-  const saveChangesMutation = useMutation(saveChanges, {
-    onSuccess: (data) => {
-      queryClient.setQueryData('profile', {
-        ...data,
-        mobile,
-        resumeLink,
-      });
-    },
-  });
-  const updateCourseDetailsMutation = useMutation(updateCourseDetails, {
-    onSuccess: (data) => {
-      queryClient.setQueryData('profile', {
-        ...data,
-        currentSem,
-        completedCredits,
-        cgpa,
-        program,
-        admissionYear,
-      });
-    },
-  });
-
-  async function handleCourseUpdate() {
-    updateCourseDetailsMutation.mutate({
-      password,
-    });
-  }
-  async function handleSaveChanges(e) {
-    e.preventDefault();
-    saveChangesMutation.mutate({
-      mobile,
-      resumeLink,
-    });
-  }
-
-  useEffect(() => {
-    if (!isLoading && profile) {
-      setMobile(profile.mobile);
-      setResumeLink(profile.resumeLink);
-    }
-  }, [isLoading, profile]);
-
-  if (isLoading) return <FullLoader />;
+export const Notification = () => {
   return (
-    <>
-      <Container fixed className=" flex flex-col gap-8">
-        <Container
-          className="flex flex-wrap justify-between items-center"
-          sx={{
-            borderBottom: '1px solid',
-            borderColor: 'divider',
-            paddingY: '16px',
-            paddingX: '8px',
-          }}
-        >
-          <Typography variant="h4" className="hidden md:block">
-            My Profile
+    <div>
+      <Paper
+        elevation={1}
+        className="border-2 border-solid rounded-md py-1 px-2 gap-2"
+        sx={{
+          borderColor: 'divider',
+        }}
+      >
+        <Container className="flex flex-col gap-1 p-2" maxWidth="xl">
+          <Typography variant="h6">
+            Amazon is not intrested in hiring today.
           </Typography>
-          <Typography variant="h5" className="md:hidden block">
-            My Profile
-          </Typography>
-          {!isError && (
-            <Tooltip title="Update Course Details">
-              <IconButton onClick={handleCourseUpdate}>
-                <CachedIcon className="text-2xl" />
-              </IconButton>
-            </Tooltip>
-          )}
-        </Container>
-        {isError ? (
-          <Container className="flex flex-wrap jutify-center items-center">
-            <Typography
-              variant="body1"
-              className="w-full font-medium text-center"
-              color="error.main"
-            >
-              {' '}
-              Some Error Occured
+          <Box className=" mb-2 flex flex-nowrap gap-2 items-center">
+            <Avatar
+              className="h-4 w-4"
+              sx={{
+                bgcolor: 'primary.main',
+              }}
+            />
+            <Typography variant="caption" color="text.secondary">
+              Mukesh Yadav
             </Typography>
-          </Container>
-        ) : (
-          <>
-            <Container className="flex flex-wrap jutify-around items-center">
-              <TextField
-                disabled
-                label="Name"
-                defaultValue={profile.name}
-                fullWidth
-              />
-            </Container>
-            <Container className="flex flex-wrap justify-between items-center gap-4 ">
-              <TextField
-                disabled
-                label="Enrollment Number"
-                defaultValue={profile.rollNumber}
-                className="md:basis-[30%] sm:basis-[40%] basis-full"
-              />
-              <Box
-                className="flex flex-row flex-nowrap gap-2 rounded-lg border-solid  p-3.5 border-2 md:basis-[30%] sm:basis-[40%] basis-full"
-                sx={{
-                  borderColor: 'divider',
-                }}
-              >
-                <Typography variant="body1" className="font-medium">
-                  CGPA :
-                </Typography>
-                <Typography
-                  variant="body1"
-                  className="font-bold"
-                  color={
-                    profile.cgpa === 6.9
-                      ? '#FFD700'
-                      : profile.cgpa < 7
-                      ? 'error.main'
-                      : profile.cgpa < 7.5
-                      ? 'warning.main'
-                      : 'success.main'
-                  }
-                >
-                  {Number(profile.cgpa)}
-                </Typography>
-              </Box>
-              <Box
-                className="flex flex-row flex-nowrap gap-2 rounded-md border-solid  py-3.5 px-2 border-2 md:basis-[30%] sm:basis-[40%] basis-full "
-                sx={{
-                  borderColor: 'divider',
-                }}
-              >
-                <Typography variant="body1" className="font-medium">
-                  Credits:
-                </Typography>
-                <Typography
-                  variant="body1"
-                  className="font-bold"
-                  color="primary"
-                >
-                  {profile.completedCredits}
-                </Typography>
-              </Box>
-              <TextField
-                disabled
-                label="Current Semester"
-                defaultValue={profile.currentSem}
-                className="md:basis-[30%] sm:basis-[40%] basis-full"
-              />
-              <TextField
-                disabled
-                label="Admission Year"
-                defaultValue={profile.admissionYear}
-                className="md:basis-[30%] sm:basis-[40%] basis-full"
-              />
-              <TextField
-                disabled
-                label="Program"
-                defaultValue={profile.program}
-                className="md:basis-[30%] sm:basis-[40%] basis-full"
-              />
-            </Container>
-            <Divider />
-            <Container className="flex flex-nowrap jutify-around items-center gap-2">
-              <TextField
-                disabled={!mobileActive}
-                label="Mobile Number"
-                defaultValue={profile.mobile}
-                onChange={(e) => setMobile(e.target.value)}
-                onFocus={(e) => setMobile(e.target.value)}
-                fullWidth
-                focused={mobileActive}
-              />
-
-              <ToggleButton
-                value="check"
-                selected={mobileActive}
-                onChange={() => {
-                  setMobileActive((mobile) => {
-                    if (mobile) {
-                      return false;
-                    }
-                    setResumeLinkActive(false);
-                    return true;
-                  });
-                }}
-                className="p-3.5"
-              >
-                <CreateIcon />
-              </ToggleButton>
-            </Container>
-            <Container className="flex flex-nowrap jutify-around items-center gap-2">
-              <TextField
-                disabled={!resumeLinkActive}
-                label="Resume Link"
-                placeholder="Google Docs Link"
-                defaultValue={profile.resumeLink}
-                onChange={(e) => setResumeLink(e.target.value)}
-                onFocus={(e) => setResumeLink(e.target.value)}
-                fullWidth
-                focused={resumeLinkActive}
-              />
-
-              <ToggleButton
-                value="check"
-                selected={resumeLinkActive}
-                onChange={() => {
-                  setResumeLinkActive((resumeLink) => {
-                    if (resumeLink) {
-                      return false;
-                    }
-                    setMobileActive(false);
-                    return true;
-                  });
-                }}
-                className="p-3.5"
-              >
-                <CreateIcon />
-              </ToggleButton>
-            </Container>
-            <Container className="flex justify-end">
-              <Button
-                variant="contained"
-                className="font-bold"
-                disabled={isSaveButtonDisabled()}
-                onClick={(e) => handleSaveChanges(e)}
-              >
-                Save Changes
-              </Button>
-            </Container>
-          </>
-        )}
-      </Container>
-    </>
+            ·
+            <Typography variant="caption" color="text.secondary">
+              {moment(Date.now()).fromNow()}
+            </Typography>
+          </Box>
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            className="line-clamp-3 sm:line-clamp-2"
+          >
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Vitae
+            tempora beatae earum itaque nobis officia laudantium mollitia
+            deserunt cupiditate deleniti vero ut qui nam corrupti a, assumenda
+            alias optio! Expedita?
+          </Typography>
+          <Box className="flex flex-wrap gap-2 pt-2 pb-1">
+            <Chip
+              variant="outlined"
+              label="Amazon"
+              color="primary"
+              className="font-semibold"
+            />
+            <Chip
+              variant="outlined"
+              label="Placement"
+              color="primary"
+              className="font-semibold"
+            />
+          </Box>
+        </Container>
+      </Paper>
+    </div>
   );
 };
 
-export default Dashboard;
+export default Notification;

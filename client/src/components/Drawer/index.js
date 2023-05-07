@@ -3,66 +3,154 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
+import ListSubheader from '@mui/material/ListSubheader';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import MailIcon from '@mui/icons-material/Mail';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
+import InboxIcon from '@mui/icons-material/MoveToInbox';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
+
+import { useRouter } from 'next/router';
+
+import useUser from '@/customHooks/useUser';
+
+const dashboardRoutes = [
+  {
+    baseUrl: '/dashboard',
+    items: [
+      {
+        path: '',
+        name: 'Inbox',
+        Icon: InboxIcon,
+      },
+      {
+        path: '/profile',
+        name: 'Profile',
+        Icon: AccountCircleIcon,
+      },
+    ],
+  },
+];
+
+const adminRoutes = [
+  {
+    // title: 'Main',
+    baseUrl: '/admin',
+    items: [
+      {
+        path: '',
+        name: 'Home',
+        Icon: InboxIcon,
+      },
+    ],
+  },
+  {
+    // title: 'Users',
+    baseUrl: '/admin/users',
+    items: [
+      {
+        path: '',
+        name: 'All Users',
+        Icon: AccountCircleIcon,
+      },
+    ],
+  },
+];
 
 const drawerWidth = 200;
 
 function ResponsiveDrawer(props) {
+  const router = useRouter();
+  const { user } = useUser();
   const { open, setOpen } = props;
-
   const handleDrawerToggle = () => {
     setOpen(!open);
   };
+  function isAdmin() {
+    if (router?.pathname.startsWith('/admin')) {
+      return true;
+    }
+    return false;
+  }
 
   const drawer = (
     <div>
       <Toolbar>
         <Typography variant="h6" className="w-full text-center" color="primary">
-          Dashboard
+          {isAdmin() ? 'Admin' : 'Dashboard'}
         </Typography>
       </Toolbar>
       <Divider />
-      <List>
-        {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                {index % 2 === 0 ? (
-                  <InboxIcon color="primary" />
-                ) : (
-                  <MailIcon color="primary" />
-                )}
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
-      <Divider />
-      <List>
-        {['All mail', 'Trash', 'Spam'].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                {index % 2 === 0 ? (
-                  <InboxIcon color="primary" />
-                ) : (
-                  <MailIcon color="primary" />
-                )}
-              </ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
+      {(isAdmin() ? adminRoutes : dashboardRoutes).map((list) => (
+        <>
+          <List>
+            {list.title && (
+              <ListSubheader disableSticky>{list.title}</ListSubheader>
+            )}
+            {list.items.map((item) => (
+              <ListItem key={item.name} disablePadding>
+                <ListItemButton
+                  selected={router.pathname === list.baseUrl + item.path}
+                  onClick={() => {
+                    router.push(list.baseUrl + item.path);
+                    setOpen(false);
+                  }}
+                >
+                  <ListItemIcon>
+                    <item.Icon
+                      color={
+                        router.pathname === list.baseUrl + item.path
+                          ? 'primary'
+                          : undefined
+                      }
+                    />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={item.name}
+                    primaryTypographyProps={{
+                      color:
+                        router.pathname === list.baseUrl + item.path
+                          ? 'primary'
+                          : undefined,
+                    }}
+                  />
+                </ListItemButton>
+              </ListItem>
+            ))}
+          </List>
+          <Divider />
+        </>
+      ))}
+      {user?.isAdmin && !isAdmin() ? (
+        <ListItemButton
+          onClick={() => {
+            router.push('/admin');
+            setOpen(false);
+          }}
+        >
+          <ListItemIcon>
+            <VerifiedUserIcon />
+          </ListItemIcon>
+          <ListItemText primary={'Admin Panel'} />
+        </ListItemButton>
+      ) : (
+        <ListItemButton
+          onClick={() => {
+            router.push('/dashboard');
+            setOpen(false);
+          }}
+        >
+          <ListItemIcon>
+            <AccountCircleIcon />
+          </ListItemIcon>
+          <ListItemText primary={'User Panel'} />
+        </ListItemButton>
+      )}
     </div>
   );
 
