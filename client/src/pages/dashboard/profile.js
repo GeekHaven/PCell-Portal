@@ -7,24 +7,56 @@ import {
   TextField,
   Box,
   ToggleButton,
-  Button,
   Divider,
+  CircularProgress,
 } from '@mui/material';
+import LoadingButton from '@mui/lab/LoadingButton';
 import CachedIcon from '@mui/icons-material/Cached';
 import CreateIcon from '@mui/icons-material/Create';
-import { useQuery } from 'react-query';
+import { useQuery, useMutation, useQueryClient } from 'react-query';
 import SEO from '@/components/SEO';
 
 import FullLoader from '@/components/FullLoader';
+import PasswordModal from '@/components/PasswordModal';
 import useLoggedinUser from '@/customHooks/useLoggedinUser';
-import { getProfile } from '@/utils/API/dashboard/profile';
+import {
+  getProfile,
+  saveChanges,
+  updateCourseDetails,
+} from '@/utils/API/dashboard/profile';
 
 const Dashboard = () => {
+  let queryClient = useQueryClient();
   let { user } = useLoggedinUser();
-  const [mobileActive, setMobileActive] = useState(false);
-  const [resumeLinkActive, setResumeLinkActive] = useState(false);
-  const [mobile, setMobile] = useState('');
-  const [resumeLink, setResumeLink] = useState('');
+  const [mobileActive, setMobileActive] = useState(false),
+    [resumeLinkActive, setResumeLinkActive] = useState(false),
+    [mobile, setMobile] = useState(''),
+    [resumeLink, setResumeLink] = useState(''),
+    [openUpdateCourseDetails, setOpenUpdateCourseDetails] = useState(false),
+    [openSaveChanges, setOpenSaveChanges] = useState(false);
+
+  const saveChangesMutation = useMutation(saveChanges, {
+    onSuccess: () => {
+      setMobileActive(false);
+      setResumeLinkActive(false);
+      queryClient.invalidateQueries({ queryKey: ['profile', user.rollNumber] });
+    },
+  });
+
+  const handleSaveChanges = (password) => {
+    saveChangesMutation.mutate({ mobile, resumeLink, password });
+  };
+
+  const updateCourseDetailsMutation = useMutation(updateCourseDetails, {
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['profile', user.rollNumber] });
+    },
+  });
+
+  const handleCourseDetailsSubmit = (password) => {
+    updateCourseDetailsMutation.mutate({ password });
+  };
+
   const {
     data: profile,
     isLoading,
@@ -34,6 +66,7 @@ const Dashboard = () => {
     queryFn: getProfile,
     staleTime: 1000 * 60 * 60,
   });
+
   function isSaveButtonDisabled() {
     return (
       profile.mobile === mobile &&
@@ -51,6 +84,16 @@ const Dashboard = () => {
   return (
     <>
       <SEO title="Dashboard" />
+      <PasswordModal
+        open={openUpdateCourseDetails}
+        setOpen={setOpenUpdateCourseDetails}
+        onSubmit={handleCourseDetailsSubmit}
+      />
+      <PasswordModal
+        open={openSaveChanges}
+        setOpen={setOpenSaveChanges}
+        onSubmit={handleSaveChanges}
+      />
       <Container fixed className=" flex flex-col gap-8">
         <Container
           className="flex flex-wrap justify-between items-center"
@@ -69,8 +112,12 @@ const Dashboard = () => {
           </Typography>
           {!isError && (
             <Tooltip title="Update Course Details">
-              <IconButton>
-                <CachedIcon className="text-2xl" />
+              <IconButton onClick={() => setOpenUpdateCourseDetails(true)}>
+                {updateCourseDetailsMutation.isLoading ? (
+                  <CircularProgress size={24} />
+                ) : (
+                  <CachedIcon className="text-2xl" />
+                )}
               </IconButton>
             </Tooltip>
           )}
@@ -223,13 +270,15 @@ const Dashboard = () => {
               </ToggleButton>
             </Container>
             <Container className="flex justify-end">
-              <Button
+              <LoadingButton
                 variant="contained"
                 className="font-bold"
                 disabled={isSaveButtonDisabled()}
+                loading={saveChangesMutation.isLoading}
+                onClick={() => setOpenSaveChanges(true)}
               >
                 Save Changes
-              </Button>
+              </LoadingButton>
             </Container>
           </>
         )}

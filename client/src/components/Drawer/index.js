@@ -86,8 +86,8 @@ function ResponsiveDrawer(props) {
         </Typography>
       </Toolbar>
       <Divider />
-      {(isAdmin() ? adminRoutes : dashboardRoutes).map((list) => (
-        <>
+      {(isAdmin() ? adminRoutes : dashboardRoutes).map((list, index) => (
+        <React.Fragment key={index}>
           <List>
             {list.title && (
               <ListSubheader disableSticky>{list.title}</ListSubheader>
@@ -124,7 +124,7 @@ function ResponsiveDrawer(props) {
             ))}
           </List>
           <Divider />
-        </>
+        </React.Fragment>
       ))}
       {user?.isAdmin && !isAdmin() ? (
         <ListItemButton

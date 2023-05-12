@@ -28,7 +28,7 @@ export const updateCourseDetails = async (req, res) => {
     const userData = await getAviralData(req.user.rollNumber, password);
     if (!userData) return response_404(res, 'User not found');
 
-    const updatedUser = User.findOneAndUpdate(
+    await User.findOneAndUpdate(
       { rollNumber: req.user.rollNumber },
       {
         currentSem: userData.semester,
@@ -39,7 +39,7 @@ export const updateCourseDetails = async (req, res) => {
       }
     );
 
-    return response_200(res, 'OK', updatedUser);
+    return response_200(res, 'OK');
   } catch (err) {
     return response_500(res, err);
   }
@@ -52,7 +52,7 @@ export const saveChanges = async (req, res) => {
     if (!(await verifyPassword(req.user.rollNumber, password)))
       return response_400(res, 'Invalid password');
 
-    const updatedUser = await User.findOneAndUpdate(
+    await User.findOneAndUpdate(
       { rollNumber: req.user.rollNumber },
       {
         mobile,
