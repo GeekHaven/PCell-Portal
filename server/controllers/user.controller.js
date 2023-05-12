@@ -7,6 +7,7 @@ import {
 } from '../utils/responseCodes.js';
 import { getAviralData } from '../utils/aviral.js';
 import { verifyPassword } from '../utils/password.js';
+import companyModel from '../models/company.model.js';
 
 export const getUserData = async (req, res) => {
   let user = await User.findOne({ rollNumber: req.user.rollNumber }).lean();
@@ -78,4 +79,42 @@ export const getUserGroups = async (req, res) => {
   } catch (err) {
     response_500(res, err);
   }
+};
+
+export const getPaginatedCompanies = async (req, res) => {
+  const { onlyEligible, sort, q } = req.query;
+  const options = {
+    pagination: req.query.page !== -1,
+    page: req.query.page,
+    limit: req.query.limit,
+    sort: sort,
+  }
+
+  let query = {};
+  if (onlyEligible) {
+    query = {
+      targets : {
+        $elemMatch: {
+          program: req.user.program,
+          year: req.user.admissionYear,
+          requiredCGPA: { $gte: req.user.cgpa },
+        },
+      }
+    };
+  }
+  if (q) {
+    query = {
+      ...query,
+      name: { $regex: new RegExp(q), $options: 'i' },
+    };
+  }
+
+  try {
+    const companies = await companyModel.paginate(query, options);
+    return response_200(res, 'OK', companies);
+  }
+  catch (err) {
+    return response_500(res, err);
+  }
+
 };
