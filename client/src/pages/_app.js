@@ -2,7 +2,7 @@ import '@/styles/globals.css';
 import '@fontsource/ibm-plex-sans';
 import '@fontsource/oswald';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ThemeProvider } from '@mui/material/styles';
 import { Container, CssBaseline, Box, CircularProgress } from '@mui/material';
 import { StyledEngineProvider } from '@mui/material/styles';

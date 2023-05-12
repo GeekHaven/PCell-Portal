@@ -1,4 +1,3 @@
-
 import { createTheme } from '@mui/material/styles';
 
 export function getTheme(mode) {
@@ -36,6 +35,28 @@ export function getTheme(mode) {
     },
     shape: {
       borderRadius: 8,
+    },
+    components: {
+      MuiPopover: {
+        defaultProps: {
+          container: () => document.getElementById('__next'),
+        },
+      },
+      MuiPopper: {
+        defaultProps: {
+          container: () => document.getElementById('__next'),
+        },
+      },
+      MuiDialog: {
+        defaultProps: {
+          container: () => document.getElementById('__next'),
+        },
+      },
+      MuiModal: {
+        defaultProps: {
+          container: () => document.getElementById('__next'),
+        },
+      },
     },
   });
 }

@@ -5,11 +5,11 @@ export async function getProfile() {
   if (res.status === 200) return Promise.resolve(res.data.data);
   return Promise.reject(res.data.message);
 }
-export async function saveChanges({ password, mobile, resumeLink }) {
+export async function saveChanges({ mobile, resumeLink, password }) {
   let res = await post('/user/saveChanges', {
-    // password,
     mobile,
     resumeLink,
+    password,
   });
   if (res.status === 200) return Promise.resolve(res.data.data);
   return Promise.reject(res.data.message);
