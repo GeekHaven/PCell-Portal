@@ -31,7 +31,8 @@ export async function addCompany(req, res) {
   const { name, targets } = req.body;
   if (!name) return response_400(res, 'Invalid request');
   try {
-    const logo = await uploadImage(req.file.image);
+    const logo = await uploadImage(req.file);
+    if (!logo) return response_400(res, 'Invalid image');
     const company = await companyModel.create({ name, logo, targets });
     return response_200(res, 'OK', company);
   } catch (err) {
