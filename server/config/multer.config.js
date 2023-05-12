@@ -15,3 +15,5 @@ const upload = multer({
   },
   fileFilter: fileFilter,
 });
+
+export default upload;
