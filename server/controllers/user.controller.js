@@ -49,7 +49,6 @@ export const updateCourseDetails = async (req, res) => {
 export const saveChanges = async (req, res) => {
   try {
     const { password, mobile, resumeLink } = req.body;
-    console.log(req.body);
     if (!(await verifyPassword(req.user.rollNumber, password)))
       return response_400(res, 'Invalid password');
 
@@ -66,6 +65,7 @@ export const saveChanges = async (req, res) => {
   }
 };
 
+// Should return an object with admission years mapped with array of all programs available for that year
 export const getUserGroups = async (req, res) => {
   try {
     let programs = User.distinct('program');
@@ -81,6 +81,8 @@ export const getUserGroups = async (req, res) => {
   }
 };
 
+// NOTE: Move this controller to company.controller.js
+// update the controller, user can be able to search using company name and tech stack
 export const getPaginatedCompanies = async (req, res) => {
   const { onlyEligible, sort, q } = req.query;
   const options = {
@@ -88,18 +90,18 @@ export const getPaginatedCompanies = async (req, res) => {
     page: req.query.page,
     limit: req.query.limit,
     sort: sort,
-  }
+  };
 
   let query = {};
   if (onlyEligible) {
     query = {
-      targets : {
+      targets: {
         $elemMatch: {
           program: req.user.program,
           year: req.user.admissionYear,
           requiredCGPA: { $gte: req.user.cgpa },
         },
-      }
+      },
     };
   }
   if (q) {
@@ -112,9 +114,7 @@ export const getPaginatedCompanies = async (req, res) => {
   try {
     const companies = await companyModel.paginate(query, options);
     return response_200(res, 'OK', companies);
-  }
-  catch (err) {
+  } catch (err) {
     return response_500(res, err);
   }
-
 };

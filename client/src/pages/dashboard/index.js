@@ -1,7 +1,4 @@
 import { Avatar, Container, Typography, Chip, Paper } from '@mui/material';
-import Image from 'next/image';
-import react from 'react';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import Box from '@mui/material/Box';
 import moment from 'moment';
 

@@ -21,7 +21,10 @@ const CompanySchema = Schema({
     type: String,
     required: true,
   },
-
+  techStack: {
+    type: String,
+    default: '',
+  },
   targets: {
     type: [targetSchema],
     default: [],

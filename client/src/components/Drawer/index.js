@@ -14,6 +14,8 @@ import Typography from '@mui/material/Typography';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
+import StoreIcon from '@mui/icons-material/Store';
+import AddBusinessIcon from '@mui/icons-material/AddBusiness';
 
 import { useRouter } from 'next/router';
 
@@ -38,14 +40,30 @@ const dashboardRoutes = [
 ];
 
 const adminRoutes = [
+  // {
+  //   // title: 'Main',
+  //   baseUrl: '/admin',
+  //   items: [
+  //     {
+  //       path: '',
+  //       name: 'Home',
+  //       Icon: InboxIcon,
+  //     },
+  //   ],
+  // },
   {
-    // title: 'Main',
-    baseUrl: '/admin',
+    title: 'Companies',
+    baseUrl: '/admin/company',
     items: [
       {
         path: '',
-        name: 'Home',
-        Icon: InboxIcon,
+        name: 'All Companies',
+        Icon: StoreIcon,
+      },
+      {
+        path: '/new',
+        name: 'Add Company',
+        Icon: AddBusinessIcon,
       },
     ],
   },

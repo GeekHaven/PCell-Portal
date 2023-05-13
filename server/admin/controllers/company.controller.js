@@ -7,14 +7,19 @@ import {
 } from '../../utils/responseCodes.js';
 
 export async function addCompany(req, res) {
-  const { name, targets } = req.body;
+  const { name, targets, techStack } = req.body;
   if (!name) return response_400(res, 'Invalid request');
   if (await CompanyModel.exists({ name }))
     return response_400(res, 'Company already exists');
   try {
     const logo = await uploadImage(req.file);
     if (!logo) return response_400(res, 'Invalid image');
-    const company = await CompanyModel.create({ name, logo, targets });
+    const company = await CompanyModel.create({
+      name,
+      logo,
+      targets,
+      techStack,
+    });
     delete company._id;
     delete company.__v;
     return response_200(res, 'OK', company);
