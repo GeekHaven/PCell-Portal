@@ -1,5 +1,4 @@
 import cloudinary from '../config/cloudinary.config.js';
-import { response_400 } from './responseCodes.js';
 import { Readable } from 'stream';
 
 export const uploadImage = async (image) => {

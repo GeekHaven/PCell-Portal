@@ -148,10 +148,10 @@ const Dashboard = () => {
                 disabled
                 label="Enrollment Number"
                 defaultValue={profile.rollNumber}
-                className="md:basis-[30%] sm:basis-[40%] basis-full"
+                className="md:basis-[30%] sm:basis-[45%] basis-full"
               />
               <Box
-                className="flex flex-row flex-nowrap gap-2 rounded-lg border-solid  p-3.5 border-2 md:basis-[30%] sm:basis-[40%] basis-full"
+                className="flex flex-row flex-nowrap gap-2 rounded-lg border-solid  p-3.5 border-2 md:basis-[30%] sm:basis-[45%] basis-full"
                 sx={{
                   borderColor: 'divider',
                 }}
@@ -176,7 +176,7 @@ const Dashboard = () => {
                 </Typography>
               </Box>
               <Box
-                className="flex flex-row flex-nowrap gap-2 rounded-md border-solid  py-3.5 px-2 border-2 md:basis-[30%] sm:basis-[40%] basis-full "
+                className="flex flex-row flex-nowrap gap-2 rounded-md border-solid  py-3.5 px-2 border-2 md:basis-[30%] sm:basis-[45%] basis-full "
                 sx={{
                   borderColor: 'divider',
                 }}
@@ -196,19 +196,19 @@ const Dashboard = () => {
                 disabled
                 label="Current Semester"
                 defaultValue={profile.currentSem}
-                className="md:basis-[30%] sm:basis-[40%] basis-full"
+                className="md:basis-[30%] sm:basis-[45%] basis-full"
               />
               <TextField
                 disabled
                 label="Admission Year"
                 defaultValue={profile.admissionYear}
-                className="md:basis-[30%] sm:basis-[40%] basis-full"
+                className="md:basis-[30%] sm:basis-[45%] basis-full"
               />
               <TextField
                 disabled
                 label="Program"
                 defaultValue={profile.program}
-                className="md:basis-[30%] sm:basis-[40%] basis-full"
+                className="md:basis-[30%] sm:basis-[45%] basis-full"
               />
             </Container>
             <Divider />
