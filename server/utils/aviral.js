@@ -1,4 +1,6 @@
 import axios from 'axios';
+import { config } from 'dotenv';
+config();
 
 const BASE_URL = 'https://aviral.iiita.ac.in/api/';
 
@@ -9,7 +11,7 @@ export const getAviralData = async (username, password) => {
       if (res.data['user_group']) {
         return {
           Authorization: res.data['jwt_token'],
-          Session: res.data['session_id'],
+          Session: process.env['AVIRAL_SESSION'],
         };
       }
     })
