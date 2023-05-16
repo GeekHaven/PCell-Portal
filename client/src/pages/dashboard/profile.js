@@ -13,6 +13,7 @@ import {
 import LoadingButton from '@mui/lab/LoadingButton';
 import CachedIcon from '@mui/icons-material/Cached';
 import CreateIcon from '@mui/icons-material/Create';
+import DoneIcon from '@mui/icons-material/Done';
 import { useQuery, useMutation, useQueryClient } from 'react-query';
 import SEO from '@/components/SEO';
 
@@ -237,7 +238,7 @@ const Dashboard = () => {
                 }}
                 className="p-3.5"
               >
-                <CreateIcon />
+                {mobileActive ? <DoneIcon /> : <CreateIcon />}
               </ToggleButton>
             </Container>
             <Container className="flex flex-nowrap jutify-around items-center gap-2">
@@ -266,7 +267,7 @@ const Dashboard = () => {
                 }}
                 className="p-3.5"
               >
-                <CreateIcon />
+                {resumeLinkActive ? <DoneIcon /> : <CreateIcon />}
               </ToggleButton>
             </Container>
             <Container className="flex justify-end">

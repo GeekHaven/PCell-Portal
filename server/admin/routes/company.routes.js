@@ -5,4 +5,5 @@ import { addCompany } from '../controllers/company.controller.js';
 const router = Router();
 
 router.post('/new', upload.single('logo'), addCompany);
+
 export default router;
