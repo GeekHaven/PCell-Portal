@@ -66,18 +66,3 @@ export const saveChanges = async (req, res) => {
   }
 };
 
-// Should return an object with admission years mapped with array of all programs available for that year
-export const getUserGroups = async (req, res) => {
-  try {
-    let programs = User.distinct('program');
-    let admissionYears = User.distinct('admissionYear');
-    Promise.all([programs, admissionYears]).then((values) => {
-      return response_200(res, 'OK', {
-        programs: values[0],
-        admissionYears: values[1],
-      });
-    });
-  } catch (err) {
-    response_500(res, err);
-  }
-};

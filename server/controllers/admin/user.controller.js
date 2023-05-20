@@ -75,3 +75,19 @@ export async function getUserGroups(req, res) {
   });
   return response_200(res, 'OK', response);
 }
+
+
+export const searchUserByRollNumber = async (req, res) => {
+  const rollNumber = req?.query?.q || '';
+
+  try {
+    const users = await User.find({
+      rollNumber: { $regex: rollNumber, $options: 'i' },
+    })
+      .select('rollNumber name -_id')
+      .limit(10);
+    return response_200(res, 'OK', users);
+  } catch (err) {
+    return response_500(res, err);
+  }
+};
