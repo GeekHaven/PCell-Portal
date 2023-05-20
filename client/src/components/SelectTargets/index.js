@@ -1,6 +1,12 @@
 import { Paper, Container, Typography, Box } from '@mui/material';
-
+import { get } from '@/utils/API/request';
+import SearchInput from '../SearchInput';
 import GroupCard from './GroupCard';
+
+async function searchUserByRollNumber(value) {
+  const { data } = await get(`/admin/user/getUsers?q=${value}`);
+  return data.data;
+}
 
 export default function SelectTargets() {
   return (
@@ -19,6 +25,7 @@ export default function SelectTargets() {
           <GroupCard />
           <GroupCard />
         </Box>
+        <SearchInput queryFn={searchUserByRollNumber} />
       </Paper>
     </Container>
   );

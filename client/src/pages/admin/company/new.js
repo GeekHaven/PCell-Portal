@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { TextField, ToggleButton, Container, Box } from '@mui/material';
 import CreateIcon from '@mui/icons-material/Create';
 import DoneIcon from '@mui/icons-material/Done';
-
+import Autocomplete from '@mui/material/Autocomplete';
 import SelectTargets from '@/components/SelectTargets';
 
 const NewCompany = () => {
