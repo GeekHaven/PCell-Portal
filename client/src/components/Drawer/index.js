@@ -144,31 +144,32 @@ function ResponsiveDrawer(props) {
           <Divider />
         </React.Fragment>
       ))}
-      {user?.isAdmin && !isAdmin() ? (
-        <ListItemButton
-          onClick={() => {
-            router.push('/admin');
-            setOpen(false);
-          }}
-        >
-          <ListItemIcon>
-            <VerifiedUserIcon />
-          </ListItemIcon>
-          <ListItemText primary={'Admin Panel'} />
-        </ListItemButton>
-      ) : (
-        <ListItemButton
-          onClick={() => {
-            router.push('/dashboard');
-            setOpen(false);
-          }}
-        >
-          <ListItemIcon>
-            <AccountCircleIcon />
-          </ListItemIcon>
-          <ListItemText primary={'User Panel'} />
-        </ListItemButton>
-      )}
+      {user?.isAdmin &&
+        (!isAdmin() ? (
+          <ListItemButton
+            onClick={() => {
+              router.push('/admin');
+              setOpen(false);
+            }}
+          >
+            <ListItemIcon>
+              <VerifiedUserIcon />
+            </ListItemIcon>
+            <ListItemText primary={'Admin Panel'} />
+          </ListItemButton>
+        ) : (
+          <ListItemButton
+            onClick={() => {
+              router.push('/dashboard');
+              setOpen(false);
+            }}
+          >
+            <ListItemIcon>
+              <AccountCircleIcon />
+            </ListItemIcon>
+            <ListItemText primary={'User Panel'} />
+          </ListItemButton>
+        ))}
     </div>
   );
 
