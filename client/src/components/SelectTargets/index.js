@@ -9,10 +9,7 @@ export default function SelectTargets() {
         <Typography variant="subtitle1">Include Groups</Typography>
         <Box
           elevation={2}
-          className="p-2 mt-1 grid gap-2"
-          style={{
-            gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
-          }}
+          className="p-2 mt-1 grid gap-2 grid-cols-1 sm:grid-cols-[repeat(auto-fill,minmax(240px,1fr))]"
         >
           <GroupCard />
           <GroupCard />
