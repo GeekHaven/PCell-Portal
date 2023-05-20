@@ -6,6 +6,8 @@ import { TextField, ToggleButton, Container, Box } from '@mui/material';
 import CreateIcon from '@mui/icons-material/Create';
 import DoneIcon from '@mui/icons-material/Done';
 
+import SelectTargets from '@/components/SelectTargets';
+
 const NewCompany = () => {
   const [techStackActive, setTechStackActive] = useState(false),
     [companyNameActive, setCompanyNameActive] = useState(false),
@@ -84,6 +86,7 @@ const NewCompany = () => {
             </ToggleButton>
           </Box>
         </Container>
+        <SelectTargets />
       </div>
     </>
   );
