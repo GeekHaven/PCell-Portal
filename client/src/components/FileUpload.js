@@ -29,8 +29,11 @@ export default function FileUpload({ files, setFiles }) {
   }, [files]);
   return (
     <Paper
-      elevation={8}
-      className="w-full h-full rounded-lg"
+      elevation={2}
+      className="w-full h-full rounded-lg cursor-pointer hover:opacity-90 hover:outline outline-1"
+      style={{
+        outlineColor: 'secondary.main',
+      }}
       {...getRootProps()}
     >
       <input {...getInputProps()} />
