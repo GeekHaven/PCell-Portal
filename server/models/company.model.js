@@ -1,14 +1,27 @@
 import { Schema, model } from 'mongoose';
+import mongoose from 'mongoose';
+
+const groupSchema = Schema({
+  year: Number,
+  program: String,
+  minCredits: Number,
+  minCGPA: Number,
+});
 
 const targetSchema = Schema({
-  program: {
-    type: String,
+  groups: {
+    type: [groupSchema],
+    default: [],
   },
-  year: {
-    type: String,
+
+  include: {
+    type: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+    required: false,
   },
-  requiredCGPA: {
-    type: String,
+
+  exclude: {
+    type: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+    required: false,
   },
 });
 
@@ -26,7 +39,7 @@ const CompanySchema = Schema({
     default: '',
   },
   targets: {
-    type: [targetSchema],
+    type: targetSchema,
     default: [],
   },
 });

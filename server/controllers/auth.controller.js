@@ -33,6 +33,7 @@ export async function logIn(req, res) {
         cgpa: userData.cgpa,
         currentSem: userData.semester,
         completedCredits: userData.completedCredits,
+        totalCredits: userData.totalCredits,
         program: userData.program,
         admissionYear: userData.admissionYear,
       });

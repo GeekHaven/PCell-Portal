@@ -31,7 +31,8 @@ export const getAviralData = async (username, password) => {
         rollNumber: res.data['student_id'],
         mobile: res.data['phone'],
         cgpa: res.data['cgpi'],
-        completedCredits: `${res.data['completed_total']} / ${res.data['total_credits']}`,
+        completedCredits: res.data['completed_total'],
+        totalCredits: res.data['total_credits'],
         program: res.data['program'],
         admissionYear: res.data['admission_year'],
       };

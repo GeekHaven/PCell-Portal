@@ -190,7 +190,7 @@ const Dashboard = () => {
                   className="font-bold"
                   color="primary"
                 >
-                  {profile.completedCredits}
+                  {`${profile.completedCredits} / ${profile.totalCredits}`}
                 </Typography>
               </Box>
               <TextField

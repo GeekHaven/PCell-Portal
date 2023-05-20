@@ -34,6 +34,7 @@ export const updateCourseDetails = async (req, res) => {
       {
         currentSem: userData.semester,
         completedCredits: userData.completedCredits,
+        totalCredits: userData.totalCredits,
         cgpa: userData.cgpa,
         program: userData.program,
         admissionYear: userData.admissionYear,
@@ -80,4 +81,3 @@ export const getUserGroups = async (req, res) => {
     response_500(res, err);
   }
 };
-

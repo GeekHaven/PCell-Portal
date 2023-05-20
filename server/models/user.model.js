@@ -28,7 +28,11 @@ const UserSchema = Schema(
       required: true,
     },
     completedCredits: {
-      type: String,
+      type: Number,
+      required: true,
+    },
+    totalCredits: {
+      type: Number,
       required: true,
     },
     admissionYear: {
@@ -43,10 +47,10 @@ const UserSchema = Schema(
       type: Boolean,
       default: false,
     },
-    notifications:{
+    notifications: {
       type: [{ type: Schema.Types.ObjectId, ref: 'Notification' }],
       default: [],
-    }
+    },
   },
   {
     timestamps: true,

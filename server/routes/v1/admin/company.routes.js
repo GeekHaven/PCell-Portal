@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import { upload } from '../../config/multer.config.js';
-import { addCompany } from '../controllers/company.controller.js';
+import { upload } from '../../../config/multer.config.js';
+import { addCompany } from '../../../controllers/admin/company.controller.js';
 
 const router = Router();
 
