@@ -2,11 +2,12 @@ import '@/styles/globals.css';
 import '@fontsource/ibm-plex-sans';
 import '@fontsource/oswald';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { ThemeProvider } from '@mui/material/styles';
-import { Container, CssBaseline, Box, CircularProgress } from '@mui/material';
+import { Container, CssBaseline, Box } from '@mui/material';
 import { StyledEngineProvider } from '@mui/material/styles';
 import NextNProgress from 'nextjs-progressbar';
+import { SnackbarProvider } from 'notistack';
 
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
 
@@ -100,7 +101,9 @@ export default function App({ Component, pageProps }) {
         <ThemeContext.Provider value={{ theme, toggleTheme }}>
           <ThemeProvider theme={theme}>
             <CssBaseline />
-            <AppContentWrapper Component={Component} pageProps={pageProps} />
+            <SnackbarProvider maxSnack={3}>
+              <AppContentWrapper Component={Component} pageProps={pageProps} />
+            </SnackbarProvider>
           </ThemeProvider>
         </ThemeContext.Provider>
       </StyledEngineProvider>

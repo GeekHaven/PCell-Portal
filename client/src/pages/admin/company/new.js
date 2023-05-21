@@ -56,7 +56,7 @@ const NewCompany = () => {
           </Container>
         </div>
         <SelectTargets target={target} setTarget={setTarget} />
-        <Container className="flex justify-end p-0 m-0">
+        <Container maxWidth="xl" className="flex justify-end p-0 m-0">
           <LoadingButton
             type="submit"
             variant="contained"
