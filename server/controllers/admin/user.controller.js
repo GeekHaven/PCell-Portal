@@ -73,9 +73,8 @@ export async function getUserGroups(req, res) {
   data.forEach((item) => {
     result[item._id] = item.programs;
   });
-  return response_200(res, 'OK', response);
+  return response_200(res, 'OK', result);
 }
-
 
 export const searchUserByRollNumber = async (req, res) => {
   const rollNumber = req?.query?.q || '';
