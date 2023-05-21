@@ -26,18 +26,18 @@ const CompanySchema = Schema({
     type: [{ type: Schema.Types.ObjectId, ref: 'User' }],
     default: [],
   },
-  registeredUsers: {
-    type: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-    default: [],
-  },
-  shortListedUsers: {
-    type: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-    default: [],
-  },
-  selectedUsers: {
-    type: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-    default: [],
-  },
+  // registeredUsers: {
+  //   type: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+  //   default: [],
+  // },
+  // shortListedUsers: {
+  //   type: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+  //   default: [],
+  // },
+  // selectedUsers: {
+  //   type: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+  //   default: [],
+  // },
 });
 
 export default model('Company', CompanySchema);

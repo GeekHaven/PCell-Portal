@@ -8,7 +8,7 @@ import {
 } from '../../utils/responseCodes.js';
 
 export async function addCompany(req, res) {
-  const { name, targets, techStack, include, exclude } = req.body;
+  const { name, targets, techStack } = req.body;
   if (!name) return response_400(res, 'Invalid request');
   if (await CompanyModel.exists({ name }))
     return response_400(res, 'Company already exists');
@@ -20,8 +20,6 @@ export async function addCompany(req, res) {
       logo,
       targets,
       techStack,
-      include,
-      exclude,
     });
     delete company._id;
     delete company.__v;
