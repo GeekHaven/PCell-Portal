@@ -1,3 +1,11 @@
+import {
+  response_200,
+  response_400,
+  response_500,
+  response_201,
+} from '../utils/responseCodes';
+import { uploadImage } from '../utils/image';
+import companyModel from '../models/company.model';
 export const getPaginatedCompanies = async (req, res) => {
   const { onlyEligible, sort, q } = req.query;
   const options = {
