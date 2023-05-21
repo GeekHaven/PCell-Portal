@@ -44,12 +44,12 @@ const dashboardRoutes = [
     items: [
       {
         path: '',
-        name: 'All Companies',
+        name: 'All',
         Icon: StoreIcon,
       },
       {
         path: '/registered',
-        name: 'Registered Companies',
+        name: 'Registered',
         Icon: LocationCityIcon,
       },
     ],
