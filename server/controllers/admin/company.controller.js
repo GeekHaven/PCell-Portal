@@ -36,7 +36,7 @@ export async function updateCompany(req, res) {
   const companyId = req.params.id;
   try {
     if (req.file) {
-      deleteImage(logo);
+      await deleteImage(logo);
       const logoUrl = await uploadImage(req.file);
       if (!logoUrl) return response_400(res, 'Invalid image');
       logo = logoUrl;
@@ -51,5 +51,16 @@ export async function updateCompany(req, res) {
     return response_201(res, 'OK', company);
   } catch (err) {
     return response_500(res, err);
+  }
+}
+export async function deleteCompany(req, res) {
+  const companyId = req.params.id;
+  try {
+    const company = await CompanyModel.findByIdAndDelete(companyId);
+    if (!company) return response_400(res, 'Company not found');
+    await deleteImage(company.logo);
+    return response_200(res, 'OK');
+  } catch (err) {
+    response_500(res, err);
   }
 }
