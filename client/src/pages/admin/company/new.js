@@ -1,21 +1,28 @@
 import React from 'react';
-import FileUpload from '@/components/FileUpload';
 import { useState } from 'react';
+import { TextField, Container, Box } from '@mui/material';
+import LoadingButton from '@mui/lab/LoadingButton';
 
-import { TextField, ToggleButton, Container, Box } from '@mui/material';
-import CreateIcon from '@mui/icons-material/Create';
-import DoneIcon from '@mui/icons-material/Done';
-import Autocomplete from '@mui/material/Autocomplete';
+import FileUpload from '@/components/FileUpload';
 import SelectTargets from '@/components/SelectTargets';
 
 const NewCompany = () => {
   const [techStack, setTechStack] = useState(''),
-    [companyName, setCompanyName] = useState('');
-  const [files, setFiles] = useState([]);
+    [companyName, setCompanyName] = useState(''),
+    [files, setFiles] = useState([]),
+    [target, setTarget] = useState({
+      groups: [],
+      include: [],
+      exclude: [],
+    });
 
   return (
     <>
-      <Container className="flex flex-col items-center gap-4" maxWidth="xl">
+      <Container
+        component="form"
+        className="flex flex-col items-center gap-4"
+        maxWidth="xl"
+      >
         <div className="flex flex-row w-full flex-wrap gap-4 justify-between">
           <Box
             className="h-40 sm:w-40 w-full sm:m-0 "
@@ -31,6 +38,7 @@ const NewCompany = () => {
           >
             <TextField
               label="Company Name"
+              required
               placeholder="Enter the name of Company"
               defaultValue={companyName}
               onChange={(e) => setCompanyName(e.target.value)}
@@ -47,7 +55,18 @@ const NewCompany = () => {
             />
           </Container>
         </div>
-        <SelectTargets />
+        <SelectTargets target={target} setTarget={setTarget} />
+        <Container className="flex justify-end p-0 m-0">
+          <LoadingButton
+            type="submit"
+            variant="contained"
+            // disabled={isSaveButtonDisabled()}
+            // loading={saveChangesMutation.isLoading}
+            // onClick={() => setOpenSaveChanges(true)}
+          >
+            Add Company
+          </LoadingButton>
+        </Container>
       </Container>
     </>
   );

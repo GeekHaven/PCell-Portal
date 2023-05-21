@@ -81,7 +81,14 @@ export const searchUserByRollNumber = async (req, res) => {
 
   try {
     const users = await User.find({
-      rollNumber: { $regex: rollNumber, $options: 'i' },
+      $and: [
+        {
+          rollNumber: { $regex: rollNumber, $options: 'i' },
+        },
+        {
+          rollNumber: { $nin: req?.query?.exclude?.split(';') },
+        },
+      ],
     })
       .select('rollNumber name -_id')
       .limit(10);
