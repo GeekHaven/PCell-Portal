@@ -62,3 +62,5 @@ export async function deleteCompany(req, res) {
     response_500(res, err);
   }
 }
+
+
