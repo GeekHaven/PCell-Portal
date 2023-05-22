@@ -21,3 +21,12 @@ export async function loginUser(username, password, remember) {
   }
   return Promise.reject(res.data.message);
 }
+
+export async function isUserAdmin() {
+  if (!getLS('jwt_token')) return Promise.resolve(false);
+  let res = await get('/auth/isAdmin');
+  console.log(res);
+  if (res.status === 200 && res.data?.data?.status)
+    return Promise.resolve(res.data.data.isAdmin);
+  return Promise.resolve(false);
+}

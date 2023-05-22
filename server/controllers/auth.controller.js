@@ -50,7 +50,11 @@ export async function logIn(req, res) {
       });
     }
 
-    const token = getJwt({ rollNumber: user.rollNumber, name: user.name });
+    const token = getJwt({
+      rollNumber: user.rollNumber,
+      name: user.name,
+      isAdmin: user.isAdmin,
+    });
     return response_200(res, 'OK', {
       token,
       status: true,
@@ -74,6 +78,21 @@ export async function isUser(req, res) {
       rollNumber: user.rollNumber,
       isAdmin: user.isAdmin,
     });
+  } catch (err) {
+    return response_500(res, err);
+  }
+}
+
+export async function isUserAdmin(req, res) {
+  const token = req.header('Authorization');
+  console.log(token);
+  if (!token) return response_200(res, { status: false });
+  try {
+    const decoded = jwt.verify(token, process.env.SECRET);
+    const user = await User.findOne({ rollNumber: decoded.payload.rollNumber });
+    if (!user) return response_200(res, 'OK', { status: false });
+    if (user.isAdmin) return response_200(res, 'OK', { status: true });
+    return response_200(res, 'OK', { status: false });
   } catch (err) {
     return response_500(res, err);
   }
