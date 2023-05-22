@@ -8,8 +8,7 @@ import {
   Button,
   Container,
 } from '@mui/material';
-import AdjustIcon from '@mui/icons-material/Adjust';
-
+import FiberManualRecordTwoToneIcon from '@mui/icons-material/FiberManualRecordTwoTone';
 import DrawerHeader from '@/components/DrawerHeader';
 
 const IndividualCompany = ({ params }) => {
@@ -34,7 +33,7 @@ const IndividualCompany = ({ params }) => {
             padding: 0,
           }}
         >
-          <div className="flex flex-row w-full flex-wrap gap-4 justify-start">
+          <div className="flex flex-row w-full sm:flex-nowrap flex-wrap gap-4 justify-center sm:justify-start">
             <div className="flex sm:flex-col flex-row gap-2 justify-start items-center">
               <Box
                 className="h-40 sm:w-40 w-full sm:m-0"
@@ -50,13 +49,39 @@ const IndividualCompany = ({ params }) => {
                   alt="Google"
                 />
               </Box>
-              <Typography className="text-2xl font-semibold" color={'primary'}>
-                Google
-              </Typography>
+              <Box className="flex justify-evenly flex-col">
+                <Typography
+                  className="text-2xl font-semibold text-center mb-2"
+                  color={'primary'}
+                >
+                  Google
+                </Typography>
+                <Chip
+                  label={'Registration Closed'}
+                  variant="outlined"
+                  color="warning"
+                  className="ml-2"
+                  icon={
+                    <FiberManualRecordTwoToneIcon
+                      sx={{
+                        fontSize: '1rem',
+                      }}
+                    />
+                  }
+                />
+              </Box>
             </div>
-            <Divider orientation="vertical" flexItem />
-            <Box className="flex flex-col gap-2 flex-grow">
-              <Typography className="text-2xl font-semibold" color={'primary'}>
+            <Divider
+              orientation="vertical"
+              flexItem
+              className="hidden sm:block"
+            />
+            <Box className="flex-grow">
+              <Divider fullWidth className="block sm:hidden mb-2" />
+              <Typography
+                className="text-2xl font-semibold mb-2"
+                color={'primary'}
+              >
                 Tech Stack :
               </Typography>
               <Box className="flex flex-wrap gap-2 mb-2">
@@ -85,83 +110,24 @@ const IndividualCompany = ({ params }) => {
                   }}
                 />
               </Box>
-              <Divider fullWidth />
-              <Typography className="text-2xl font-semibold" color={'primary'}>
-                Status :
-              </Typography>
+              <Divider fullWidth className="my-4" />
               <Typography
                 className="text-xl font-semibold mt-2 ml-2"
                 color={'primary'}
               >
-                Company :
-                <Chip
-                  label={'Registration Open'}
-                  variant="outlined"
-                  color="secondary"
-                  className="ml-2"
-                  icon={<AdjustIcon />}
-                />
-                <Chip
-                  label={'Registration Closed'}
-                  variant="outlined"
-                  color="warning"
-                  className="ml-2"
-                  icon={<AdjustIcon />}
-                />
-                <Chip
-                  label={'Shortlisting'}
-                  variant="outlined"
-                  color="info"
-                  className="ml-2"
-                  icon={<AdjustIcon />}
-                />
-                <Chip
-                  label={'Completed'}
-                  variant="outlined"
-                  color="success"
-                  className="ml-2"
-                  icon={<AdjustIcon />}
-                />
-              </Typography>
-              <Typography
-                className="text-xl font-semibold mt-2 ml-2"
-                color={'primary'}
-              >
-                User :
+                User Status :
                 <Chip
                   label={'Registered'}
                   variant="outlined"
                   color="secondary"
                   className="ml-2"
-                  icon={<AdjustIcon />}
-                />
-                <Chip
-                  label={'Not Registered'}
-                  variant="outlined"
-                  color="warning"
-                  className="ml-2"
-                  icon={<AdjustIcon />}
-                />
-                <Chip
-                  label={'Shortlisted'}
-                  variant="outlined"
-                  color="info"
-                  className="ml-2"
-                  icon={<AdjustIcon />}
-                />
-                <Chip
-                  label={'Accepted'}
-                  variant="outlined"
-                  color="success"
-                  className="ml-2"
-                  icon={<AdjustIcon />}
-                />
-                <Chip
-                  label={'Rejected'}
-                  variant="outlined"
-                  color="error"
-                  className="ml-2"
-                  icon={<AdjustIcon />}
+                  icon={
+                    <FiberManualRecordTwoToneIcon
+                      sx={{
+                        fontSize: '1rem',
+                      }}
+                    />
+                  }
                 />
               </Typography>
             </Box>
@@ -179,6 +145,7 @@ const IndividualCompany = ({ params }) => {
       >
         <Button
           variant="contained"
+          color="primary"
           size="large"
           sx={{
             width: ['100%', 'fit-content'],
