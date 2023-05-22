@@ -8,6 +8,7 @@ import {
   Button,
   Container,
 } from '@mui/material';
+import AdjustIcon from '@mui/icons-material/Adjust';
 
 import DrawerHeader from '@/components/DrawerHeader';
 
@@ -54,11 +55,11 @@ const IndividualCompany = ({ params }) => {
               </Typography>
             </div>
             <Divider orientation="vertical" flexItem />
-            <Box>
+            <Box className="flex flex-col gap-2 flex-grow">
               <Typography className="text-2xl font-semibold" color={'primary'}>
                 Tech Stack :
               </Typography>
-              <Box className="flex flex-wrap gap-2 mt-4">
+              <Box className="flex flex-wrap gap-2 mb-2">
                 <Chip
                   label={'Web Development'}
                   variant="outlined"
@@ -84,6 +85,85 @@ const IndividualCompany = ({ params }) => {
                   }}
                 />
               </Box>
+              <Divider fullWidth />
+              <Typography className="text-2xl font-semibold" color={'primary'}>
+                Status :
+              </Typography>
+              <Typography
+                className="text-xl font-semibold mt-2 ml-2"
+                color={'primary'}
+              >
+                Company :
+                <Chip
+                  label={'Registration Open'}
+                  variant="outlined"
+                  color="secondary"
+                  className="ml-2"
+                  icon={<AdjustIcon />}
+                />
+                <Chip
+                  label={'Registration Closed'}
+                  variant="outlined"
+                  color="warning"
+                  className="ml-2"
+                  icon={<AdjustIcon />}
+                />
+                <Chip
+                  label={'Shortlisting'}
+                  variant="outlined"
+                  color="info"
+                  className="ml-2"
+                  icon={<AdjustIcon />}
+                />
+                <Chip
+                  label={'Completed'}
+                  variant="outlined"
+                  color="success"
+                  className="ml-2"
+                  icon={<AdjustIcon />}
+                />
+              </Typography>
+              <Typography
+                className="text-xl font-semibold mt-2 ml-2"
+                color={'primary'}
+              >
+                User :
+                <Chip
+                  label={'Registered'}
+                  variant="outlined"
+                  color="secondary"
+                  className="ml-2"
+                  icon={<AdjustIcon />}
+                />
+                <Chip
+                  label={'Not Registered'}
+                  variant="outlined"
+                  color="warning"
+                  className="ml-2"
+                  icon={<AdjustIcon />}
+                />
+                <Chip
+                  label={'Shortlisted'}
+                  variant="outlined"
+                  color="info"
+                  className="ml-2"
+                  icon={<AdjustIcon />}
+                />
+                <Chip
+                  label={'Accepted'}
+                  variant="outlined"
+                  color="success"
+                  className="ml-2"
+                  icon={<AdjustIcon />}
+                />
+                <Chip
+                  label={'Rejected'}
+                  variant="outlined"
+                  color="error"
+                  className="ml-2"
+                  icon={<AdjustIcon />}
+                />
+              </Typography>
             </Box>
           </div>
         </Box>
