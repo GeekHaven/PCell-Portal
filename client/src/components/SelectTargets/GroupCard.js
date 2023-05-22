@@ -9,7 +9,7 @@ import {
   OutlinedInput,
 } from '@mui/material';
 
-import { useCallback, useMemo } from 'react';
+import { useMemo } from 'react';
 
 import CloseIcon from '@mui/icons-material/Close';
 
@@ -49,7 +49,6 @@ export default function GroupCard({ target, setTarget, userGroups, index }) {
   }, [target]);
 
   let yearList = useMemo(() => {
-    console.log(target);
     let list = Object.keys(userGroups).filter(
       (year) => getOptionList(year).length > 0
     );
@@ -69,7 +68,7 @@ export default function GroupCard({ target, setTarget, userGroups, index }) {
           <CloseIcon fontSize="small" />
         </IconButton>
       </Typography>
-      <FormControl size="small">
+      <FormControl size="small" required>
         <InputLabel>Year</InputLabel>
         <Select
           value={target.groups[index]?.year}
@@ -92,7 +91,7 @@ export default function GroupCard({ target, setTarget, userGroups, index }) {
             ))}
         </Select>
       </FormControl>
-      <FormControl size="small" disabled={!optionsList}>
+      <FormControl size="small" disabled={!optionsList} required>
         <InputLabel>Program</InputLabel>
         <Select
           value={target.groups[index]?.program}
@@ -115,7 +114,11 @@ export default function GroupCard({ target, setTarget, userGroups, index }) {
             ))}
         </Select>
       </FormControl>
-      <FormControl size="small" disabled={!target.groups[index].program}>
+      <FormControl
+        size="small"
+        disabled={!target.groups[index].program}
+        required
+      >
         <InputLabel>Min CGPA</InputLabel>
         <OutlinedInput
           label="Min CGPA"
@@ -132,7 +135,11 @@ export default function GroupCard({ target, setTarget, userGroups, index }) {
           }}
         />
       </FormControl>
-      <FormControl size="small" disabled={!target.groups[index].program}>
+      <FormControl
+        size="small"
+        disabled={!target.groups[index].program}
+        required
+      >
         <InputLabel>Min Credits</InputLabel>
         <OutlinedInput
           label="Min Credits"

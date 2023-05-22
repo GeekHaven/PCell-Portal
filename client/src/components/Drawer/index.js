@@ -16,6 +16,7 @@ import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
 import StoreIcon from '@mui/icons-material/Store';
 import AddBusinessIcon from '@mui/icons-material/AddBusiness';
+import LocationCityIcon from '@mui/icons-material/LocationCity';
 
 import { useRouter } from 'next/router';
 
@@ -34,6 +35,22 @@ const dashboardRoutes = [
         path: '/profile',
         name: 'Profile',
         Icon: AccountCircleIcon,
+      },
+    ],
+  },
+  {
+    title: 'Companies',
+    baseUrl: '/company',
+    items: [
+      {
+        path: '',
+        name: 'All',
+        Icon: StoreIcon,
+      },
+      {
+        path: '/registered',
+        name: 'Registered',
+        Icon: LocationCityIcon,
       },
     ],
   },

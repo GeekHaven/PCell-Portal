@@ -6,7 +6,10 @@ import { BsCardImage } from 'react-icons/bs';
 
 export default function FileUpload({ files, setFiles }) {
   const { getRootProps, getInputProps } = useDropzone({
-    accept: 'image/*',
+    accept: {
+      'image/jpeg': [],
+      'image/png': [],
+    },
     onDrop: (acceptedFiles) => {
       setFiles([]);
       acceptedFiles.map((file, index) => {
@@ -30,7 +33,7 @@ export default function FileUpload({ files, setFiles }) {
   return (
     <Paper
       elevation={2}
-      className="w-full h-full rounded-lg cursor-pointer hover:opacity-90 hover:outline outline-1"
+      className="w-full h-full rounded-lg cursor-pointer hover:opacity-90 hover:outline outline-1 overflow-hidden"
       style={{
         outlineColor: 'secondary.main',
       }}

@@ -2,54 +2,63 @@ import * as React from 'react';
 import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
-import { useEffect } from 'react';
+import { debounce } from '@mui/material/utils';
+import { useEffect, useMemo } from 'react';
 
-export default function Asynchronous({ queryFn }) {
+export default function SearchUserInput({
+  queryFn,
+  target,
+  value,
+  setValue,
+  label,
+}) {
   const [open, setOpen] = React.useState(false);
   const [options, setOptions] = React.useState([]);
+  const [inputValue, setInputValue] = React.useState('');
   const loading = open && options.length === 0;
-  const [curValue, setCurValue] = React.useState('');
+
+  let getUserList = useMemo(
+    () =>
+      debounce(async (callback) => {
+        return callback(await queryFn(inputValue));
+      }, 250),
+    [inputValue, target]
+  );
 
   useEffect(() => {
-    queryFn(curValue).then((data) => {
-      setOptions([...data]);
+    getUserList((opt) => {
+      setOptions(opt);
     });
-  }, [loading]);
-
-  useEffect(() => {
-    if (!open) {
-      setOptions([]);
-    }
-  }, [open]);
+  }, [inputValue, target]);
 
   return (
     <Autocomplete
-      id="asynchronous-demo"
-      fullWidth
-      limitTags={2}
       multiple
-      open={open}
+      value={value}
       onOpen={() => {
         setOpen(true);
       }}
       onClose={() => {
         setOpen(false);
       }}
-      isOptionEqualToValue={(option, value) =>
-        `${option.rollNumber}${option.name}` === value.rollNumber
-      }
-      getOptionLabel={(option) => option.rollNumber + ' ' + option.name}
+      onChange={(event, newValue) => {
+        setValue(newValue);
+      }}
+      onInputChange={(event, newInputValue) => {
+        setInputValue(newInputValue);
+      }}
       options={options}
-      loading={loading}
-      autoHighlight={true}
+      getOptionLabel={(option) => `${option.name}(${option.rollNumber})`}
+      noOptionsText="No Users"
+      filterSelectedOptions
+      isOptionEqualToValue={(o, v) => o.rollNumber === v.rollNumber}
+      autoHighlight
+      includeInputInList
+      autoComplete
       renderInput={(params) => (
         <TextField
           {...params}
-          label="Asynchronous"
-          value={curValue}
-          onChange={(e) => {
-            setCurValue(e.target.value);
-          }}
+          label={label}
           InputProps={{
             ...params.InputProps,
             endAdornment: (
@@ -66,4 +75,3 @@ export default function Asynchronous({ queryFn }) {
     />
   );
 }
-
