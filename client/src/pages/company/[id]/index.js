@@ -100,7 +100,7 @@ const IndividualCompany = ({ params, companyData }) => {
                 className="text-xl font-semibold mt-2 ml-2"
                 color={'primary'}
               >
-                User Status :
+                Application Status :
                 <Chip
                   label={companyData.userStatus || 'Not Registered'}
                   sx={{
@@ -133,7 +133,9 @@ const IndividualCompany = ({ params, companyData }) => {
         </Box>
       </Container>
       <Paper
-        className="absolute bottom-0 w-full flex justify-end"
+        className={`absolute bottom-0 w-full flex justify-end ${
+          companyData.userStatus ? 'hidden' : 'block'
+        }`}
         sx={{
           borderRadius: 0,
           paddingX: [1, 4, 8],
@@ -142,7 +144,6 @@ const IndividualCompany = ({ params, companyData }) => {
         elevation={2}
       >
         <Button
-          disabled={companyData.userStatus ? true : false}
           variant="contained"
           color="primary"
           size="large"
