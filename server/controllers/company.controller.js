@@ -60,14 +60,14 @@ export const getIndividualCompany = async (req, res) => {
     }
 
     if (
-      !companyData.exclude.includes(req.user.rollNumber) && //should not be in exclude list
-      (companyData.include.includes(req.user.rollNumber) || //can be in include list
-        companyData.targets.some(
+      !companyData.targets.exclude.includes(req.user.rollNumber) && //should not be in exclude list
+      (companyData.targets.include.includes(req.user.rollNumber) || //can be in include list
+        companyData.targets.groups.some(
           //or should be eligible
-          (target) =>
-            target.program === req.user.program &&
-            target.year === req.user.admissionYear &&
-            target.requiredCGPA >= req.user.cgpa
+          (group) =>
+            group.program === req.user.program &&
+            group.year === req.user.admissionYear &&
+            group.requiredCGPA >= req.user.cgpa
         ))
     ) {
       const companyRelation = await companyUserRelationModel.findOne({

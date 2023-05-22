@@ -109,7 +109,7 @@ const IndividualCompany = ({ params, companyData }) => {
                   variant="outlined"
                   color={
                     companyData.userStatus === 'Registered'
-                      ? 'success'
+                      ? 'primary'
                       : companyData.userStatus === 'Shortlisted'
                       ? 'info'
                       : companyData.userStatus === 'Accepted'
