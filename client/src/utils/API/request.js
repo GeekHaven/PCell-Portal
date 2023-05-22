@@ -22,25 +22,54 @@ const getHeaders = (token) => {
   };
 };
 
-const get = async (endpoint, token = null) =>
-  axios.get(API_URL + endpoint, getHeaders(token));
+const get = async (endpoint, token = null) => {
+  try {
+    let res = await axios.get(API_URL + endpoint, getHeaders(token));
+    return res;
+  } catch (err) {
+    return err.response;
+  }
+};
 
 const post = async (endpoint, body, token = null, form = false) => {
   let options = getHeaders(token);
   if (form) {
     options.headers['Content-Type'] = 'multipart/form-data';
   }
-  return axios.post(API_URL + endpoint, body, options);
+  try {
+    return await axios.post(API_URL + endpoint, body, options);
+  } catch (err) {
+    return err.response;
+  }
 };
 
-const update = async (endpoint, body, token = null) =>
-  axios.patch(API_URL + endpoint, body, getHeaders(token));
+const update = async (endpoint, body, token = null) => {
+  try {
+    return await axios.patch(API_URL + endpoint, body, getHeaders(token));
+  } catch (err) {
+    return err.response;
+  }
+};
 
-const remove = async (endpoint, token = null) =>
-  axios.delete(API_URL + endpoint, getHeaders(token));
+const remove = async (endpoint, token = null) => {
+  try {
+    return await axios.delete(API_URL + endpoint, getHeaders(token));
+  } catch (err) {
+    return err.response;
+  }
+};
 
 const logout = () => {
   removeLS('jwt_token');
 };
 
-export { getAccessToken, post, get, update, remove, API_URL, getHeaders, logout };
+export {
+  getAccessToken,
+  post,
+  get,
+  update,
+  remove,
+  API_URL,
+  getHeaders,
+  logout,
+};

@@ -9,6 +9,9 @@ export default function FileUpload({ files, setFiles }) {
     accept: {
       'image/jpeg': [],
       'image/png': [],
+      'image/jpg': [],
+      'image/webp': [],
+      'image/gif': [],
     },
     onDrop: (acceptedFiles) => {
       setFiles([]);
