@@ -5,12 +5,12 @@ import {
   getRegisteredCompanies,
   registerUserToCompany,
 } from '../../controllers/company.controller.js';
-import { verifyUser } from '../../middleware/auth.middleware.js';
 
 const router = Router();
 
-router.get('/', verifyUser, getPaginatedCompanies);
-router.get('/registered', verifyUser, getRegisteredCompanies);
-router.get('/:id', verifyUser, getIndividualCompany);
-router.post('/:id/register', verifyUser, registerUserToCompany);
+router.get('/', getPaginatedCompanies);
+router.get('/registered', getRegisteredCompanies);
+router.get('/:id', getIndividualCompany);
+router.post('/:id/register', registerUserToCompany);
 
+export default router;

@@ -11,7 +11,7 @@ import {
 import FiberManualRecordTwoToneIcon from '@mui/icons-material/FiberManualRecordTwoTone';
 import DrawerHeader from '@/components/DrawerHeader';
 
-const IndividualCompany = ({ params }) => {
+const IndividualCompany = ({ params, companyData }) => {
   return (
     <>
       <Container
@@ -42,9 +42,7 @@ const IndividualCompany = ({ params }) => {
                 }}
               >
                 <img
-                  src={
-                    'https://w7.pngwing.com/pngs/989/129/png-transparent-google-logo-google-search-meng-meng-company-text-logo-thumbnail.png'
-                  }
+                  src={companyData.logo}
                   className="object-contain w-full h-full rounded-md"
                   alt="Google"
                 />
@@ -54,7 +52,7 @@ const IndividualCompany = ({ params }) => {
                   className="text-2xl font-semibold text-center mb-2"
                   color={'primary'}
                 >
-                  Google
+                  {companyData.name}
                 </Typography>
                 <Chip
                   label={'Registration Closed'}
@@ -85,30 +83,17 @@ const IndividualCompany = ({ params }) => {
                 Tech Stack :
               </Typography>
               <Box className="flex flex-wrap gap-2 mb-2">
-                <Chip
-                  label={'Web Development'}
-                  variant="outlined"
-                  sx={{
-                    borderColor: 'primary.main',
-                    color: 'primary.secondary',
-                  }}
-                />
-                <Chip
-                  label={'Web Development'}
-                  variant="outlined"
-                  sx={{
-                    borderColor: 'primary.main',
-                    color: 'primary.secondary',
-                  }}
-                />
-                <Chip
-                  label={'Web Development'}
-                  variant="outlined"
-                  sx={{
-                    borderColor: 'primary.main',
-                    color: 'primary.secondary',
-                  }}
-                />
+                {companyData.techStack.split(';').map((tech) => (
+                  <Chip
+                    label={tech}
+                    variant="outlined"
+                    sx={{
+                      borderColor: 'primary.main',
+                      color: 'primary.secondary',
+                    }}
+                    key={tech}
+                  />
+                ))}
               </Box>
               <Divider fullWidth className="my-4" />
               <Typography
@@ -117,9 +102,22 @@ const IndividualCompany = ({ params }) => {
               >
                 User Status :
                 <Chip
-                  label={'Registered'}
+                  label={companyData.userStatus || 'Not Registered'}
+                  sx={{
+                    textTransform: 'capitalize',
+                  }}
                   variant="outlined"
-                  color="secondary"
+                  color={
+                    companyData.userStatus === 'Registered'
+                      ? 'success'
+                      : companyData.userStatus === 'Shortlisted'
+                      ? 'info'
+                      : companyData.userStatus === 'Accepted'
+                      ? 'success'
+                      : companyData.userStatus === 'Rejected'
+                      ? 'error'
+                      : 'warning'
+                  }
                   className="ml-2"
                   icon={
                     <FiberManualRecordTwoToneIcon
@@ -144,6 +142,7 @@ const IndividualCompany = ({ params }) => {
         elevation={2}
       >
         <Button
+          disabled={companyData.userStatus ? true : false}
           variant="contained"
           color="primary"
           size="large"
@@ -160,9 +159,17 @@ const IndividualCompany = ({ params }) => {
 
 export async function getServerSideProps(context) {
   // will be passed to the page component as props
+  let companyData = {
+    name: 'Google',
+    logo: 'https://w7.pngwing.com/pngs/249/19/png-transparent-google-logo-g-suite-google-guava-google-plus-company-text-logo.png',
+    techStack: 'React;Node;MongoDB;Express',
+    userStatus: 'Registered',
+  };
+
   return {
     props: {
       params: context.params,
+      companyData,
     },
   };
 }

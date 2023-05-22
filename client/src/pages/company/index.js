@@ -1,55 +1,14 @@
 import {
   Avatar,
-  Box,
   Button,
   Chip,
-  Divider,
-  Paper,
   Typography,
 } from '@mui/material';
 import { Container } from '@mui/material';
 import { useRouter } from 'next/router';
 import React from 'react';
 
-const AllCompanies = ({
-  companyData = [
-    {
-      imageUrl:
-        'https://w7.pngwing.com/pngs/989/129/png-transparent-google-logo-google-search-meng-meng-company-text-logo-thumbnail.png',
-      companyName: 'Google',
-      techStacks: 'Javascript;Golang;Mongo;Javascript;Golang',
-      id: '1',
-    },
-    {
-      imageUrl:
-        'https://companieslogo.com/img/orig/AMZN-e9f942e4.png?t=1632523695',
-      companyName: 'Amazon',
-      techStacks: 'Javascript;Golang;Mongo',
-      id: '2',
-    },
-    {
-      imageUrl:
-        'https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Microsoft_logo.svg/2048px-Microsoft_logo.svg.png',
-      companyName: 'Microsoft',
-      techStacks: 'Javascript;Golang;Mongo',
-      id: '3',
-    },
-    {
-      imageUrl:
-        'https://w7.pngwing.com/pngs/733/607/png-transparent-nvidia-logo-geforce-intel-graphics-processing-unit-nvidia-electronics-text-computer-thumbnail.png',
-      companyName: 'Nvidia',
-      techStacks: 'Javascript;Golang;Mongo',
-      id: '4',
-    },
-    {
-      imageUrl:
-        'https://w7.pngwing.com/pngs/280/326/png-transparent-logo-netflix-logos-and-brands-icon-thumbnail.png',
-      companyName: 'Netflix',
-      techStacks: 'Javascript;Golang;Mongo',
-      id: '5',
-    },
-  ],
-}) => {
+const AllCompanies = ({ companyData }) => {
   const router = useRouter();
   return (
     <Container
@@ -109,5 +68,52 @@ const AllCompanies = ({
     </Container>
   );
 };
+
+export async function getServerSideProps(context) {
+  // will be passed to the page component as props
+  let companyData = [
+    {
+      imageUrl:
+        'https://w7.pngwing.com/pngs/989/129/png-transparent-google-logo-google-search-meng-meng-company-text-logo-thumbnail.png',
+      companyName: 'Google',
+      techStacks: 'Javascript;Golang;Mongo;Javascript;Golang',
+      id: '1',
+    },
+    {
+      imageUrl:
+        'https://companieslogo.com/img/orig/AMZN-e9f942e4.png?t=1632523695',
+      companyName: 'Amazon',
+      techStacks: 'Javascript;Golang;Mongo',
+      id: '2',
+    },
+    {
+      imageUrl:
+        'https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Microsoft_logo.svg/2048px-Microsoft_logo.svg.png',
+      companyName: 'Microsoft',
+      techStacks: 'Javascript;Golang;Mongo',
+      id: '3',
+    },
+    {
+      imageUrl:
+        'https://w7.pngwing.com/pngs/733/607/png-transparent-nvidia-logo-geforce-intel-graphics-processing-unit-nvidia-electronics-text-computer-thumbnail.png',
+      companyName: 'Nvidia',
+      techStacks: 'Javascript;Golang;Mongo',
+      id: '4',
+    },
+    {
+      imageUrl:
+        'https://w7.pngwing.com/pngs/280/326/png-transparent-logo-netflix-logos-and-brands-icon-thumbnail.png',
+      companyName: 'Netflix',
+      techStacks: 'Javascript;Golang;Mongo',
+      id: '5',
+    },
+  ];
+
+  return {
+    props: {
+      companyData,
+    },
+  };
+}
 
 export default AllCompanies;
