@@ -1,9 +1,4 @@
-import {
-  Avatar,
-  Button,
-  Chip,
-  Typography,
-} from '@mui/material';
+import { Avatar, Button, Chip, Typography } from '@mui/material';
 import { Container } from '@mui/material';
 import { useRouter } from 'next/router';
 import React from 'react';
@@ -25,6 +20,7 @@ const AllCompanies = ({ companyData }) => {
           onClick={() => {
             router.push(`/company/${company.id}`);
           }}
+          key={company.id}
         >
           <div className="flex flex-nowrap gap-4 items-center">
             <Avatar
@@ -60,6 +56,7 @@ const AllCompanies = ({ companyData }) => {
                   borderColor: 'primary.main',
                   color: 'primary.secondary',
                 }}
+                key={tech + company.id}
               />
             ))}
           </div>
