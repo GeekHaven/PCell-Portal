@@ -47,6 +47,36 @@ export const getPaginatedCompanies = async (req, res) => {
   }
 };
 
+export const getIndividualCompany = async (req, res) => {
+  const { id } = req.params;
+
+  if (!id) {
+    return response_400(res, 'Invalid request');
+  }
+  try {
+    const companyData = await companyModel.findById(id);
+    if (!companyData) {
+      return response_400(res, 'Invalid request');
+    }
+
+    if (
+      !companyData.exclude.includes(req.user._id) && //should not be in exclude list
+      (companyData.include.includes(req.user._id) || //can be in include list
+        companyData.targets.some(
+          //or should be eligible
+          (target) =>
+            target.program === req.user.program &&
+            target.year === req.user.admissionYear &&
+            target.requiredCGPA >= req.user.cgpa
+        ))
+    ) {
+      return response_200(res, 'OK', companyData);
+    }
+    return response_400(res, 'Invalid request');
+  } catch (err) {
+    return response_500(res, err);
+  }
+};
 
 // This function is not verified yet.
 export const registerUserToCompany = async (req, res) => {
