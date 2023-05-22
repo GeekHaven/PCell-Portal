@@ -14,13 +14,13 @@ const targetSchema = Schema({
   },
 
   include: {
-    type: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-    required: false,
+    type: [String],
+    default: [],
   },
 
   exclude: {
-    type: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-    required: false,
+    type: [String],
+    default: [],
   },
 });
 
