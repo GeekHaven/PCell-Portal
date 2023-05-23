@@ -19,16 +19,16 @@ import SEO from '@/components/SEO';
 
 import FullLoader from '@/components/FullLoader';
 import PasswordModal from '@/components/PasswordModal';
-import useLoggedinUser from '@/customHooks/useLoggedinUser';
 import {
   getProfile,
   saveChanges,
   updateCourseDetails,
 } from '@/utils/API/dashboard/profile';
+import useUser from '@/customHooks/useUser';
 
 const Dashboard = () => {
   let queryClient = useQueryClient();
-  let { user } = useLoggedinUser();
+  let { user } = useUser();
   const [mobileActive, setMobileActive] = useState(false),
     [resumeLinkActive, setResumeLinkActive] = useState(false),
     [mobile, setMobile] = useState(''),
