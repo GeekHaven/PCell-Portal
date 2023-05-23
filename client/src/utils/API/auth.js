@@ -26,6 +26,7 @@ export async function loginUser(username, password, remember) {
 
 export async function isUserAdmin() {
   if (!getLS('jwt_token')) return Promise.resolve(false);
+  console.log('isUserAdmin');
   let res = await get('/auth/isAdmin');
   console.log(res);
   if (res.status === 200 && res.data?.data?.status)

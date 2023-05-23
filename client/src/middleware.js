@@ -1,17 +1,17 @@
-import { NextResponse } from 'next/server';
-import { isUserAdmin, isUserAuthenticated } from './utils/API/auth';
+// import { NextResponse } from 'next/server';
+// import { isUserAdmin, isUserAuthenticated } from './utils/API/auth';
 
 export async function middleware(req) {
   // if (
   //   !(await isUserAuthenticated()) &&
-  //   req.nextUrl.pathname !== '/login' &&
-  //   req.nextUrl.pathname !== '/'
+  //   !(req.nextUrl.pathname === '/login' || req.nextUrl.pathname === '/')
   // ) {
   //   return NextResponse.redirect(new URL('/login', req.url));
   // }
-  if (!(await isUserAdmin()) && req.nextUrl.pathname.match(/^\/admin\//)) {
-    return NextResponse.redirect(new URL('/dashboard', req.url));
-  }
+  // console.log(await isUserAdmin());
+  // if (!(await isUserAdmin()) && req.nextUrl.pathname.match(/^\/admin\//)) {
+  //   return NextResponse.redirect(new URL('/dashboard', req.url));
+  // }
 }
 
 export const config = {
