@@ -2,10 +2,11 @@ import '@/styles/globals.css';
 import '@fontsource/ibm-plex-sans';
 import '@fontsource/oswald';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { ThemeProvider } from '@mui/material/styles';
 import { Container, CssBaseline, Box } from '@mui/material';
 import { StyledEngineProvider } from '@mui/material/styles';
+import { useRouter } from 'next/router';
 import NextNProgress from 'nextjs-progressbar';
 import { SnackbarProvider } from 'notistack';
 
@@ -29,12 +30,28 @@ function conditionalWrapper(condition, Parent, parentProps, Children) {
 }
 
 function AppContentWrapper({ Component, pageProps }) {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
-  let { isLoading } = useQuery({
+  let { data: user, isLoading } = useQuery({
     queryKey: 'user',
     queryFn: isUserAuthenticated,
     staleTime: 1000 * 60 * 60 * 24 * 30,
   });
+
+  useEffect(() => {
+    if (!isLoading) {
+      if (router.asPath.startsWith('/dashboard')) {
+        if (!isLoading && !user) {
+          router.push('/login');
+        }
+      }
+      if (router.asPath.startsWith('/admin')) {
+        if (!isLoading && !user.isAdmin) {
+          router.push('/login');
+        }
+      }
+    }
+  }, [router, user]);
 
   return (
     <>
