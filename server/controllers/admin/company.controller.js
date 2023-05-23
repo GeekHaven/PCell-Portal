@@ -9,21 +9,21 @@ import {
 
 export async function addCompany(req, res) {
   const { name, targets, techStack } = req.body;
-  if (!name) return response_400(res, 'Invalid request');
-  if (await CompanyModel.exists({ name }))
-    return response_400(res, 'Company already exists');
+  if (!name || !req.file) return response_400(res, 'Invalid request');
   try {
+    if (await CompanyModel.exists({ name }))
+      return response_400(res, 'Company already exists');
     const logo = await uploadImage(req.file);
     if (!logo) return response_400(res, 'Invalid image');
     const company = await CompanyModel.create({
       name,
       logo,
-      targets,
+      targets: JSON.parse(targets),
       techStack,
     });
     delete company._id;
     delete company.__v;
-    return response_200(res, 'OK', company);
+    return response_201(res, 'OK', company);
   } catch (err) {
     return response_500(res, err);
   }
@@ -62,5 +62,3 @@ export async function deleteCompany(req, res) {
     response_500(res, err);
   }
 }
-
-

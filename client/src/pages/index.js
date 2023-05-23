@@ -2,7 +2,6 @@ import Image from 'next/image';
 import { Typography, Container, Button } from '@mui/material';
 import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
 import { useRouter } from 'next/router';
-
 import useUser from '@/customHooks/useUser';
 import vector from '@/assets/vectors/home.svg';
 import SEO from '@/components/SEO';

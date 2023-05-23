@@ -16,15 +16,6 @@ const CompanySchema = Schema({
   },
   targets: {
     type: targetSchema,
-    default: [],
-  },
-  include: {
-    type: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-    default: [],
-  },
-  exclude: {
-    type: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-    default: [],
   },
   // registeredUsers: {
   //   type: [{ type: Schema.Types.ObjectId, ref: 'User' }],
