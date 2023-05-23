@@ -3,6 +3,7 @@ import {
   response_201,
   response_400,
   response_404,
+  response_403,
   response_500,
 } from '../utils/responseCodes.js';
 import jwt from 'jsonwebtoken';
@@ -69,8 +70,13 @@ export async function logIn(req, res) {
 export async function isUser(req, res) {
   const token = req.header('Authorization');
   if (!token) return response_200(res, { status: false });
+  let decoded = false;
   try {
-    const decoded = jwt.verify(token, process.env.SECRET);
+    decoded = jwt.verify(token, process.env.SECRET);
+  } catch (e) {
+    return response_403(res, 'Invalid token');
+  }
+  try {
     const user = await User.findOne({ rollNumber: decoded.payload.rollNumber });
     if (!user) return response_200(res, 'OK', { status: false });
     return response_200(res, 'OK', {
