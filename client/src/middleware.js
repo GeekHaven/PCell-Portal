@@ -2,14 +2,13 @@ import { NextResponse } from 'next/server';
 import { isUserAdmin, isUserAuthenticated } from './utils/API/auth';
 
 export async function middleware(req) {
-  if (
-    !(await isUserAuthenticated()) &&
-    req.nextUrl.pathname !== '/login' &&
-    req.nextUrl.pathname !== '/'
-  ) {
-    return NextResponse.redirect(new URL('/login', req.url));
-  }
-  
+  // if (
+  //   !(await isUserAuthenticated()) &&
+  //   req.nextUrl.pathname !== '/login' &&
+  //   req.nextUrl.pathname !== '/'
+  // ) {
+  //   return NextResponse.redirect(new URL('/login', req.url));
+  // }
   if (!(await isUserAdmin()) && req.nextUrl.pathname.match(/^\/admin\//)) {
     return NextResponse.redirect(new URL('/dashboard', req.url));
   }
@@ -23,6 +22,7 @@ export const config = {
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
+     * - manifest.json (manifest file)
      */
     '/((?!api|_next/static|_next/image|manifest.json|favicon.ico).*)',
   ],
