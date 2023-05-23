@@ -7,48 +7,57 @@ import {
 import { uploadImage } from '../utils/image.js';
 import companyModel from '../models/company.model.js';
 import companyUserRelationModel from '../models/relations/companyUser.relation.model.js';
+import { isUserEligibleInTarget } from '../utils/queries/isUserEligibleInTarget.js';
+import { companyStatusPriority } from '../utils/queries/companyStatusPriority.js';
 
 export const getPaginatedCompanies = async (req, res) => {
-  const { onlyEligible, sort, q } = req.query;
-  const options = {
-    pagination: req.query.page !== -1,
-    page: req.query.page,
-    limit: req.query.limit,
-    sort: sort,
-  };
-
-  let query = {};
-  if (onlyEligible) {
-    query = {
-      targets: {
-        $elemMatch: {
-          program: req.user.program,
-          year: req.user.admissionYear,
-          requiredCGPA: { $gte: req.user.cgpa },
-        },
-      },
-    };
+  const { onlyEligible, sort, q, sortBy, page, limit } = req.query;
+  if (!page || !limit || !sort || !sortBy) {
+    return response_400(res, 'Invalid request');
   }
-  if (q) {
-    query = {
-      ...query,
-      $or: [
-        { name: { $regex: new RegExp(q), $options: 'i' } },
-        { techStack: { $regex: new RegExp(q), $options: 'i' } },
-      ],
-    };
-  }
+  if (sortBy === 'status') sortBy = 'priority';
 
   try {
-    const companies = await companyModel.paginate(query, options);
-    return response_200(res, 'OK', companies);
+    let companyList = await companyModel.aggregate([
+      {
+        $match: {
+          name: { $regex: new RegExp(q), $options: 'i' },
+        },
+      },
+      {
+        $addFields: {
+          isEligible: isUserEligibleInTarget(req.user),
+          priority: companyStatusPriority('currentStatus'),
+        },
+      },
+      {
+        $sort: {
+          [sortBy]: sort,
+        },
+      },
+      {
+        $project: {
+          name: 1,
+          logo: 1,
+          isEligible: 1,
+          _id: 1,
+          currentStatus: 1,
+        },
+      },
+    ]);
+
+    if (page !== -1) {
+      companyList = companyList.slice(limit * (page - 1), limit);
+    }
+    return response_200(res, 'OK', companyList);
   } catch (err) {
     return response_500(res, err);
   }
 };
 
 export const getIndividualCompany = async (req, res) => {
-  const { id } = req.params;
+  let { id } = req.params;
+  id = Buffer.from(id, 'base64').toString('hex');
 
   if (!id) {
     return response_400(res, 'Invalid request');

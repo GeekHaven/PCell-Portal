@@ -17,18 +17,20 @@ const CompanySchema = Schema({
   targets: {
     type: targetSchema,
   },
-  // registeredUsers: {
-  //   type: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-  //   default: [],
-  // },
-  // shortListedUsers: {
-  //   type: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-  //   default: [],
-  // },
-  // selectedUsers: {
-  //   type: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-  //   default: [],
-  // },
+  currentStatus: {
+    type: String,
+    enum: [
+      'registration open',
+      'registration closed',
+      'shortlisting',
+      'completed',
+    ],
+    default: 'registration open',
+  },
+  hidden: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 export default model('Company', CompanySchema);
