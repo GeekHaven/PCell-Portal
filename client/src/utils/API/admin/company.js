@@ -16,3 +16,4 @@ export async function addCompany({ companyName, techStack, files, target }) {
   }
   return Promise.reject(res.data.error);
 }
+export async function updateCompany({}) {}
