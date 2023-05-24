@@ -1,4 +1,11 @@
-import { Paper, Container, Typography, Box, Button } from '@mui/material';
+import {
+  Paper,
+  Container,
+  Typography,
+  Box,
+  Button,
+  ToggleButton,
+} from '@mui/material';
 import { useQuery } from 'react-query';
 import AddIcon from '@mui/icons-material/Add';
 import { useState, useCallback } from 'react';
@@ -8,8 +15,14 @@ import SearchInput from './SearchUserInput';
 import GroupCard from './GroupCard';
 import { getUserGroups } from '@/utils/API/common';
 import FullLoader from '../FullLoader';
-
-export default function SelectTargets({ target, setTarget }) {
+import CreateIcon from '@mui/icons-material/Create';
+import DoneIcon from '@mui/icons-material/Done';
+export default function SelectTargets({
+  target,
+  setTarget,
+  targetsInactive,
+  edit,
+}) {
   let setInclude = (newValue) => {
     setTarget((prev) => {
       let next = { ...prev, include: newValue };
@@ -108,20 +121,40 @@ export default function SelectTargets({ target, setTarget }) {
             <AddIcon fontSize="large" />
           </Button>
         </Box>
-        <SearchInput
-          target={target}
-          value={target.include}
-          setValue={setInclude}
-          queryFn={searchIncludeUser}
-          label="Include Users"
-        />
-        <SearchInput
-          target={target}
-          value={target.exclude}
-          setValue={setExclude}
-          queryFn={searchExcludeUser}
-          label="Exclude Users"
-        />
+        <Container className="flex flex-nowrap justify-around items-center gap-2 ">
+          <SearchInput
+            target={target}
+            value={target.include}
+            setValue={setInclude}
+            queryFn={searchIncludeUser}
+            label="Include Users"
+          />
+          <ToggleButton
+            value="check"
+            selected={targetsInactive.include}
+            onChange={() => {}}
+            className="p-3.5"
+          >
+            {targetsInactive.include ? <CreateIcon /> : <DoneIcon />}
+          </ToggleButton>
+        </Container>
+        <Container className="flex flex-nowrap justify-around items-center gap-2 ">
+          <SearchInput
+            target={target}
+            value={target.exclude}
+            setValue={setExclude}
+            queryFn={searchExcludeUser}
+            label="Exclude Users"
+          />
+          <ToggleButton
+            value="check"
+            selected={targetsInactive.exclude}
+            onChange={() => {}}
+            className="p-3.5"
+          >
+            {targetsInactive.exclude ? <CreateIcon /> : <DoneIcon />}
+          </ToggleButton>
+        </Container>
       </Paper>
     </Container>
   );
