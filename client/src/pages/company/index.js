@@ -1,116 +1,248 @@
-import { Avatar, Button, Chip, Typography } from '@mui/material';
+import {
+  Avatar,
+  Box,
+  Button,
+  Checkbox,
+  Chip,
+  CircularProgress,
+  Divider,
+  FormControl,
+  FormControlLabel,
+  IconButton,
+  InputLabel,
+  MenuItem,
+  Paper,
+  Select,
+  TextField,
+  Typography,
+} from '@mui/material';
 import { Container } from '@mui/material';
 import { useRouter } from 'next/router';
 import React from 'react';
+import FiberManualRecordTwoToneIcon from '@mui/icons-material/FiberManualRecordTwoTone';
+import Image from 'next/image';
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import { Label } from '@mui/icons-material';
+import Tooltip from '@mui/material/Tooltip';
+import SearchIcon from '@mui/icons-material/Search';
+import { useState } from 'react';
+import { getPaginatedCompanies } from '@/utils/API/company';
+import { useMutation, useQuery, useQueryClient } from 'react-query';
+import FullLoader from '@/components/FullLoader';
+import { set } from 'nprogress';
 
-const AllCompanies = ({ companyData }) => {
+const AllCompanies = () => {
+  const [sort, setSort] = useState(1);
+  const [onlyEligible, setOnlyEligible] = useState(false);
+  const [search, setSearch] = useState('');
+  const [sortBy, setSortBy] = useState('name');
+  const queryClient = useQueryClient();
+
+  const handleSearch = ({
+    handleOnlyEligible = onlyEligible,
+    handleSort = sort,
+    handleSearch = search,
+    handleSortBy = sortBy,
+  }) => {
+    // queryClient.invalidateQueries('companies');
+    searchMutation.mutate({
+      onlyEligible: handleOnlyEligible,
+      sort: handleSort,
+      search: handleSearch,
+      sortBy: handleSortBy,
+      page: '1',
+      limit: '10',
+    });
+  };
+
+  const {
+    data: companyData,
+    isLoading,
+    isError,
+    error,
+    isSuccess,
+    refetch,
+  } = useQuery({
+    queryKey: ['companies'],
+    queryFn: getPaginatedCompanies,
+    staleTime: 1000 * 60 * 60,
+  });
+
+  const searchMutation = useMutation(getPaginatedCompanies, {
+    onSuccess: (data) => {
+      queryClient.setQueryData(['companies'], data);
+    },
+  });
+
   const router = useRouter();
+  if (isLoading) return <FullLoader />;
+
   return (
-    <Container
-      className="grid gap-2 grid-cols-1 sm:grid-cols-[repeat(auto-fill,minmax(300px,1fr))]"
-      maxWidth="xl"
-    >
-      {companyData.map((company) => (
-        <Button
-          variant="outlined"
-          className="px-2 flex-col items-start justify-start w-full h-full"
-          sx={{
-            outlineColor: 'secondary.main',
-          }}
-          onClick={() => {
-            router.push(`/company/${company.id}`);
-          }}
-          key={company.id}
-        >
-          <div className="flex flex-nowrap gap-4 items-center">
-            <Avatar
-              className="p-0"
-              sx={{
-                borderRadius: '2px',
-              }}
-              alt={company.companyName}
-              src={company.imageUrl}
-            />
-            <Typography
-              color="primary"
-              variant="subtitle1"
-              className="text-start"
-              sx={{
-                fontWeight: 600,
-                textTransform: 'capitalize',
+    <>
+      <Paper
+        elevation={2}
+        className="py-4 px-4 mb-4 flex md:flex-row flex-col gap-4 md:gap-2 md:items-center"
+      >
+        <div className="flex flex-nowrap flex-grow w-full">
+          <TextField
+            label="Search"
+            variant="outlined"
+            size="small"
+            className="flex-grow mr-1"
+            value={search}
+            onChange={(e) => {
+              setSearch(e.target.value);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                handleSearch();
+              }
+            }}
+          />
+          <IconButton
+            sx={{
+              backgroundColor: 'primary.main',
+              borderRadius: '4px',
+              marginRight: '4px',
+            }}
+            onClick={handleSearch}
+          >
+            <SearchIcon />
+          </IconButton>
+        </div>
+        <div className="flex md:flex-nowrap items-center justify-start gap-0 flex-grow md:flex-grow-0 w-full md:w-fit flex-wrap">
+          <FormControl className="w-28" size="small">
+            <InputLabel id="sortByUi">Sort By</InputLabel>
+            <Select
+              labelId="sortByUi"
+              id="sortBy"
+              value={sortBy}
+              label="Sort By"
+              onChange={(e) => {
+                setSortBy(e.target.value);
+                handleSearch({
+                  handleSortBy: e.target.value,
+                });
               }}
             >
-              {company.companyName}
-            </Typography>
-          </div>
-          <div className="w-full border-[0.5px] my-2 border-blue-400"></div>
-
-          <div className="flex flex-start flex-wrap">
-            {company.techStacks.split(';').map((tech) => (
-              <Chip
-                label={tech}
-                variant="outlined"
-                className="m-1"
-                size="small"
-                sx={{
-                  borderColor: 'primary.main',
-                  color: 'primary.secondary',
+              <MenuItem value={'name'}>Name</MenuItem>
+              <MenuItem value={'status'}>Status</MenuItem>
+              <MenuItem value={'isEligible'}>Eligibility</MenuItem>
+            </Select>
+          </FormControl>
+          <div className="flex flex-nowrap justify-center items-center mx-2">
+            <Tooltip title="Sort">
+              <IconButton
+                variant="contained"
+                color="primary"
+                onClick={() => {
+                  setSort(sort === 1 ? -1 : 1);
+                  handleSearch({
+                    handleSort: sort === 1 ? -1 : 1,
+                  });
                 }}
-                key={tech + company.id}
-              />
-            ))}
+              >
+                {sort === 1 ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
+              </IconButton>
+            </Tooltip>
           </div>
-        </Button>
-      ))}
-    </Container>
+          <FormControlLabel
+            className=" w-fit"
+            label="Eligible"
+            control={
+              <Checkbox
+                checked={onlyEligible}
+                onChange={(e) => {
+                  setOnlyEligible(e.target.checked);
+                  handleSearch({
+                    handleOnlyEligible: e.target.checked,
+                  });
+                }}
+              />
+            }
+          />
+        </div>
+      </Paper>
+      {searchMutation.isLoading ? (
+        <Container className="h-96 w-full flex justify-center items-center">
+          <CircularProgress />
+        </Container>
+      ) : (
+        <Container
+          className="grid gap-2 grid-cols-1 sm:grid-cols-[repeat(auto-fill,minmax(300px,1fr))]"
+          maxWidth="xl"
+        >
+          {companyData.map((company) => (
+            <Button
+              variant="outlined"
+              disabled={!company.isEligible}
+              className="px-2 w-full h-full"
+              sx={{
+                outlineColor: 'secondary.main',
+                opacity: company.isEligible ? 1 : 0.7,
+              }}
+              onClick={() => {
+                router.push(`/company/${company._id}`);
+              }}
+              key={company._id}
+            >
+              <div className="flex flex-nowrap gap-2 items-center justify-center w-full">
+                <div className="bg-white rounded-md">
+                  <img
+                    className={`p-0 rounded-md object-contain object-center aspect-square`}
+                    alt={company.name}
+                    src={company.logo}
+                    height={100}
+                    width={100}
+                  />
+                </div>
+
+                <Divider orientation="vertical" flexItem />
+                <div className="flex-grow mx-auto">
+                  <Typography
+                    color="primary"
+                    variant="h6"
+                    className="text-center mb-2"
+                    sx={{
+                      fontWeight: 600,
+                      textTransform: 'capitalize',
+                    }}
+                  >
+                    {company.name}
+                  </Typography>
+                  <Chip
+                    label={company.currentStatus}
+                    sx={{
+                      textTransform: 'capitalize',
+                    }}
+                    size="small"
+                    variant="outlined"
+                    color={
+                      company.currentStatus === 'registration open'
+                        ? 'secondary'
+                        : company.currentStatus === 'registration closed'
+                        ? 'warning'
+                        : company.currentStatus === 'shortlisting'
+                        ? 'info'
+                        : 'success'
+                    }
+                    icon={
+                      <FiberManualRecordTwoToneIcon
+                        sx={{
+                          fontSize: '1rem',
+                        }}
+                      />
+                    }
+                  />
+                </div>
+              </div>
+            </Button>
+          ))}
+        </Container>
+      )}
+    </>
   );
 };
-
-export async function getServerSideProps(context) {
-  // will be passed to the page component as props
-  let companyData = [
-    {
-      imageUrl:
-        'https://w7.pngwing.com/pngs/989/129/png-transparent-google-logo-google-search-meng-meng-company-text-logo-thumbnail.png',
-      companyName: 'Google',
-      techStacks: 'Javascript;Golang;Mongo;Javascript;Golang',
-      id: '1',
-    },
-    {
-      imageUrl:
-        'https://companieslogo.com/img/orig/AMZN-e9f942e4.png?t=1632523695',
-      companyName: 'Amazon',
-      techStacks: 'Javascript;Golang;Mongo',
-      id: '2',
-    },
-    {
-      imageUrl:
-        'https://upload.wikimedia.org/wikipedia/commons/thumb/4/44/Microsoft_logo.svg/2048px-Microsoft_logo.svg.png',
-      companyName: 'Microsoft',
-      techStacks: 'Javascript;Golang;Mongo',
-      id: '3',
-    },
-    {
-      imageUrl:
-        'https://w7.pngwing.com/pngs/733/607/png-transparent-nvidia-logo-geforce-intel-graphics-processing-unit-nvidia-electronics-text-computer-thumbnail.png',
-      companyName: 'Nvidia',
-      techStacks: 'Javascript;Golang;Mongo',
-      id: '4',
-    },
-    {
-      imageUrl:
-        'https://w7.pngwing.com/pngs/280/326/png-transparent-logo-netflix-logos-and-brands-icon-thumbnail.png',
-      companyName: 'Netflix',
-      techStacks: 'Javascript;Golang;Mongo',
-      id: '5',
-    },
-  ];
-
-  return {
-    props: {
-      companyData,
-    },
-  };
-}
 
 export default AllCompanies;

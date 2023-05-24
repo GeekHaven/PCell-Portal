@@ -5,7 +5,7 @@ const API_URL = process.env.API_URL || 'http://localhost:8080/api/v1';
 
 const getAccessToken = () => getLS('jwt_token');
 
-const getHeaders = (token) => {
+const getHeaders = (token, params) => {
   if (!token) token = getAccessToken();
   if (token) {
     return {
@@ -13,18 +13,20 @@ const getHeaders = (token) => {
         Accept: 'application/json',
         Authorization: token,
       },
+      params: params,
     };
   }
   return {
     headers: {
       Accept: 'application/json',
     },
+    params: params,
   };
 };
 
-const get = async (endpoint, token = null) => {
+const get = async (endpoint, token = null, params = null) => {
   try {
-    let res = await axios.get(API_URL + endpoint, getHeaders(token));
+    let res = await axios.get(API_URL + endpoint, getHeaders(token, params));
     return res;
   } catch (err) {
     return err.response;

@@ -11,11 +11,19 @@ import { isUserEligibleInTarget } from '../utils/queries/isUserEligibleInTarget.
 import { companyStatusPriority } from '../utils/queries/companyStatusPriority.js';
 
 export const getPaginatedCompanies = async (req, res) => {
-  const { onlyEligible, sort, q, sortBy, page, limit } = req.query;
+  const { q } = req.query;
+  let { sort, sortBy, onlyEligible, page, limit } = req.query;
+
   if (!page || !limit || !sort || !sortBy) {
     return response_400(res, 'Invalid request');
   }
+  //changing types to required types
+  page = parseInt(page);
+  limit = parseInt(limit);
+  onlyEligible = onlyEligible === 'true' ? true : false;
   if (sortBy === 'status') sortBy = 'priority';
+  if (sortBy === 'isEligible') sort = sort * -1; // to make true first
+  sort = parseInt(sort);
 
   try {
     let companyList = await companyModel.aggregate([
@@ -28,6 +36,13 @@ export const getPaginatedCompanies = async (req, res) => {
         $addFields: {
           isEligible: isUserEligibleInTarget(req.user),
           priority: companyStatusPriority('currentStatus'),
+        },
+      },
+      {
+        $match: {
+          isEligible: {
+            $in: [true, onlyEligible],
+          },
         },
       },
       {
@@ -44,11 +59,13 @@ export const getPaginatedCompanies = async (req, res) => {
           currentStatus: 1,
         },
       },
+      {
+        $skip: limit * (page - 1),
+      },
+      {
+        $limit: limit,
+      },
     ]);
-
-    if (page !== -1) {
-      companyList = companyList.slice(limit * (page - 1), limit);
-    }
     return response_200(res, 'OK', companyList);
   } catch (err) {
     return response_500(res, err);
