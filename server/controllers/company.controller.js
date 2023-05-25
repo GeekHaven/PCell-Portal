@@ -4,8 +4,7 @@ import {
   response_500,
   response_201,
 } from '../utils/responseCodes.js';
-import { uploadImage } from '../utils/image.js';
-import companyModel from '../models/company.model.js';
+import Company from '../models/company.model.js';
 import companyUserRelationModel from '../models/relations/companyUser.relation.model.js';
 import { isUserEligibleInTarget } from '../utils/queries/isUserEligibleInTarget.js';
 import { companyStatusPriority } from '../utils/queries/companyStatusPriority.js';
@@ -26,7 +25,7 @@ export const getPaginatedCompanies = async (req, res) => {
   sort = parseInt(sort);
 
   try {
-    let companyList = await companyModel.aggregate([
+    let companyListAggregate = Company.aggregate([
       {
         $match: {
           name: { $regex: new RegExp(q), $options: 'i' },
@@ -59,13 +58,11 @@ export const getPaginatedCompanies = async (req, res) => {
           currentStatus: 1,
         },
       },
-      {
-        $skip: limit * (page - 1),
-      },
-      {
-        $limit: limit,
-      },
     ]);
+    let companyList = await Company.aggregatePaginate(companyListAggregate, {
+      page,
+      limit,
+    });
     return response_200(res, 'OK', companyList);
   } catch (err) {
     return response_500(res, err);
@@ -80,7 +77,7 @@ export const getIndividualCompany = async (req, res) => {
     return response_400(res, 'Invalid request');
   }
   try {
-    const companyData = await companyModel.findById(id);
+    const companyData = await Company.findById(id);
     if (!companyData) {
       return response_400(res, 'Invalid request');
     }
@@ -162,7 +159,7 @@ export const getRegisteredCompanies = async (req, res) => {
 
     const companyIds = companies.map((company) => company.companyId);
 
-    const companyData = await companyModel.find({
+    const companyData = await Company.find({
       _id: { $in: companyIds },
     });
 

@@ -57,7 +57,12 @@ function AppContentWrapper({ Component, pageProps }) {
     <>
       <NextNProgress height={1} />
       {isLoading ? (
-        <FullLoader />
+        <Container
+          maxWidth="xl"
+          className="w-full h-screen flex justify-center items-center"
+        >
+          <FullLoader />
+        </Container>
       ) : (
         conditionalWrapper(
           !Component.hideContainer,

@@ -1,7 +1,7 @@
 import { get } from './request';
 
 export async function getPaginatedCompanies({
-  onlyEligible = false,
+  onlyEligible = true,
   sort = 1,
   search = '',
   sortBy = 'name',

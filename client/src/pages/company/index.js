@@ -1,6 +1,4 @@
 import {
-  Avatar,
-  Box,
   Button,
   Checkbox,
   Chip,
@@ -20,63 +18,45 @@ import { Container } from '@mui/material';
 import { useRouter } from 'next/router';
 import React from 'react';
 import FiberManualRecordTwoToneIcon from '@mui/icons-material/FiberManualRecordTwoTone';
-import Image from 'next/image';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import { Label } from '@mui/icons-material';
 import Tooltip from '@mui/material/Tooltip';
 import SearchIcon from '@mui/icons-material/Search';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { getPaginatedCompanies } from '@/utils/API/company';
 import { useMutation, useQuery, useQueryClient } from 'react-query';
-import FullLoader from '@/components/FullLoader';
-import { set } from 'nprogress';
 
 const AllCompanies = () => {
+  const router = useRouter();
   const [sort, setSort] = useState(1);
-  const [onlyEligible, setOnlyEligible] = useState(false);
+  const [onlyEligible, setOnlyEligible] = useState(true);
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState('name');
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [companyData, setCompanyData] = useState([]);
   const queryClient = useQueryClient();
 
-  const handleSearch = ({
-    handleOnlyEligible = onlyEligible,
-    handleSort = sort,
-    handleSearch = search,
-    handleSortBy = sortBy,
-  }) => {
-    // queryClient.invalidateQueries('companies');
+  const searchMutation = useMutation(getPaginatedCompanies, {
+    onSuccess: (data) => {
+      setCompanyData(data.docs);
+    },
+  });
+
+  const handleSearch = () => {
     searchMutation.mutate({
-      onlyEligible: handleOnlyEligible,
-      sort: handleSort,
-      search: handleSearch,
-      sortBy: handleSortBy,
+      onlyEligible,
+      sort,
+      search,
+      sortBy,
       page: '1',
       limit: '10',
     });
   };
 
-  const {
-    data: companyData,
-    isLoading,
-    isError,
-    error,
-    isSuccess,
-    refetch,
-  } = useQuery({
-    queryKey: ['companies'],
-    queryFn: getPaginatedCompanies,
-    staleTime: 1000 * 60 * 60,
-  });
-
-  const searchMutation = useMutation(getPaginatedCompanies, {
-    onSuccess: (data) => {
-      queryClient.setQueryData(['companies'], data);
-    },
-  });
-
-  const router = useRouter();
-  if (isLoading) return <FullLoader />;
+  useEffect(() => {
+    handleSearch();
+  }, [onlyEligible, sort, sortBy, page, limit]);
 
   return (
     <>
@@ -103,7 +83,7 @@ const AllCompanies = () => {
           <IconButton
             sx={{
               backgroundColor: 'primary.main',
-              borderRadius: '4px',
+              borderRadius: '8px',
               marginRight: '4px',
             }}
             onClick={handleSearch}
@@ -121,9 +101,6 @@ const AllCompanies = () => {
               label="Sort By"
               onChange={(e) => {
                 setSortBy(e.target.value);
-                handleSearch({
-                  handleSortBy: e.target.value,
-                });
               }}
             >
               <MenuItem value={'name'}>Name</MenuItem>
@@ -138,9 +115,6 @@ const AllCompanies = () => {
                 color="primary"
                 onClick={() => {
                   setSort(sort === 1 ? -1 : 1);
-                  handleSearch({
-                    handleSort: sort === 1 ? -1 : 1,
-                  });
                 }}
               >
                 {sort === 1 ? <ArrowDropUpIcon /> : <ArrowDropDownIcon />}
@@ -155,9 +129,6 @@ const AllCompanies = () => {
                 checked={onlyEligible}
                 onChange={(e) => {
                   setOnlyEligible(e.target.checked);
-                  handleSearch({
-                    handleOnlyEligible: e.target.checked,
-                  });
                 }}
               />
             }

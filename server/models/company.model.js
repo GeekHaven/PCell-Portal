@@ -1,5 +1,6 @@
 import { Schema, model } from 'mongoose';
 import targetSchema from './target.schema.js';
+import aggregatePaginate from 'mongoose-aggregate-paginate-v2';
 
 const CompanySchema = Schema({
   name: {
@@ -32,5 +33,7 @@ const CompanySchema = Schema({
     default: false,
   },
 });
+
+CompanySchema.plugin(aggregatePaginate);
 
 export default model('Company', CompanySchema);

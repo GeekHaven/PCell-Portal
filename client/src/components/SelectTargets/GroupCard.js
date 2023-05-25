@@ -13,7 +13,13 @@ import { useMemo } from 'react';
 
 import CloseIcon from '@mui/icons-material/Close';
 
-export default function GroupCard({ target, setTarget, userGroups, index }) {
+export default function GroupCard({
+  target,
+  setTarget,
+  userGroups,
+  index,
+  disabled = false,
+}) {
   function deleteSelf() {
     setTarget((prev) => {
       let next = { ...prev };
@@ -58,7 +64,7 @@ export default function GroupCard({ target, setTarget, userGroups, index }) {
   return (
     <Paper elevation={4} className="group flex flex-col p-4 gap-3">
       <Typography variant="subtitle2" className="relative">
-        <em>Group #1</em>
+        <em>Group #{index + 1}</em>
         <IconButton
           color="error"
           size="small"
@@ -68,12 +74,15 @@ export default function GroupCard({ target, setTarget, userGroups, index }) {
           <CloseIcon fontSize="small" />
         </IconButton>
       </Typography>
-      <FormControl size="small" required>
+      <FormControl size="small" required disabled={disabled}>
         <InputLabel>Year</InputLabel>
         <Select
           value={target.groups[index]?.year}
           label="Year"
-          onChange={(event) => changeProp('year', event.target.value)}
+          onChange={(event) => {
+            changeProp('year', event.target.value);
+            changeProp('program', '');
+          }}
         >
           <MenuItem value="">
             <em>None</em>
@@ -91,7 +100,7 @@ export default function GroupCard({ target, setTarget, userGroups, index }) {
             ))}
         </Select>
       </FormControl>
-      <FormControl size="small" disabled={!optionsList} required>
+      <FormControl size="small" disabled={!optionsList || disabled} required>
         <InputLabel>Program</InputLabel>
         <Select
           value={target.groups[index]?.program}
@@ -116,7 +125,7 @@ export default function GroupCard({ target, setTarget, userGroups, index }) {
       </FormControl>
       <FormControl
         size="small"
-        disabled={!target.groups[index].program}
+        disabled={!target.groups[index].program || disabled}
         required
       >
         <InputLabel>Min CGPA</InputLabel>
@@ -137,7 +146,7 @@ export default function GroupCard({ target, setTarget, userGroups, index }) {
       </FormControl>
       <FormControl
         size="small"
-        disabled={!target.groups[index].program}
+        disabled={!target.groups[index].program || disabled}
         required
       >
         <InputLabel>Min Credits</InputLabel>

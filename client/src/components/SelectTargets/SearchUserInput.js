@@ -11,8 +11,10 @@ export default function SearchUserInput({
   value,
   setValue,
   label,
+  disabled = false,
 }) {
   const [open, setOpen] = React.useState(false);
+  const [names, setNames] = React.useState({});
   const [options, setOptions] = React.useState([]);
   const [inputValue, setInputValue] = React.useState('');
   const loading = open && options.length === 0;
@@ -27,13 +29,21 @@ export default function SearchUserInput({
 
   useEffect(() => {
     getUserList((opt) => {
-      setOptions(opt);
+      let rolls = [];
+      let names = {};
+      opt.forEach((o) => {
+        rolls.push(o.rollNumber);
+        names[o.rollNumber] = o.name;
+      });
+      setNames(names);
+      setOptions(rolls);
     });
   }, [inputValue, target]);
 
   return (
     <Autocomplete
       multiple
+      disabled={disabled}
       value={value}
       onOpen={() => {
         setOpen(true);
@@ -48,10 +58,9 @@ export default function SearchUserInput({
         setInputValue(newInputValue);
       }}
       options={options}
-      getOptionLabel={(option) => `${option.name}(${option.rollNumber})`}
+      getOptionLabel={(option) => `${names[option]}(${option})`}
       noOptionsText="No Users"
       filterSelectedOptions
-      isOptionEqualToValue={(o, v) => o.rollNumber === v.rollNumber}
       autoHighlight
       includeInputInList
       autoComplete

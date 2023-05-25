@@ -1,11 +1,4 @@
-import {
-  Paper,
-  Container,
-  Typography,
-  Box,
-  Button,
-  ToggleButton,
-} from '@mui/material';
+import { Paper, Container, Typography, Box, Button } from '@mui/material';
 import { useQuery } from 'react-query';
 import AddIcon from '@mui/icons-material/Add';
 import { useState, useCallback } from 'react';
@@ -15,14 +8,8 @@ import SearchInput from './SearchUserInput';
 import GroupCard from './GroupCard';
 import { getUserGroups } from '@/utils/API/common';
 import FullLoader from '../FullLoader';
-import CreateIcon from '@mui/icons-material/Create';
-import DoneIcon from '@mui/icons-material/Done';
-export default function SelectTargets({
-  target,
-  setTarget,
-  targetsInactive,
-  edit,
-}) {
+
+export default function SelectTargets({ target, setTarget, disabled = false }) {
   let setInclude = (newValue) => {
     setTarget((prev) => {
       let next = { ...prev, include: newValue };
@@ -74,7 +61,7 @@ export default function SelectTargets({
   function addGroup() {
     if (
       target.groups.length > 0 &&
-      Object.values(target.groups[target.groups.length - 1]).includes('')
+      target.groups.some((e) => Object.values(e).some((e) => !e))
     )
       return;
 
@@ -94,67 +81,57 @@ export default function SelectTargets({
       return next;
     });
   }
+  console.log();
 
   if (isLoading) return <FullLoader />;
   return (
     <Container maxWidth="xl" className="m-0 p-0">
       <Paper className="p-4 flex flex-col gap-2">
-        <Typography variant="subtitle1">Include Groups</Typography>
-        <Box
-          elevation={2}
-          className="py-2 mt-1 grid gap-2 grid-cols-1 md:auto-rows-fr sm:grid-cols-[repeat(auto-fill,minmax(240px,1fr))]"
-        >
-          {target.groups.map((_, i) => (
-            <GroupCard
-              target={target}
-              setTarget={setTarget}
-              userGroups={userGroups}
-              key={i}
-              index={i}
-            />
-          ))}
-          <Button
-            variant="outlined"
-            className="border-dashed"
-            onClick={addGroup}
-          >
-            <AddIcon fontSize="large" />
-          </Button>
-        </Box>
-        <Container className="flex flex-nowrap justify-around items-center gap-2 ">
-          <SearchInput
-            target={target}
-            value={target.include}
-            setValue={setInclude}
-            queryFn={searchIncludeUser}
-            label="Include Users"
-          />
-          <ToggleButton
-            value="check"
-            selected={targetsInactive.include}
-            onChange={() => {}}
-            className="p-3.5"
-          >
-            {targetsInactive.include ? <CreateIcon /> : <DoneIcon />}
-          </ToggleButton>
-        </Container>
-        <Container className="flex flex-nowrap justify-around items-center gap-2 ">
-          <SearchInput
-            target={target}
-            value={target.exclude}
-            setValue={setExclude}
-            queryFn={searchExcludeUser}
-            label="Exclude Users"
-          />
-          <ToggleButton
-            value="check"
-            selected={targetsInactive.exclude}
-            onChange={() => {}}
-            className="p-3.5"
-          >
-            {targetsInactive.exclude ? <CreateIcon /> : <DoneIcon />}
-          </ToggleButton>
-        </Container>
+        {disabled && target.groups.length === 0 ? null : (
+          <>
+            <Typography variant="subtitle1">Include Groups</Typography>
+            <Box
+              elevation={2}
+              className="py-2 mt-1 grid gap-2 grid-cols-1 md:auto-rows-fr sm:grid-cols-[repeat(auto-fill,minmax(240px,1fr))]"
+            >
+              {target.groups.map((_, i) => (
+                <GroupCard
+                  target={target}
+                  setTarget={setTarget}
+                  userGroups={userGroups}
+                  key={i}
+                  index={i}
+                  disabled={disabled}
+                />
+              ))}
+              {!disabled && (
+                <Button
+                  variant="outlined"
+                  className="border-dashed"
+                  onClick={addGroup}
+                >
+                  <AddIcon fontSize="large" />
+                </Button>
+              )}
+            </Box>
+          </>
+        )}
+        <SearchInput
+          target={target}
+          value={target.include}
+          setValue={setInclude}
+          queryFn={searchIncludeUser}
+          label="Include Users"
+          disabled={disabled}
+        />
+        <SearchInput
+          target={target}
+          value={target.exclude}
+          setValue={setExclude}
+          queryFn={searchExcludeUser}
+          label="Exclude Users"
+          disabled={disabled}
+        />
       </Paper>
     </Container>
   );

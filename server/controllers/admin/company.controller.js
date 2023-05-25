@@ -1,4 +1,4 @@
-import CompanyModel from '../../models/company.model.js';
+import Company from '../../models/company.model.js';
 import companyUserRelationModel from '../../models/relations/companyUser.relation.model.js';
 import { uploadImage, deleteImage } from '../../utils/image.js';
 import {
@@ -12,11 +12,11 @@ export async function addCompany(req, res) {
   const { name, targets, techStack } = req.body;
   if (!name || !req.file) return response_400(res, 'Invalid request');
   try {
-    if (await CompanyModel.exists({ name }))
+    if (await Company.exists({ name }))
       return response_400(res, 'Company already exists');
     const logo = await uploadImage(req.file);
     if (!logo) return response_400(res, 'Invalid image');
-    const company = await CompanyModel.create({
+    const company = await Company.create({
       name,
       logo,
       targets: JSON.parse(targets),
@@ -40,7 +40,7 @@ export async function updateCompany(req, res) {
       if (!logoUrl) return response_400(res, 'Invalid image');
       logo = logoUrl;
     }
-    const company = await CompanyModel.findByIdAndUpdate(companyId, {
+    const company = await Company.findByIdAndUpdate(companyId, {
       name,
       targets,
       techStack,
@@ -55,7 +55,7 @@ export async function updateCompany(req, res) {
 export async function deleteCompany(req, res) {
   const companyId = req.params.id;
   try {
-    const company = await CompanyModel.findByIdAndDelete(companyId);
+    const company = await Company.findByIdAndDelete(companyId);
     if (!company) return response_400(res, 'Company not found');
     await deleteImage(company.logo);
     return response_200(res, 'OK');
@@ -110,3 +110,48 @@ export async function searchByCompanyStatus(req, res) {
     return response_500(res, err);
   }
 }
+
+export const getPaginatedCompanies = async (req, res) => {
+  const { q } = req.query;
+  let { sort, sortBy, page, limit } = req.query;
+
+  if (!page || !limit || !sort || !sortBy) {
+    return response_400(res, 'Invalid request');
+  }
+  //changing types to required types
+  page = parseInt(page);
+  limit = parseInt(limit);
+  if (sortBy === 'status') sortBy = 'priority';
+  if (sortBy === 'isEligible') sort = sort * -1; // to make true first
+  sort = parseInt(sort);
+
+  try {
+    let companyListAggregate = Company.aggregate([
+      {
+        $match: {
+          name: { $regex: new RegExp(q), $options: 'i' },
+        },
+      },
+      {
+        $sort: {
+          [sortBy]: sort,
+        },
+      },
+      {
+        $project: {
+          name: 1,
+          logo: 1,
+          _id: 1,
+          currentStatus: 1,
+        },
+      },
+    ]);
+    let companyList = await Company.aggregatePaginate(companyListAggregate, {
+      page,
+      limit,
+    });
+    return response_200(res, 'OK', companyList);
+  } catch (err) {
+    return response_500(res, err);
+  }
+};

@@ -227,6 +227,7 @@ const Dashboard = () => {
               <ToggleButton
                 value="check"
                 selected={mobileActive}
+                color={mobileActive ? 'success' : undefined}
                 onChange={() => {
                   setMobileActive((mobile) => {
                     if (mobile) {
@@ -256,6 +257,7 @@ const Dashboard = () => {
               <ToggleButton
                 value="check"
                 selected={resumeLinkActive}
+                color={resumeLinkActive ? 'success' : undefined}
                 onChange={() => {
                   setResumeLinkActive((resumeLink) => {
                     if (resumeLink) {
