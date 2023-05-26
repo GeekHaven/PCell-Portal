@@ -1,138 +1,130 @@
 import React from 'react';
-import { useState } from 'react';
-import { TextField, Container, Box, ToggleButton } from '@mui/material';
-import LoadingButton from '@mui/lab/LoadingButton';
-import { useRouter } from 'next/router';
-import { useSnackbar } from 'notistack';
-import FileUpload from '@/components/FileUpload';
-import SelectTargets from '@/components/SelectTargets';
-import { addCompany } from '@/utils/API/admin/company';
-import { useQuery, useMutation, useQueryClient } from 'react-query';
-import CreateIcon from '@mui/icons-material/Create';
-import DoneIcon from '@mui/icons-material/Done';
-const EditCompany = () => {
-  let queryClient = useQueryClient();
-  const router = useRouter(),
-    { enqueueSnackbar } = useSnackbar();
-  const [techStack, setTechStack] = useState(''),
-    [companyName, setCompanyName] = useState(''),
-    [fieldsInactive, setFieldsInactive] = useState({
-      companyName: true,
-      techStack: true,
-      imgName: true,
-      targets: {
-        groups: true,
-        include: true,
-        exclude: true,
-      },
-    }),
-    [files, setFiles] = useState([]),
-    [target, setTarget] = useState({
-      groups: [],
-      include: [],
-      exclude: [],
-    });
+import {
+  Box,
+  Typography,
+  Chip,
+  Divider,
+  Paper,
+  Button,
+  Container,
+} from '@mui/material';
+import FiberManualRecordTwoToneIcon from '@mui/icons-material/FiberManualRecordTwoTone';
+import DrawerHeader from '@/components/DrawerHeader';
 
-  let addCompanyMutation = useMutation(addCompany, {
-    onSuccess: (data) => {
-      enqueueSnackbar('Company added successfully', { variant: 'success' });
-      router.push('/admin/company');
-    },
-    onError: (err) => {
-      enqueueSnackbar(err, { variant: 'error' });
-    },
-  });
-
-  async function onSubmit(e) {
-    e.preventDefault();
-    addCompanyMutation.mutate({
-      companyName,
-      techStack,
-      files,
-      target,
-    });
-  }
-
+export default function IndividualCompanyAdmin({ params }) {
+  let companyData = {
+    name: 'Google',
+    logo: 'https://w7.pngwing.com/pngs/249/19/png-transparent-google-logo-g-suite-google-guava-google-plus-company-text-logo.png',
+    techStack: 'React;Node;MongoDB;Express',
+    userStatus: 'Registered',
+  };
   return (
     <>
-      <Container
-        component="form"
-        className="flex flex-col items-center gap-4"
-        maxWidth="xl"
-        onSubmit={onSubmit}
+      <Box
+        className="flex flex-row items-start justify-start gap-4"
+        fullWidth
+        sx={{
+          padding: 0,
+        }}
       >
-        <div className="flex flex-row w-full flex-wrap gap-4 justify-between">
-          <Box
-            className="h-40 sm:w-40 w-full sm:m-0 "
-            sx={{
-              padding: 0,
-            }}
-          >
-            <FileUpload
-              files={files}
-              setFiles={setFiles}
-              disabled={fieldsInactive.imgName}
-            />
+        <div className="flex flex-row w-full sm:flex-nowrap flex-wrap gap-4 justify-center sm:justify-start">
+          <div className="flex sm:flex-col flex-row gap-2 justify-start items-center">
+            <Box
+              className="h-40 sm:w-40 w-full sm:m-0"
+              sx={{
+                padding: 0,
+              }}
+            >
+              <img
+                src={companyData.logo}
+                className="object-contain w-full h-full rounded-md"
+                alt="Google"
+              />
+            </Box>
+            <Box className="flex justify-evenly flex-col">
+              <Typography
+                className="text-2xl font-semibold text-center mb-2"
+                color={'primary'}
+              >
+                {companyData.name}
+              </Typography>
+              <Chip
+                label={'Registration Closed'}
+                variant="outlined"
+                color="warning"
+                className="ml-2"
+                icon={
+                  <FiberManualRecordTwoToneIcon
+                    sx={{
+                      fontSize: '1rem',
+                    }}
+                  />
+                }
+              />
+            </Box>
+          </div>
+          <Divider
+            orientation="vertical"
+            flexItem
+            className="hidden sm:block"
+          />
+          <Box className="flex-grow">
+            <Divider fullWidth className="block sm:hidden mb-2" />
+            <Typography
+              className="text-2xl font-semibold mb-2"
+              color={'primary'}
+            >
+              Tech Stack :
+            </Typography>
+            <Box className="flex flex-wrap gap-2 mb-2">
+              {companyData.techStack.split(';').map((tech) => (
+                <Chip
+                  label={tech}
+                  variant="outlined"
+                  sx={{
+                    borderColor: 'primary.main',
+                    color: 'primary.secondary',
+                  }}
+                  key={tech}
+                />
+              ))}
+            </Box>
+            <Divider fullWidth className="my-4" />
+            <Typography
+              className="text-xl font-semibold mt-2 ml-2"
+              color={'primary'}
+            >
+              Application Status :
+              <Chip
+                label={companyData.userStatus || 'Not Registered'}
+                sx={{
+                  textTransform: 'capitalize',
+                }}
+                variant="outlined"
+                color={
+                  companyData.userStatus === 'Registered'
+                    ? 'primary'
+                    : companyData.userStatus === 'Shortlisted'
+                    ? 'info'
+                    : companyData.userStatus === 'Accepted'
+                    ? 'success'
+                    : companyData.userStatus === 'Rejected'
+                    ? 'error'
+                    : 'warning'
+                }
+                className="ml-2"
+                icon={
+                  <FiberManualRecordTwoToneIcon
+                    sx={{
+                      fontSize: '1rem',
+                    }}
+                  />
+                }
+              />
+            </Typography>
           </Box>
-          <Container
-            maxWidth="xl"
-            className="w-fit flex-grow flex flex-nowrap justify-around items-center gap-4 flex-col m-0 p-0"
-          >
-            <Container className="flex flex-nowrap justify-around items-center gap-2 px-0">
-              <TextField
-                label="Company Name"
-                required
-                placeholder="Enter the name of Company"
-                defaultValue={companyName}
-                onChange={(e) => setCompanyName(e.target.value)}
-                onFocus={(e) => setCompanyName(e.target.value)}
-                disabled={fieldsInactive.companyName}
-                fullWidth
-              />
-              <ToggleButton
-                value="check"
-                selected={fieldsInactive.companyName}
-                onChange={() => {}}
-                className="p-3.5"
-              >
-                {fieldsInactive.companyName ? <CreateIcon /> : <DoneIcon />}
-              </ToggleButton>
-            </Container>
-            <Container className="flex flex-nowrap justify-around items-center gap-2 px-0">
-              <TextField
-                label="Tech Stack"
-                placeholder="Enter the stacks used by the company"
-                defaultValue={techStack}
-                onChange={(e) => setTechStack(e.target.value)}
-                onFocus={(e) => setTechStack(e.target.value)}
-                disabled={fieldsInactive.techStack}
-                fullWidth
-              />
-              <ToggleButton
-                value="check"
-                selected={fieldsInactive.techStack}
-                onChange={() => {}}
-                className="p-3.5"
-              >
-                {fieldsInactive.techStack ? <CreateIcon /> : <DoneIcon />}
-              </ToggleButton>
-            </Container>
-          </Container>
         </div>
-        <SelectTargets
-          target={target}
-          setTarget={setTarget}
-          targetsInactive={fieldsInactive.targets}
-          edit={true}
-        />
-        <Container maxWidth="xl" className="flex justify-end p-0 m-0">
-          <LoadingButton type="submit" variant="contained">
-            Add Company
-          </LoadingButton>
-        </Container>
-      </Container>
+      </Box>
     </>
   );
-};
-
-export default EditCompany;
+}

@@ -24,7 +24,7 @@ import Tooltip from '@mui/material/Tooltip';
 import SearchIcon from '@mui/icons-material/Search';
 import { useState, useEffect } from 'react';
 import { getPaginatedCompanies } from '@/utils/API/company';
-import { useMutation, useQuery, useQueryClient } from 'react-query';
+import { useMutation } from 'react-query';
 
 const AllCompanies = () => {
   const router = useRouter();
@@ -35,7 +35,6 @@ const AllCompanies = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [companyData, setCompanyData] = useState([]);
-  const queryClient = useQueryClient();
 
   const searchMutation = useMutation(getPaginatedCompanies, {
     onSuccess: (data) => {

@@ -9,7 +9,7 @@ import {
 } from '../../utils/responseCodes.js';
 
 export async function addCompany(req, res) {
-  const { name, targets, techStack } = req.body;
+  const { name, targets, techStack, hidden } = req.body;
   if (!name || !req.file) return response_400(res, 'Invalid request');
   try {
     if (await Company.exists({ name }))
@@ -21,6 +21,7 @@ export async function addCompany(req, res) {
       logo,
       targets: JSON.parse(targets),
       techStack,
+      hidden,
     });
     delete company._id;
     delete company.__v;

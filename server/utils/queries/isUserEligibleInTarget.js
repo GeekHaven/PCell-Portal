@@ -1,29 +1,30 @@
-export const isUserEligibleInTarget = (user, targetsFieldName = 'targets') => {
+export const isUserEligibleInTarget = (user) => {
   return {
     $and: [
-      { $not: { $in: [user.rollNumber, '$' + targetsFieldName + '.exclude'] } },
+      { $not: { $in: [user.rollNumber, '$targets.exclude'] } },
       {
         $or: [
-          { $in: [user.rollNumber, '$' + targetsFieldName + '.include'] },
+          { $in: [user.rollNumber, '$targets.include'] },
           {
-            $and: [
-              {
-                $in: [user.program, '$' + targetsFieldName + '.groups.program'],
+            $let: {
+              vars: {
+                tg: {
+                  $filter: {
+                    input: '$targets.groups',
+                    as: 'group',
+                    cond: {
+                      $and: [
+                        { $eq: ['$$group.year', user.admissionYear] },
+                        { $eq: ['$$group.program', user.program] },
+                        { $lte: ['$$group.minCredits', user.completedCredits] },
+                        { $lte: ['$$group.minCGPA', user.cgpa] },
+                      ],
+                    },
+                  },
+                },
               },
-              {
-                $in: [
-                  user.admissionYear,
-                  '$' + targetsFieldName + '.groups.year',
-                ],
-              },
-              { $gte: [user.cgpa, '$' + targetsFieldName + '.groups.minCGPA'] },
-              {
-                $gte: [
-                  user.completedCredits,
-                  '$' + targetsFieldName + '.groups.minCredits',
-                ],
-              },
-            ],
+              in: { $gt: [{ $size: '$$tg' }, 0] },
+            },
           },
         ],
       },

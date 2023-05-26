@@ -65,14 +65,16 @@ export default function GroupCard({
     <Paper elevation={4} className="group flex flex-col p-4 gap-3">
       <Typography variant="subtitle2" className="relative">
         <em>Group #{index + 1}</em>
-        <IconButton
-          color="error"
-          size="small"
-          className="md:opacity-0 group-hover:opacity-100 absolute right-0 top-0 mt-[-4px] transition-opacity"
-          onClick={deleteSelf}
-        >
-          <CloseIcon fontSize="small" />
-        </IconButton>
+        {!disabled && (
+          <IconButton
+            color="error"
+            size="small"
+            className="md:opacity-0 group-hover:opacity-100 absolute right-0 top-0 mt-[-4px] transition-opacity"
+            onClick={deleteSelf}
+          >
+            <CloseIcon fontSize="small" />
+          </IconButton>
+        )}
       </Typography>
       <FormControl size="small" required disabled={disabled}>
         <InputLabel>Year</InputLabel>
