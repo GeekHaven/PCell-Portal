@@ -124,7 +124,7 @@ const NewNotification = () => {
           </Container>
         </div>
 
-        <Container className="content w-full px-0 py-4 mx-0">
+        <Container className="admin-content w-full px-0 py-4 mx-0">
           <Editor
             apiKey="ah9w9dtmhnrt5yhzobg11p0jj9sdldd1x64lj89aipllnqn6"
             onInit={(evt, editor) => (editorRef.current = editor)}
