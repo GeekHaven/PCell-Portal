@@ -1,11 +1,18 @@
 import { post, get } from '../request';
 
-export async function addCompany({ companyName, techStack, files, target }) {
+export async function addCompany({
+  companyName,
+  techStack,
+  files,
+  target,
+  hidden,
+}) {
   let logo = await (await fetch(files[0].src)).blob();
   let body = new FormData();
   body.append('name', companyName);
   body.append('techStack', techStack);
   body.append('logo', logo);
+  body.append('hidden', hidden);
   body.append('targets', JSON.stringify(target));
   let res = await post('/admin/company/new', body, null, true);
   if (res.status === 201) {

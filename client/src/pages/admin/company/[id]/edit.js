@@ -91,21 +91,7 @@ const NewCompany = () => {
           </Container>
         </div>
         <SelectTargets target={target} setTarget={setTarget} />
-        {/* <Container
-          maxWidth="xl"
-          className="flex justify-start p-0 m-0"
-        ></Container> */}
-        <Container maxWidth="xl" className="flex justify-between p-0 m-0">
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={hidden}
-                onChange={(e) => setHidden(e.target.checked)}
-                name="hidden"
-              />
-            }
-            label="Create Hidden"
-          />
+        <Container maxWidth="xl" className="flex justify-end p-0 m-0">
           <LoadingButton
             type="submit"
             variant="contained"
