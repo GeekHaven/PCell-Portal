@@ -40,7 +40,7 @@ const dashboardRoutes = [
   },
   {
     title: 'Companies',
-    baseUrl: '/company',
+    baseUrl: '/dashboard/company',
     items: [
       {
         path: '',

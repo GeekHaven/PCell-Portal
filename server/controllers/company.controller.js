@@ -64,7 +64,6 @@ export const getPaginatedCompanies = async (req, res) => {
       page,
       limit,
     });
-    console.log(companyList);
     return response_200(res, 'OK', companyList);
   } catch (err) {
     return response_500(res, err);
