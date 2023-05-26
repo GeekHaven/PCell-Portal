@@ -51,7 +51,7 @@ export default function Navbar({ open, setOpen, noSidebarMargin }) {
         backdropFilter: 'blur(8px)',
       }}
     >
-      <Toolbar className={noSidebarMargin ? undefined : 'md:ml-[200px]'}>
+      <Toolbar className={noSidebarMargin ? undefined : 'md:ml-[240px]'}>
         <Container
           maxWidth="xl"
           className="flex flex-row justify-between px-0 items-center"
