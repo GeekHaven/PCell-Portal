@@ -85,6 +85,22 @@ const adminRoutes = [
     ],
   },
   {
+    title: 'Notifications',
+    baseUrl: '/admin/notification/',
+    items: [
+      {
+        path: '',
+        name: 'All Notifications',
+        Icon: StoreIcon,
+      },
+      {
+        path: '/new',
+        name: 'New Notification',
+        Icon: AddBusinessIcon,
+      },
+    ],
+  },
+  {
     // title: 'Users',
     baseUrl: '/admin/users',
     items: [
@@ -97,7 +113,7 @@ const adminRoutes = [
   },
 ];
 
-const drawerWidth = 200;
+const drawerWidth = 240;
 
 function ResponsiveDrawer(props) {
   const router = useRouter();

@@ -93,7 +93,7 @@ function AppContentWrapper({ Component, pageProps }) {
                   flexGrow: 1,
                   p: 3,
                 },
-                className: 'w-full md:ml-[200px]',
+                className: 'w-full md:ml-[240px]',
               },
               <>
                 {!Component.isFullWidth && !Component.hideNavbar && (

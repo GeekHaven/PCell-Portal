@@ -23,7 +23,7 @@ const IndividualCompany = ({ params, companyData }) => {
           flexGrow: 1,
           p: 3,
         }}
-        className="w-full md:ml-[200px]"
+        className="w-full md:ml-[240px]"
       >
         <DrawerHeader />
         <Box
