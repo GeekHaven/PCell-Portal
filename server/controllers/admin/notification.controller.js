@@ -58,7 +58,20 @@ export async function getAllNotifications(req, res) {
     }
 }
 
-export async function getNotificationById(req, res) {
+export async function getAllUserNotifications(req, res) {
+    try{
+        const { id } = req.params;
+        if(!id) return response_400(res, 'Invalid request');
+        const user = await User.findById(id).populate('notifications');
+        if(!user) return response_400(res, 'User Doesnot exist');
+        return response_200(res, user.notifications);
+    }
+    catch(error){
+        return response_500(res, error);
+    }
+}
+
+export async function getNotificationByIdAdmin(req, res) {
     try{
         const { id } = req.params;
         const notification = await Notification.findById(id).populate('publicComments').populate('privateComments');
@@ -69,16 +82,33 @@ export async function getNotificationById(req, res) {
     }
 }
 
-export async function getAllUserNotifications(req, res) {
-    try{
-        const { id } = req.params;
-        const user = await User.findById(id).populate('notifications').populate('notifications.publicComments');
-        return response_200(res, user.notifications);
-    }
-    catch(error){
-        return response_500(res, error);
-    }
+export async function getNotificationByIdUser(req, res) {
+  try {
+    const { id } = req.params;
+    const notification = await Notification.findById(id)
+      .populate('publicComments')
+        .populate('privateComments');
+    
+    
+    
+    notification.status = 'read';
+    if(!notification) return response_400(res, 'Invalid request');
+    return response_200(res, notification);
+  } catch (error) {
+    return response_500(res, error);
+  }
 }
+
+// export async function getAllUserNotifications(req, res) {
+//     try{
+//         const { id } = req.params;
+//         const user = await User.findById(id).populate('notifications').populate('notifications.publicComments');
+//         return response_200(res, user.notifications);
+//     }
+//     catch(error){
+//         return response_500(res, error);
+//     }
+// }
 
 export async function addPublicComment(req, res) {
     try{
