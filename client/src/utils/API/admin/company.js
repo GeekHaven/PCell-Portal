@@ -21,6 +21,12 @@ export async function addCompany({
   return Promise.reject(res.data.error);
 }
 
+export async function getAllCompanies() {
+  let res = await get('/admin/company/all');
+  if (res.status === 200) return Promise.resolve(res.data.data);
+  return Promise.reject(res.data.message);
+}
+
 export async function getPaginatedCompanies({
   sort = 1,
   search = '',

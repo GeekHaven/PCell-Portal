@@ -156,3 +156,13 @@ export const getPaginatedCompanies = async (req, res) => {
     return response_500(res, err);
   }
 };
+
+export const getAllCompanies = async (req, res) => {
+  try {
+    const companyList = await Company.find();
+    return response_200(res, 'OK', companyList);
+  } catch (err) {
+    console.log(err);
+    return response_500(res, err);
+  }
+}

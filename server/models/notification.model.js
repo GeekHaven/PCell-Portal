@@ -1,4 +1,6 @@
 import { Schema, model } from 'mongoose';
+import targetSchema from './target.schema.js';
+
 const NotificationSchema = Schema(
   {
     title: {
@@ -7,20 +9,39 @@ const NotificationSchema = Schema(
     },
     description: {
       type: String,
+      required: false,
     },
-    createdBy: {
+    company: {
       type: Schema.Types.ObjectId,
-      ref: 'User',
+      ref: 'Company',
       required: true,
     },
-    bannerImg: {
-      type: String,
-    },
-    target: {
+    comments: {
       type: String,
       required: true,
     },
-    tags: [String],
+    publicComments: {
+      type: Schema.Types.ObjectId,
+      ref: 'Comment',
+      required: false,
+    },
+    privateComments: {
+      type: Schema.Types.ObjectId,
+      ref: 'Comment',
+      required: false,
+    },
+    content: {
+      type: String,
+      required: false,
+    },
+    targets: {
+      type: targetSchema,
+    },
+    status: {
+      type: String,
+      enum: ['read', 'unread'],
+      default: 'active'
+    }
   },
   { timestamps: true }
 );

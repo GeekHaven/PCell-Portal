@@ -1,5 +1,5 @@
 import React from 'react';
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import {
   TextField,
   Container,
@@ -19,7 +19,8 @@ import { useMutation } from 'react-query';
 
 import FileUpload from '@/components/FileUpload';
 import SelectTargets from '@/components/SelectTargets';
-import { addCompany } from '@/utils/API/admin/company';
+import { addCompany, getAllCompanies } from '@/utils/API/admin/company';
+import { addNotification } from '@/utils/API/admin/notification';
 
 const NewNotification = () => {
   const editorRef = useRef(null);
@@ -27,44 +28,58 @@ const NewNotification = () => {
     { enqueueSnackbar } = useSnackbar();
   const [title, setTitle] = useState(''),
     [description, setDescription] = useState(''),
-    [body, setBody] = useState(''),
-    [companyName, setCompanyName] = useState(''),
+    [content, setContent] = useState(''),
+    [companyNames, setCompanyNames] = useState(''),
+    [companyName, setCompanyName] = useState('none'),
+    [comments, setComments] = useState(true),
     [target, setTarget] = useState({
       groups: [],
       include: [],
       exclude: [],
     });
 
-  let addCompanyMutation = useMutation(addCompany, {
-    onSuccess: (data) => {
-      enqueueSnackbar('Company added successfully', { variant: 'success' });
-      router.push('/admin/company');
-    },
-    onError: (err) => {
-      enqueueSnackbar(err, { variant: 'error' });
-    },
-  });
-
-  async function onSubmit(e) {
-    e.preventDefault();
-    addCompanyMutation.mutate({
-      companyName,
-      techStack,
-      files,
-      target,
+    const AllCompanies = useMutation(getAllCompanies, {
+      onSuccess: (data) => {
+        setCompanyNames(data);
+      },
     });
-  }
+
+    useEffect(() => {
+      AllCompanies.mutate();
+    }, []);
+
+    let addNotificationMutation = useMutation(addNotification, {
+      onSuccess: (data) => {
+        enqueueSnackbar('Company added successfully', { variant: 'success' });
+        router.push('/admin/company');
+      },
+      onError: (err) => {
+        enqueueSnackbar(err, { variant: 'error' });
+      },
+    });
+
+    async function onSubmit(e) {
+      e.preventDefault();
+      addNotificationMutation.mutate({
+        title,
+        description,
+        companyName,
+        comments : !comments,
+        content,
+        target,
+      });
+    }
 
 
-  const handleChange = (event) => {
-    setCompanyName(event.target.value);
-  };
 
   const log = () => {
     if (editorRef.current) {
-      console.log(editorRef.current.getContent());
       setContent(editorRef.current.getContent());
     }
+  };
+
+  const handleChange = (event) => {
+    setCompanyName(event.target.value);
   };
 
 
@@ -113,19 +128,28 @@ const NewNotification = () => {
                 onChange={handleChange}
               >
                 <MenuItem value={'none'}>None</MenuItem>
-                <MenuItem value={'google'}>Google</MenuItem>
-                <MenuItem value={'microsoft'}>Microsoft</MenuItem>
-                <MenuItem value={'linkedin'}>LinkedIn</MenuItem>
+                {companyNames &&
+                  companyNames.map((company) => (
+                    <MenuItem value={company.name}>{company.name}</MenuItem>
+                  ))}
               </Select>
             </Box>
             <Box className="flex justify-between items-center">
-              <FormControlLabel control={<Checkbox />} label="Allow Comments" />
+              <FormControlLabel
+                control={<Checkbox />}
+                label="Allow Comments"
+                value={comments}
+                onChange={() => {
+                  setComments(!comments);
+                }}
+              />
             </Box>
           </Container>
         </div>
 
         <Container className="admin-content w-full px-0 py-4 mx-0">
           <Editor
+            onChange={log}
             apiKey="ah9w9dtmhnrt5yhzobg11p0jj9sdldd1x64lj89aipllnqn6"
             onInit={(evt, editor) => (editorRef.current = editor)}
             initialValue="<p>Enter the Body of the Notification here. You can style it as you wish.</p>"
@@ -155,11 +179,7 @@ const NewNotification = () => {
         </Container>
 
         <SelectTargets target={target} setTarget={setTarget} />
-        <Container
-          maxWidth="xl"
-          className="flex justify-end p-0 m-0"
-          onClick={log}
-        >
+        <Container maxWidth="xl" className="flex justify-end p-0 m-0">
           <LoadingButton type="submit" variant="contained">
             Send Notification
           </LoadingButton>
