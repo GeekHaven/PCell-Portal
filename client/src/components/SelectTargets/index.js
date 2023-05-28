@@ -28,11 +28,11 @@ export default function SelectTargets({ target, setTarget, disabled = false }) {
     async function (value) {
       let {
         data: { data: userlist },
-      } = await get(
-        `/admin/user/getUsers?q=${value}&exclude=${target.exclude.join(
-          ';'
-        )}&include=${target.include.join(';')}`
-      );
+      } = await get(`/admin/user/getUsers`, null, {
+        q: value,
+        exclude: target.exclude.join(';'),
+        include: target.include.join(';'),
+      });
       return userlist;
     },
     [target]
@@ -42,11 +42,11 @@ export default function SelectTargets({ target, setTarget, disabled = false }) {
     async function (value) {
       let {
         data: { data: userlist },
-      } = await get(
-        `/admin/user/getUsers?q=${value}&exclude=${target.include.join(
-          ';'
-        )}&include=${target.exclude.join(';')}`
-      );
+      } = await get(`/admin/user/getUsers`, null, {
+        q: value,
+        exclude: target.include.join(';'),
+        include: target.exclude.join(';'),
+      });
       return userlist;
     },
     [target]
