@@ -8,6 +8,7 @@ import {
   FormControlLabel,
   InputLabel,
   MenuItem,
+  FormControl,
 } from '@mui/material';
 import Select from '@mui/material/Select';
 import { Editor } from '@tinymce/tinymce-react';
@@ -112,24 +113,27 @@ const NewPost = () => {
             />
           </Container>
 
-          <Container className="justify-start px-1 inline sm:flex">
+          <Container
+            maxWidth="xl"
+            className="justify-start px-1 inline sm:flex"
+          >
             <Box className="flex justify-between items-center mr-5">
-              <InputLabel id="demo-simple-select-label" className="mr-5">
-                Choose Company
-              </InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                value={companyName}
-                label="Company"
-                onChange={handleChange}
-              >
-                <MenuItem value={'none'}>None</MenuItem>
-                {companyNames &&
-                  companyNames.map((company) => (
-                    <MenuItem value={company.name}>{company.name}</MenuItem>
-                  ))}
-              </Select>
+              <FormControl className="w-40">
+                <InputLabel className="mr-5">Choose Company</InputLabel>
+                <Select
+                  value={companyName}
+                  label="Choose Company"
+                  onChange={handleChange}
+                >
+                  <MenuItem value={'none'}>None</MenuItem>
+                  {companyNames &&
+                    companyNames.map((company, i) => (
+                      <MenuItem value={company.name} key={i}>
+                        {company.name}
+                      </MenuItem>
+                    ))}
+                </Select>
+              </FormControl>
             </Box>
             <Box className="flex justify-between items-center">
               <FormControlLabel
@@ -144,31 +148,33 @@ const NewPost = () => {
           </Container>
         </div>
 
-        <Container className="admin-content w-full px-0 py-4 mx-0">
+        <Container
+          maxWidth="xl"
+          className="admin-content w-full px-0 py-4 mx-0"
+        >
           <Editor
             onChange={log}
             apiKey="ah9w9dtmhnrt5yhzobg11p0jj9sdldd1x64lj89aipllnqn6"
             onInit={(evt, editor) => (editorRef.current = editor)}
             initialValue="<p>Enter the Body of the Notification here. You can style it as you wish.</p>"
             init={{
-              height: '100vh',
+              height: '90vmin',
               toolbar_sticky: true,
+              toolbar_sticky_offset: 64,
               selector: 'textarea',
               skin: 'oxide-dark',
               content_css: 'dark',
-
               plugins: [
                 'autolink lists advlist link image charmap print preview anchor',
                 'searchreplace visualblocks code fullscreen',
                 'insertdatetime media table paste code help wordcount quickbars',
               ],
-              menubar: 'file edit view insert format tools table tc help',
+              menubar: false,
               toolbar: [
-                'undo redo | styles| bold italic backcolor | ' +
+                'styles| bold italic backcolor | ' +
                   'alignleft aligncenter alignright alignjustify | ' +
                   'bullist numlist outdent indent | removeformat | code | help',
               ],
-
               content_style:
                 'body { font-family:Helvetica,Arial,sans-serif; font-size:17px }',
             }}
