@@ -26,12 +26,12 @@ export default function SelectTargets({ target, setTarget, disabled = false }) {
 
   let searchIncludeUser = useCallback(
     async function (value) {
-      let exclude = [];
-      target.exclude.forEach((e) => exclude.push(e.rollNumber));
       let {
         data: { data: userlist },
       } = await get(
-        `/admin/user/getUsers?q=${value}&exclude=${exclude.join(';')}`
+        `/admin/user/getUsers?q=${value}&exclude=${target.exclude.join(
+          ';'
+        )}&include=${target.include.join(';')}`
       );
       return userlist;
     },
@@ -40,12 +40,12 @@ export default function SelectTargets({ target, setTarget, disabled = false }) {
 
   let searchExcludeUser = useCallback(
     async function (value) {
-      let exclude = [];
-      target.include.forEach((e) => exclude.push(e.rollNumber));
       let {
         data: { data: userlist },
       } = await get(
-        `/admin/user/getUsers?q=${value}&exclude=${exclude.join(';')}`
+        `/admin/user/getUsers?q=${value}&exclude=${target.include.join(
+          ';'
+        )}&include=${target.exclude.join(';')}`
       );
       return userlist;
     },

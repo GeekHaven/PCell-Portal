@@ -33,6 +33,7 @@
     "react-dropzone": "^14.2.3",
     "react-icons": "^4.8.0",
     "react-query": "^3.39.3",
+    "react-window": "^1.8.9",
     "styled-components": "^5.3.10",
     "tailwindcss": "3.3.2"
   }

@@ -11,7 +11,6 @@ import {
   Container,
 } from '@mui/material';
 import FiberManualRecordTwoToneIcon from '@mui/icons-material/FiberManualRecordTwoTone';
-import DrawerHeader from '@/components/DrawerHeader';
 
 export default function IndividualCompanyAdmin({ params }) {
   let companyData = {
@@ -24,9 +23,9 @@ export default function IndividualCompanyAdmin({ params }) {
     <>
       <Box
         className="flex flex-row items-start justify-start gap-4"
-        fullWidth
         sx={{
           padding: 0,
+          width: '100%',
         }}
       >
         <div className="flex flex-row w-full sm:flex-nowrap flex-wrap gap-4 justify-center sm:justify-start">
@@ -62,28 +61,18 @@ export default function IndividualCompanyAdmin({ params }) {
             className="hidden sm:block"
           />
           <Box className="flex-grow">
-            <Typography
-              className="text-xl font-semibold mt-2 ml-2"
-              color={'primary'}
-            >
-              Current Status :
+            <Box className="flex flex-row items-center gap-2">
+              <Typography
+                component="div"
+                className="text-xl font-semibold m-0"
+                color={'primary'}
+              >
+                Current Status :
+              </Typography>
               <Chip
-                label={companyData.userStatus || 'Not Registered'}
-                sx={{
-                  textTransform: 'capitalize',
-                }}
+                label={'Registration Closed'}
                 variant="outlined"
-                color={
-                  companyData.userStatus === 'Registered'
-                    ? 'primary'
-                    : companyData.userStatus === 'Shortlisted'
-                    ? 'info'
-                    : companyData.userStatus === 'Accepted'
-                    ? 'success'
-                    : companyData.userStatus === 'Rejected'
-                    ? 'error'
-                    : 'warning'
-                }
+                color="warning"
                 className="ml-2"
                 icon={
                   <FiberManualRecordTwoToneIcon
@@ -93,7 +82,8 @@ export default function IndividualCompanyAdmin({ params }) {
                   />
                 }
               />
-            </Typography>
+              <Button size="small">View Registrations</Button>
+            </Box>
           </Box>
         </div>
       </Box>

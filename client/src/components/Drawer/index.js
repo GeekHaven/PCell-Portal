@@ -17,6 +17,7 @@ import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
 import StoreIcon from '@mui/icons-material/Store';
 import AddBusinessIcon from '@mui/icons-material/AddBusiness';
 import LocationCityIcon from '@mui/icons-material/LocationCity';
+import Link from 'next/link';
 
 import { useRouter } from 'next/router';
 
@@ -57,17 +58,6 @@ const dashboardRoutes = [
 ];
 
 const adminRoutes = [
-  // {
-  //   // title: 'Main',
-  //   baseUrl: '/admin',
-  //   items: [
-  //     {
-  //       path: '',
-  //       name: 'Home',
-  //       Icon: InboxIcon,
-  //     },
-  //   ],
-  // },
   {
     title: 'Companies',
     baseUrl: '/admin/company',
@@ -144,34 +134,36 @@ function ResponsiveDrawer(props) {
               <ListSubheader disableSticky>{list.title}</ListSubheader>
             )}
             {list.items.map((item) => (
-              <ListItem key={item.name} disablePadding>
-                <ListItemButton
-                  selected={router.pathname === list.baseUrl + item.path}
-                  onClick={() => {
-                    router.push(list.baseUrl + item.path);
-                    setOpen(false);
-                  }}
-                >
-                  <ListItemIcon>
-                    <item.Icon
-                      color={
-                        router.pathname === list.baseUrl + item.path
-                          ? 'primary'
-                          : undefined
-                      }
+              <Link
+                key={item.name}
+                href={list.baseUrl + item.path}
+                onClick={() => setOpen(false)}
+              >
+                <ListItem disablePadding>
+                  <ListItemButton
+                    selected={router.pathname === list.baseUrl + item.path}
+                  >
+                    <ListItemIcon>
+                      <item.Icon
+                        color={
+                          router.pathname === list.baseUrl + item.path
+                            ? 'primary'
+                            : undefined
+                        }
+                      />
+                    </ListItemIcon>
+                    <ListItemText
+                      primary={item.name}
+                      primaryTypographyProps={{
+                        color:
+                          router.pathname === list.baseUrl + item.path
+                            ? 'primary'
+                            : undefined,
+                      }}
                     />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={item.name}
-                    primaryTypographyProps={{
-                      color:
-                        router.pathname === list.baseUrl + item.path
-                          ? 'primary'
-                          : undefined,
-                    }}
-                  />
-                </ListItemButton>
-              </ListItem>
+                  </ListItemButton>
+                </ListItem>
+              </Link>
             ))}
           </List>
           <Divider />
@@ -179,29 +171,23 @@ function ResponsiveDrawer(props) {
       ))}
       {user?.isAdmin &&
         (!isAdmin() ? (
-          <ListItemButton
-            onClick={() => {
-              router.push('/admin');
-              setOpen(false);
-            }}
-          >
-            <ListItemIcon>
-              <VerifiedUserIcon />
-            </ListItemIcon>
-            <ListItemText primary={'Admin Panel'} />
-          </ListItemButton>
+          <Link href="/admin" onClick={() => setOpen(false)}>
+            <ListItemButton>
+              <ListItemIcon>
+                <VerifiedUserIcon />
+              </ListItemIcon>
+              <ListItemText primary={'Admin Panel'} />
+            </ListItemButton>
+          </Link>
         ) : (
-          <ListItemButton
-            onClick={() => {
-              router.push('/dashboard');
-              setOpen(false);
-            }}
-          >
-            <ListItemIcon>
-              <AccountCircleIcon />
-            </ListItemIcon>
-            <ListItemText primary={'User Panel'} />
-          </ListItemButton>
+          <Link href="/dashboard" onClick={() => setOpen(false)}>
+            <ListItemButton>
+              <ListItemIcon>
+                <AccountCircleIcon />
+              </ListItemIcon>
+              <ListItemText primary={'User Panel'} />
+            </ListItemButton>
+          </Link>
         ))}
     </div>
   );
