@@ -1,12 +1,11 @@
 import { Container, Divider, Box, Chip, Paper } from '@mui/material';
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react';
 import ThemeContext from '@/contexts/theme.context';
 import Comment from '@/components/Notification/Comment';
 import Reply from '@/components/Notification/Reply';
 import NewComment from '@/components/Notification/NewComment';
 
 export default function IndividialNotificationAdmin() {
-
   return (
     <div className="">
       <Paper maxWidth="xl" className="px-8 py-8 my-4 rounded-md">
@@ -47,10 +46,10 @@ export default function IndividialNotificationAdmin() {
       <Paper maxWidth="xl" className="px-8 py-8 my-4 rounded-md">
         <section className="  py-8 lg:py-0 px-2">
           <div className=" mx-auto px-0">
-            <NewComment/>
+            <NewComment />
             <Comment />
-            <Reply/>
-           <Comment/>
+            <Reply />
+            <Comment />
           </div>
         </section>
       </Paper>

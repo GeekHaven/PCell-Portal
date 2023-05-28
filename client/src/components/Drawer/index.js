@@ -85,17 +85,17 @@ const adminRoutes = [
     ],
   },
   {
-    title: 'Notifications',
-    baseUrl: '/admin/notification/',
+    title: 'Posts',
+    baseUrl: '/admin/post',
     items: [
       {
         path: '',
-        name: 'All Notifications',
+        name: 'All Posts',
         Icon: StoreIcon,
       },
       {
         path: '/new',
-        name: 'New Notification',
+        name: 'New Post',
         Icon: AddBusinessIcon,
       },
     ],

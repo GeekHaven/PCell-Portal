@@ -22,7 +22,7 @@ import SelectTargets from '@/components/SelectTargets';
 import { addCompany, getAllCompanies } from '@/utils/API/admin/company';
 import { addNotification } from '@/utils/API/admin/notification';
 
-const NewNotification = () => {
+const NewPost = () => {
   const editorRef = useRef(null);
   const router = useRouter(),
     { enqueueSnackbar } = useSnackbar();
@@ -38,39 +38,37 @@ const NewNotification = () => {
       exclude: [],
     });
 
-    const AllCompanies = useMutation(getAllCompanies, {
-      onSuccess: (data) => {
-        setCompanyNames(data);
-      },
+  const AllCompanies = useMutation(getAllCompanies, {
+    onSuccess: (data) => {
+      setCompanyNames(data);
+    },
+  });
+
+  useEffect(() => {
+    AllCompanies.mutate();
+  }, []);
+
+  let addNotificationMutation = useMutation(addNotification, {
+    onSuccess: (data) => {
+      enqueueSnackbar('Company added successfully', { variant: 'success' });
+      router.push('/admin/company');
+    },
+    onError: (err) => {
+      enqueueSnackbar(err, { variant: 'error' });
+    },
+  });
+
+  async function onSubmit(e) {
+    e.preventDefault();
+    addNotificationMutation.mutate({
+      title,
+      description,
+      companyName,
+      comments: !comments,
+      content,
+      target,
     });
-
-    useEffect(() => {
-      AllCompanies.mutate();
-    }, []);
-
-    let addNotificationMutation = useMutation(addNotification, {
-      onSuccess: (data) => {
-        enqueueSnackbar('Company added successfully', { variant: 'success' });
-        router.push('/admin/company');
-      },
-      onError: (err) => {
-        enqueueSnackbar(err, { variant: 'error' });
-      },
-    });
-
-    async function onSubmit(e) {
-      e.preventDefault();
-      addNotificationMutation.mutate({
-        title,
-        description,
-        companyName,
-        comments : !comments,
-        content,
-        target,
-      });
-    }
-
-
+  }
 
   const log = () => {
     if (editorRef.current) {
@@ -81,7 +79,6 @@ const NewNotification = () => {
   const handleChange = (event) => {
     setCompanyName(event.target.value);
   };
-
 
   return (
     <>
@@ -189,4 +186,4 @@ const NewNotification = () => {
   );
 };
 
-export default NewNotification;
+export default NewPost;
