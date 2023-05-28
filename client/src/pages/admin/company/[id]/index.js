@@ -4,6 +4,8 @@ import {
   Typography,
   Chip,
   Divider,
+  FormControlLabel,
+  Switch,
   Paper,
   Button,
   Container,
@@ -48,18 +50,9 @@ export default function IndividualCompanyAdmin({ params }) {
               >
                 {companyData.name}
               </Typography>
-              <Chip
-                label={'Registration Closed'}
-                variant="outlined"
-                color="warning"
-                className="ml-2"
-                icon={
-                  <FiberManualRecordTwoToneIcon
-                    sx={{
-                      fontSize: '1rem',
-                    }}
-                  />
-                }
+              <FormControlLabel
+                control={<Switch defaultChecked />}
+                label="Hidden"
               />
             </Box>
           </div>
@@ -69,32 +62,11 @@ export default function IndividualCompanyAdmin({ params }) {
             className="hidden sm:block"
           />
           <Box className="flex-grow">
-            <Divider fullWidth className="block sm:hidden mb-2" />
-            <Typography
-              className="text-2xl font-semibold mb-2"
-              color={'primary'}
-            >
-              Tech Stack :
-            </Typography>
-            <Box className="flex flex-wrap gap-2 mb-2">
-              {companyData.techStack.split(';').map((tech) => (
-                <Chip
-                  label={tech}
-                  variant="outlined"
-                  sx={{
-                    borderColor: 'primary.main',
-                    color: 'primary.secondary',
-                  }}
-                  key={tech}
-                />
-              ))}
-            </Box>
-            <Divider fullWidth className="my-4" />
             <Typography
               className="text-xl font-semibold mt-2 ml-2"
               color={'primary'}
             >
-              Application Status :
+              Current Status :
               <Chip
                 label={companyData.userStatus || 'Not Registered'}
                 sx={{

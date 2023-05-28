@@ -19,6 +19,7 @@ import { getTheme } from '@/utils/theme';
 import DrawerHeader from '@/components/DrawerHeader';
 import FullLoader from '@/components/FullLoader';
 import { isUserAuthenticated } from '@/utils/API/auth';
+import { getLS, storeLS } from '@/utils/localStorage';
 
 const queryClient = new QueryClient();
 
@@ -114,8 +115,18 @@ export default function App({ Component, pageProps }) {
   let theme = useMemo(() => getTheme(mode), [mode]);
 
   function toggleTheme() {
+    storeLS('mode', mode === 'dark' ? 'light' : 'dark', true);
     setMode((prevMode) => (prevMode === 'dark' ? 'light' : 'dark'));
   }
+
+  useEffect(() => {
+    let lsMode = getLS('mode');
+    if (lsMode) {
+      setMode(lsMode);
+    } else {
+      storeLS('mode', mode, true);
+    }
+  }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
