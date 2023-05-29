@@ -123,8 +123,6 @@ export const registerUserToCompany = async (req, res) => {
   const companyId = req.params.id;
   const userId = req.user._id;
 
-  console.log(companyId, userId);
-
   if (!companyId) {
     return response_400(res, 'Invalid request');
   }
