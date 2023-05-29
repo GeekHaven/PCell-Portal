@@ -6,10 +6,10 @@ const CompanyUserRelationSchema = new Schema({
     ref: 'Company',
     required: true,
   },
-  companyName: {
-    type: String,
-    required: true,
-  },
+  // companyName: {
+  //   type: String,
+  //   required: true,
+  // },
   userId: {
     type: Schema.Types.ObjectId,
     ref: 'User',

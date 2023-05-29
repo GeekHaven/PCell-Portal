@@ -11,17 +11,35 @@ import {
 } from '@mui/material';
 import FiberManualRecordTwoToneIcon from '@mui/icons-material/FiberManualRecordTwoTone';
 import DrawerHeader from '@/components/DrawerHeader';
-import { useQuery } from 'react-query';
-import { getIndividualCompany } from '@/utils/API/company';
+import { useQuery, useMutation } from 'react-query';
+import {
+  getIndividualCompany,
+  registerUserToCompany,
+} from '@/utils/API/company';
 
 const IndividualCompany = ({ params }) => {
   const {
     data: companyData,
     isLoading,
     isError,
+    refetch,
+    isSuccess,
   } = useQuery(['company', params.id], () => getIndividualCompany(params.id), {
     enabled: !!params.id,
   });
+
+  const { mutate: registerUser, isLoading: isRegistering } = useMutation(
+    registerUserToCompany,
+    {
+      onSuccess: async (data) => {
+        refetch();
+      },
+      onError: async (err) => {
+        console.log(err);
+      },
+    }
+  );
+
   if (isLoading) {
     return (
       <Container className="h-96 w-full flex justify-center items-center">
@@ -29,7 +47,6 @@ const IndividualCompany = ({ params }) => {
       </Container>
     );
   }
-
   return (
     <>
       <Container
@@ -182,8 +199,19 @@ const IndividualCompany = ({ params }) => {
           sx={{
             width: ['100%', 'fit-content'],
           }}
+          onClick={() => {
+            registerUser(params.id);
+          }}
         >
           Register
+          {isRegistering && (
+            <CircularProgress
+              size={20}
+              sx={{
+                marginLeft: 2,
+              }}
+            />
+          )}
         </Button>
       </Paper>
     </>
@@ -191,18 +219,9 @@ const IndividualCompany = ({ params }) => {
 };
 
 export async function getServerSideProps(context) {
-  // will be passed to the page component as props
-  // let companyData = {
-  //   name: 'Google',
-  //   logo: 'https://w7.pngwing.com/pngs/249/19/png-transparent-google-logo-g-suite-google-guava-google-plus-company-text-logo.png',
-  //   techStack: 'React;Node;MongoDB;Express',
-  //   // userStatus: 'Registered',
-  //   currentStatus: 'registration open',
-  // };
   return {
     props: {
       params: context.params,
-      // companyData,
     },
   };
 }

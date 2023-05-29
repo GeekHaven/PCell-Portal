@@ -109,7 +109,7 @@ export const getIndividualCompany = async (req, res) => {
         companyId: id,
         userId: req.user._id,
       });
-      companyData.userStatus = companyRelation?.status || 'not registered';
+      companyData.userStatus = companyRelation?.status;
       return response_200(res, 'OK', companyData);
     }
     return response_400(res, 'Invalid request');
@@ -120,14 +120,25 @@ export const getIndividualCompany = async (req, res) => {
 
 // This function is not verified yet.
 export const registerUserToCompany = async (req, res) => {
-  const { companyId } = req.params.id;
+  const companyId = req.params.id;
   const userId = req.user._id;
+
+  console.log(companyId, userId);
 
   if (!companyId) {
     return response_400(res, 'Invalid request');
   }
 
   try {
+    const companyRelation = await companyUserRelationModel.findOne({
+      companyId,
+      userId,
+    });
+
+    if (companyRelation) {
+      return response_400(res, 'User already registered to this company');
+    }
+
     const newRelation = await new companyUserRelationModel({
       companyId,
       userId,
