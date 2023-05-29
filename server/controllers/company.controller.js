@@ -8,6 +8,7 @@ import Company from '../models/company.model.js';
 import companyUserRelationModel from '../models/relations/companyUser.relation.model.js';
 import { isUserEligibleInTarget } from '../utils/queries/isUserEligibleInTarget.js';
 import { companyStatusPriority } from '../utils/queries/companyStatusPriority.js';
+import mongoose from 'mongoose';
 
 export const getPaginatedCompanies = async (req, res) => {
   const { q } = req.query;
@@ -72,35 +73,43 @@ export const getPaginatedCompanies = async (req, res) => {
 
 export const getIndividualCompany = async (req, res) => {
   let { id } = req.params;
-  id = Buffer.from(id, 'base64').toString('hex');
-
   if (!id) {
     return response_400(res, 'Invalid request');
   }
   try {
-    const companyData = await Company.findById(id);
+    const [companyData] = await Company.aggregate([
+      {
+        $match: {
+          _id: new mongoose.Types.ObjectId(id),
+        },
+      },
+      {
+        $addFields: {
+          isEligible: isUserEligibleInTarget(req.user),
+        },
+      },
+      {
+        $project: {
+          name: 1,
+          logo: 1,
+          isEligible: 1,
+          _id: 1,
+          currentStatus: 1,
+          hidden: 1,
+          techStack: 1,
+        },
+      },
+    ]);
+
     if (!companyData) {
       return response_400(res, 'Invalid request');
     }
-
-    if (
-      !companyData.targets.exclude.includes(req.user.rollNumber) && //should not be in exclude list
-      (companyData.targets.include.includes(req.user.rollNumber) || //can be in include list
-        companyData.targets.groups.some(
-          //or should be eligible
-          (group) =>
-            group.program === req.user.program &&
-            group.year === req.user.admissionYear &&
-            group.requiredCGPA >= req.user.cgpa
-        ))
-    ) {
+    if (companyData.isEligible) {
       const companyRelation = await companyUserRelationModel.findOne({
         companyId: id,
         userId: req.user._id,
       });
-      if (companyRelation) {
-        companyData.userStatus = companyRelation.status;
-      }
+      companyData.userStatus = companyRelation?.status || 'not registered';
       return response_200(res, 'OK', companyData);
     }
     return response_400(res, 'Invalid request');

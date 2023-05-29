@@ -7,11 +7,29 @@ import {
   Paper,
   Button,
   Container,
+  CircularProgress,
 } from '@mui/material';
 import FiberManualRecordTwoToneIcon from '@mui/icons-material/FiberManualRecordTwoTone';
 import DrawerHeader from '@/components/DrawerHeader';
+import { useQuery } from 'react-query';
+import { getIndividualCompany } from '@/utils/API/company';
 
-const IndividualCompany = ({ params, companyData }) => {
+const IndividualCompany = ({ params }) => {
+  const {
+    data: companyData,
+    isLoading,
+    isError,
+  } = useQuery(['company', params.id], () => getIndividualCompany(params.id), {
+    enabled: !!params.id,
+  });
+  if (isLoading) {
+    return (
+      <Container className="h-96 w-full flex justify-center items-center">
+        <CircularProgress />
+      </Container>
+    );
+  }
+
   return (
     <>
       <Container
@@ -36,14 +54,15 @@ const IndividualCompany = ({ params, companyData }) => {
           <div className="flex flex-row w-full sm:flex-nowrap flex-wrap gap-4 justify-center sm:justify-start">
             <div className="flex sm:flex-col flex-row gap-2 justify-start items-center">
               <Box
-                className="h-40 sm:w-40 w-full sm:m-0"
+                className="h-40 sm:w-40 w-full sm:m-0 rounded-md"
                 sx={{
-                  padding: 0,
+                  padding: 2,
+                  bgcolor: 'white',
                 }}
               >
                 <img
                   src={companyData.logo}
-                  className="object-contain w-full h-full rounded-md"
+                  className="object-cover w-full h-full rounded-md"
                   alt="Google"
                 />
               </Box>
@@ -55,10 +74,18 @@ const IndividualCompany = ({ params, companyData }) => {
                   {companyData.name}
                 </Typography>
                 <Chip
-                  label={'Registration Closed'}
+                  label={companyData.currentStatus}
                   variant="outlined"
-                  color="warning"
-                  className="ml-2"
+                  color={
+                    companyData.currentStatus === 'registration open'
+                      ? 'secondary'
+                      : companyData.currentStatus === 'registration closed'
+                      ? 'warning'
+                      : companyData.currentStatus === 'shortlisting'
+                      ? 'primary'
+                      : 'success'
+                  }
+                  className="ml-2 capitalize"
                   icon={
                     <FiberManualRecordTwoToneIcon
                       sx={{
@@ -76,26 +103,31 @@ const IndividualCompany = ({ params, companyData }) => {
             />
             <Box className="flex-grow">
               <Divider fullWidth className="block sm:hidden mb-2" />
-              <Typography
-                className="text-2xl font-semibold mb-2"
-                color={'primary'}
-              >
-                Tech Stack :
-              </Typography>
-              <Box className="flex flex-wrap gap-2 mb-2">
-                {companyData.techStack.split(';').map((tech) => (
-                  <Chip
-                    label={tech}
-                    variant="outlined"
-                    sx={{
-                      borderColor: 'primary.main',
-                      color: 'primary.secondary',
-                    }}
-                    key={tech}
-                  />
-                ))}
-              </Box>
-              <Divider fullWidth className="my-4" />
+              {companyData.techStack && (
+                <>
+                  <Typography
+                    className="text-2xl font-semibold mb-2"
+                    color={'primary'}
+                  >
+                    Tech Stack :
+                  </Typography>
+                  <Box className="flex flex-wrap gap-2 mb-2">
+                    {companyData.techStack.split(';').map((tech) => (
+                      <Chip
+                        label={tech}
+                        variant="outlined"
+                        sx={{
+                          borderColor: 'primary.main',
+                          color: 'primary.secondary',
+                        }}
+                        key={tech}
+                      />
+                    ))}
+                  </Box>
+                  <Divider fullWidth className="my-4" />
+                </>
+              )}
+
               <Typography
                 className="text-xl font-semibold mt-2 ml-2"
                 color={'primary'}
@@ -108,13 +140,13 @@ const IndividualCompany = ({ params, companyData }) => {
                   }}
                   variant="outlined"
                   color={
-                    companyData.userStatus === 'Registered'
+                    companyData.userStatus === 'registered'
                       ? 'primary'
-                      : companyData.userStatus === 'Shortlisted'
+                      : companyData.userStatus === 'shortlisted'
                       ? 'info'
-                      : companyData.userStatus === 'Accepted'
+                      : companyData.userStatus === 'accepted'
                       ? 'success'
-                      : companyData.userStatus === 'Rejected'
+                      : companyData.userStatus === 'rejected'
                       ? 'error'
                       : 'warning'
                   }
@@ -160,17 +192,17 @@ const IndividualCompany = ({ params, companyData }) => {
 
 export async function getServerSideProps(context) {
   // will be passed to the page component as props
-  let companyData = {
-    name: 'Google',
-    logo: 'https://w7.pngwing.com/pngs/249/19/png-transparent-google-logo-g-suite-google-guava-google-plus-company-text-logo.png',
-    techStack: 'React;Node;MongoDB;Express',
-    userStatus: 'Registered',
-  };
-
+  // let companyData = {
+  //   name: 'Google',
+  //   logo: 'https://w7.pngwing.com/pngs/249/19/png-transparent-google-logo-g-suite-google-guava-google-plus-company-text-logo.png',
+  //   techStack: 'React;Node;MongoDB;Express',
+  //   // userStatus: 'Registered',
+  //   currentStatus: 'registration open',
+  // };
   return {
     props: {
       params: context.params,
-      companyData,
+      // companyData,
     },
   };
 }

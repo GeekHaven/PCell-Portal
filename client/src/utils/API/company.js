@@ -19,3 +19,9 @@ export async function getPaginatedCompanies({
   if (res.status === 200) return Promise.resolve(res.data.data);
   return Promise.reject(res.data.message);
 }
+
+export async function getIndividualCompany(id) {
+  let res = await get(`/company/${id}`);
+  if (res.status === 200) return Promise.resolve(res.data.data);
+  return Promise.reject(res.data.message);
+}
