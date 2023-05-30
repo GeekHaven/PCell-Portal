@@ -9,6 +9,7 @@ import {
   IconButton,
   InputLabel,
   MenuItem,
+  Pagination,
   Paper,
   Select,
   TextField,
@@ -25,6 +26,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import { useState, useEffect } from 'react';
 import { getPaginatedCompanies } from '@/utils/API/company';
 import { useMutation } from 'react-query';
+import { previewData } from 'next/dist/client/components/headers';
 
 const AllCompanies = () => {
   const router = useRouter();
@@ -38,7 +40,7 @@ const AllCompanies = () => {
 
   const searchMutation = useMutation(getPaginatedCompanies, {
     onSuccess: (data) => {
-      setCompanyData(data.docs);
+      setCompanyData(data);
     },
   });
 
@@ -48,8 +50,8 @@ const AllCompanies = () => {
       sort,
       search,
       sortBy,
-      page: '1',
-      limit: '10',
+      page: page,
+      limit: limit,
     });
   };
 
@@ -143,7 +145,7 @@ const AllCompanies = () => {
           className="grid gap-2 grid-cols-1 sm:grid-cols-[repeat(auto-fill,minmax(300px,1fr))]"
           maxWidth="xl"
         >
-          {companyData.map((company) => (
+          {companyData?.docs?.map((company) => (
             <Button
               variant="outlined"
               disabled={!company.isEligible}
@@ -211,8 +213,24 @@ const AllCompanies = () => {
           ))}
         </Container>
       )}
+      <Container className="flex justify-center items-center py-4">
+        <Pagination
+          shape="rounded"
+          color="primary"
+          variant="outlined"
+          boundaryCount={2}
+          count={companyData.totalPages}
+          hideNextButton={!companyData.hasNextPage}
+          hidePrevButton={!companyData.hasPrevPage}
+          page={page}
+          onChange={(event, page) => {
+            setPage(page);
+          }}
+          hidden={companyData.totalPages === 1}
+        />
+      </Container>
     </>
   );
 };
-
+AllCompanies.fullWidth = true;
 export default AllCompanies;
