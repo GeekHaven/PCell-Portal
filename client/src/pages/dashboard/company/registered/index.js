@@ -24,21 +24,20 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import Tooltip from '@mui/material/Tooltip';
 import SearchIcon from '@mui/icons-material/Search';
 import { useState, useEffect } from 'react';
-import { getPaginatedCompanies } from '@/utils/API/company';
+import { getRegisteredCompanies } from '@/utils/API/company';
 import { useMutation } from 'react-query';
 import { previewData } from 'next/dist/client/components/headers';
 
 const AllCompanies = () => {
   const router = useRouter();
   const [sort, setSort] = useState(1);
-  const [onlyEligible, setOnlyEligible] = useState(true);
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState('name');
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [companyData, setCompanyData] = useState([]);
 
-  const searchMutation = useMutation(getPaginatedCompanies, {
+  const searchMutation = useMutation(getRegisteredCompanies, {
     onSuccess: (data) => {
       setCompanyData(data);
     },
@@ -46,7 +45,6 @@ const AllCompanies = () => {
 
   const handleSearch = () => {
     searchMutation.mutate({
-      onlyEligible,
       sort,
       search,
       sortBy,
@@ -57,7 +55,7 @@ const AllCompanies = () => {
 
   useEffect(() => {
     handleSearch();
-  }, [onlyEligible, sort, sortBy, page, limit]);
+  }, [sort, sortBy, page, limit]);
 
   return (
     <>
@@ -106,7 +104,6 @@ const AllCompanies = () => {
             >
               <MenuItem value={'name'}>Name</MenuItem>
               <MenuItem value={'status'}>Status</MenuItem>
-              <MenuItem value={'isEligible'}>Eligibility</MenuItem>
             </Select>
           </FormControl>
           <div className="flex flex-nowrap justify-center items-center mx-2">
@@ -122,18 +119,6 @@ const AllCompanies = () => {
               </IconButton>
             </Tooltip>
           </div>
-          <FormControlLabel
-            className=" w-fit"
-            label="Eligible"
-            control={
-              <Checkbox
-                checked={onlyEligible}
-                onChange={(e) => {
-                  setOnlyEligible(e.target.checked);
-                }}
-              />
-            }
-          />
         </div>
       </Paper>
       {searchMutation.isLoading ? (
@@ -148,11 +133,9 @@ const AllCompanies = () => {
           {companyData?.docs?.map((company) => (
             <Button
               variant="outlined"
-              disabled={!company.isEligible}
               className="px-2 w-full h-full"
               sx={{
                 outlineColor: 'secondary.main',
-                opacity: company.isEligible ? 1 : 0.7,
               }}
               onClick={() => {
                 router.push(`/dashboard/company/${company._id}`);
@@ -184,20 +167,22 @@ const AllCompanies = () => {
                     {company.name}
                   </Typography>
                   <Chip
-                    label={company.currentStatus}
+                    label={company.userStatus}
                     sx={{
                       textTransform: 'capitalize',
                     }}
                     size="small"
                     variant="outlined"
                     color={
-                      company.currentStatus === 'registration open'
-                        ? 'secondary'
-                        : company.currentStatus === 'registration closed'
-                        ? 'warning'
-                        : company.currentStatus === 'shortlisting'
+                      company.userStatus === 'registered'
                         ? 'info'
-                        : 'success'
+                        : company.userStatus === 'accepted'
+                        ? 'success'
+                        : company.userStatus === 'rejected'
+                        ? 'error'
+                        : company.userStatus === 'shortlisted'
+                        ? 'secondary'
+                        : 'warning'
                     }
                     icon={
                       <FiberManualRecordTwoToneIcon
