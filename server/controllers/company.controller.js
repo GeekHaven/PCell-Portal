@@ -8,6 +8,7 @@ import Company from '../models/company.model.js';
 import companyUserRelationModel from '../models/relations/companyUser.relation.model.js';
 import { isUserEligibleInTarget } from '../utils/queries/isUserEligibleInTarget.js';
 import { companyStatusPriority } from '../utils/queries/companyStatusPriority.js';
+import { userStatusPriority } from '../utils/queries/userStatusPriority.js';
 import mongoose, { get } from 'mongoose';
 
 export const getPaginatedCompanies = async (req, res) => {
@@ -152,18 +153,26 @@ export const getRegisteredCompanies = async (req, res) => {
   sort = parseInt(sort);
   page = parseInt(page);
   limit = parseInt(limit);
-
   if (!page || !limit || !sort || !sortBy) {
     return response_400(res, 'Invalid request');
   }
   if (sortBy === 'status') sortBy = 'priority';
+  const sortQuery = {};
+
+  if (sortBy === 'name') {
+    sortQuery['company.name'] = sort;
+  } else {
+    sortQuery[sortBy] = sort;
+  }
 
   try {
     let companyListAggregate = companyUserRelationModel.aggregate([
       {
         $match: {
           userId: new mongoose.Types.ObjectId(req.user._id),
-          status: { $in: ['registered', 'shortlisted', 'selected'] },
+          status: {
+            $in: ['registered', 'shortlisted', 'selected', 'rejected'],
+          },
         },
       },
       {
@@ -184,12 +193,12 @@ export const getRegisteredCompanies = async (req, res) => {
       },
       {
         $addFields: {
-          priority: companyStatusPriority('status'),
+          priority: userStatusPriority('status'),
         },
       },
       {
         $sort: {
-          [sortBy]: sort,
+          ...sortQuery,
         },
       },
       {
@@ -199,6 +208,7 @@ export const getRegisteredCompanies = async (req, res) => {
           'company._id': 1,
           'company.currentStatus': 1,
           status: 1,
+          _id: 0,
         },
       },
     ]);
@@ -209,6 +219,16 @@ export const getRegisteredCompanies = async (req, res) => {
         limit,
       }
     );
+
+    companyList = {
+      ...companyList,
+      docs: companyList.docs.map((data) => {
+        return {
+          ...data.company,
+          userStatus: data.status,
+        };
+      }),
+    };
     return response_200(res, 'OK', companyList);
   } catch (err) {
     return response_500(res, err);

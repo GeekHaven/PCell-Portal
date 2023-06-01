@@ -161,7 +161,7 @@ const IndividualCompany = ({ params }) => {
                       ? 'primary'
                       : companyData.userStatus === 'shortlisted'
                       ? 'info'
-                      : companyData.userStatus === 'accepted'
+                      : companyData.userStatus === 'selected'
                       ? 'success'
                       : companyData.userStatus === 'rejected'
                       ? 'error'
