@@ -47,8 +47,8 @@ const UserSchema = Schema(
       type: Boolean,
       default: false,
     },
-    notifications: {
-      type: [{ type: Schema.Types.ObjectId, ref: 'Notification' }],
+    posts: {
+      type: [{ type: Schema.Types.ObjectId, ref: 'Post' }],
       default: [],
     },
   },

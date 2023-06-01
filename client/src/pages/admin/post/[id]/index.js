@@ -1,16 +1,16 @@
 import { Container, Divider, Box, Chip, Paper } from '@mui/material';
 import React, { useContext, useEffect, useState } from 'react';
 import ThemeContext from '@/contexts/theme.context';
-import Comment from '@/components/Notification/Comment';
-import Reply from '@/components/Notification/Reply';
-import NewComment from '@/components/Notification/NewComment';
+import Comment from '@/components/Post/Comment';
+import Reply from '@/components/Post/Reply';
+import NewComment from '@/components/Post/NewComment';
 
-export default function IndividialNotificationAdmin() {
+export default function IndividialPostAdmin() {
   return (
     <div className="">
       <Paper maxWidth="xl" className="px-8 py-8 my-4 rounded-md">
         <div className="flex justify-start gap-4 text-3xl font-bold">
-          Title of the Notification
+          Title of the Post
         </div>
         <div className="flex justify-start gap-4 text-lg mt-4">
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime odio

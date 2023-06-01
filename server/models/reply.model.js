@@ -15,9 +15,10 @@ const commentSchema = new mongoose.Schema({
     ref: 'Post',
     required: true,
   },
-    private: {
-    type: Boolean,
-    required: false,
+  replyTo: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Comment',
+    required: true,
     },
   createdAt: {
     type: Date,
