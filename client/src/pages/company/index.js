@@ -152,7 +152,7 @@ const AllCompanies = () => {
                 opacity: company.isEligible ? 1 : 0.7,
               }}
               onClick={() => {
-                router.push(`/dashboard/company/${company._id}`);
+                router.push(`/company/individual/${company._id}`);
               }}
               key={company._id}
             >

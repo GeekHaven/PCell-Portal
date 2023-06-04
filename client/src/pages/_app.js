@@ -54,6 +54,12 @@ function AppContentWrapper({ Component, pageProps }) {
           router.push('/dashboard');
         }
       }
+
+      if (router.asPath.startsWith('/company')) {
+        if (!user && !router.asPath.startsWith('/company/individual')) {
+          router.push('/login');
+        }
+      }
     }
   }, [router, user]);
 
@@ -84,7 +90,11 @@ function AppContentWrapper({ Component, pageProps }) {
                 noSidebarMargin={Component.hideDrawer}
               />
             )}
+            {!user && router.asPath.startsWith('/company/individual')
+              ? (Component.hideDrawer = true)
+              : null}
             {!Component.hideDrawer && <Drawer open={open} setOpen={setOpen} />}
+
             {conditionalWrapper(
               !Component.isFullWidth,
               Container,
