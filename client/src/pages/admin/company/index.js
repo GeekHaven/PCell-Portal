@@ -88,7 +88,7 @@ const AllCompanies = () => {
             <SearchIcon />
           </IconButton>
         </div>
-        <div className="flex md:flex-nowrap items-center justify-start gap-0 flex-grow md:flex-grow-0 w-full md:w-fit flex-wrap">
+        <div className="flex md:flex-nowrap items-center justify-start gap-0 flex-grow md:flex-grow-0 w-full md:w-fit flex-wrap ">
           <FormControl className="w-28" size="small">
             <InputLabel id="sortByUi">Sort By</InputLabel>
             <Select
