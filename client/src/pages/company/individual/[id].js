@@ -16,15 +16,23 @@ import {
   getIndividualCompany,
   registerUserToCompany,
 } from '@/utils/API/company';
+import { getPublicIndividualCompany } from '@/utils/API/public/company';
+import useUser from '@/customHooks/useUser';
 
 const IndividualCompany = ({ params }) => {
+  const user = useUser();
+
+  const fetchCompany = async (id) => {
+    if (user.user) return getIndividualCompany(id);
+    return getPublicIndividualCompany(id);
+  };
   const {
     data: companyData,
     isLoading,
     isError,
     refetch,
     isSuccess,
-  } = useQuery(['company', params.id], () => getIndividualCompany(params.id), {
+  } = useQuery(['company', params.id], () => fetchCompany(params.id), {
     enabled: !!params.id,
   });
 
@@ -58,7 +66,7 @@ const IndividualCompany = ({ params }) => {
           flexGrow: 1,
           p: 3,
         }}
-        className="w-full md:ml-[240px]"
+        className={`w-full ${user.user ? 'md:ml-[240px]' : ''}`}
       >
         <DrawerHeader />
         <Box
@@ -68,10 +76,10 @@ const IndividualCompany = ({ params }) => {
             padding: 0,
           }}
         >
-          <div className="flex flex-row w-full sm:flex-nowrap flex-wrap gap-4 justify-center sm:justify-start">
-            <div className="flex sm:flex-col flex-row gap-2 justify-start items-center">
+          <div className="flex sm:flex-row flex-col w-full sm:flex-nowrap flex-wrap gap-4 justify-center sm:justify-start">
+            <div className="flex sm:flex-col flex-row gap-2 justify-evenly items-center">
               <Box
-                className="h-40 sm:w-40 w-full sm:m-0 rounded-md"
+                className="h-40 w-40 sm:m-0 rounded-md"
                 sx={{
                   padding: 2,
                   bgcolor: 'white',
@@ -145,75 +153,79 @@ const IndividualCompany = ({ params }) => {
                 </>
               )}
 
-              <Typography
-                className="text-xl font-semibold mt-2 ml-2"
-                color={'primary'}
-              >
-                Application Status :
-                <Chip
-                  label={companyData.userStatus || 'Not Registered'}
-                  sx={{
-                    textTransform: 'capitalize',
-                  }}
-                  variant="outlined"
-                  color={
-                    companyData.userStatus === 'registered'
-                      ? 'primary'
-                      : companyData.userStatus === 'shortlisted'
-                      ? 'info'
-                      : companyData.userStatus === 'selected'
-                      ? 'success'
-                      : companyData.userStatus === 'rejected'
-                      ? 'error'
-                      : 'warning'
-                  }
-                  className="ml-2"
-                  icon={
-                    <FiberManualRecordTwoToneIcon
-                      sx={{
-                        fontSize: '1rem',
-                      }}
-                    />
-                  }
-                />
-              </Typography>
+              {user.user && (
+                <Typography
+                  className="text-xl font-semibold mt-2 ml-2"
+                  color={'primary'}
+                >
+                  Application Status :
+                  <Chip
+                    label={companyData.userStatus || 'Not Registered'}
+                    sx={{
+                      textTransform: 'capitalize',
+                    }}
+                    variant="outlined"
+                    color={
+                      companyData.userStatus === 'registered'
+                        ? 'primary'
+                        : companyData.userStatus === 'shortlisted'
+                        ? 'info'
+                        : companyData.userStatus === 'selected'
+                        ? 'success'
+                        : companyData.userStatus === 'rejected'
+                        ? 'error'
+                        : 'warning'
+                    }
+                    className="ml-2"
+                    icon={
+                      <FiberManualRecordTwoToneIcon
+                        sx={{
+                          fontSize: '1rem',
+                        }}
+                      />
+                    }
+                  />
+                </Typography>
+              )}
             </Box>
           </div>
         </Box>
       </Container>
-      <Paper
-        className={`absolute bottom-0 w-full flex justify-end ${
-          companyData.userStatus ? 'hidden' : 'block'
-        }`}
-        sx={{
-          borderRadius: 0,
-          paddingX: [1, 4, 8],
-          paddingY: [1, 2],
-        }}
-        elevation={2}
-      >
-        <Button
-          variant="contained"
-          color="primary"
-          size="large"
+      {user.user && (
+        <Paper
+          className={`absolute bottom-0 w-full flex justify-end ${
+            companyData.userStatus ? 'hidden' : 'block'
+          }`}
           sx={{
-            width: ['100%', 'fit-content'],
+            borderRadius: 0,
+            paddingX: [1, 4, 8],
+            paddingY: [1, 2],
           }}
-          onClick={() => {
-            registerUser(params.id);
-          }}
+          elevation={2}
         >
-          Register
-          {isRegistering && (
-            <CircularProgress
-              size={20}
-              sx={{
-                marginLeft: 2,
-              }}
-            />
-          )}
-        </Button>
-      </Paper>
+          <Button
+            variant="contained"
+            color="primary"
+            size="large"
+            sx={{
+              width: ['100%', 'fit-content'],
+            }}
+            onClick={() => {
+              registerUser(params.id);
+            }}
+          >
+            Register
+            {isRegistering && (
+              <CircularProgress
+                size={20}
+                sx={{
+                  marginLeft: 2,
+                }}
+              />
+            )}
+          </Button>
+        </Paper>
+      )}
     </>
   );
 };

@@ -163,21 +163,6 @@ export default function Login() {
           >
             <Image src={vector} alt="Login" />
           </Container>
-          <Container
-            className="absolute w-full bottom-0"
-            maxWidth="3xl"
-            sx={{
-              borderTop: '1px solid',
-              borderColor: 'divider',
-              textAlign: 'center',
-              color: 'text.disabled',
-              fontSize: '0.8rem',
-              backgroundColor: 'bgclear',
-              backdropFilter: 'blur(10px)',
-            }}
-          >
-            Created by Team GeekHaven
-          </Container>
         </div>
       )}
     </>

@@ -141,10 +141,7 @@ const AllCompanies = () => {
           <CircularProgress />
         </Container>
       ) : (
-        <Container
-          className="grid gap-2 grid-cols-1 sm:grid-cols-[repeat(auto-fill,minmax(300px,1fr))]"
-          maxWidth="xl"
-        >
+        <div className="px-2 grid gap-2 grid-cols-1 sm:grid-cols-[repeat(auto-fill,minmax(300px,1fr))]">
           {companyData?.docs?.map((company) => (
             <Button
               variant="outlined"
@@ -155,7 +152,7 @@ const AllCompanies = () => {
                 opacity: company.isEligible ? 1 : 0.7,
               }}
               onClick={() => {
-                router.push(`/dashboard/company/${company._id}`);
+                router.push(`/company/individual/${company._id}`);
               }}
               key={company._id}
             >
@@ -211,7 +208,7 @@ const AllCompanies = () => {
               </div>
             </Button>
           ))}
-        </Container>
+        </div>
       )}
       <Container className="flex justify-center items-center py-4">
         <Pagination

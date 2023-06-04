@@ -39,15 +39,24 @@ function AppContentWrapper({ Component, pageProps }) {
     staleTime: 1000 * 60 * 60 * 24 * 30,
   });
 
+  //middleware to check if user is logged in or is admin.
   useEffect(() => {
     if (!isLoading) {
       if (router.asPath.startsWith('/dashboard')) {
-        if (!isLoading && !user) {
+        if (!user) {
           router.push('/login');
         }
       }
       if (router.asPath.startsWith('/admin')) {
-        if (!isLoading && !user.isAdmin) {
+        if (!user) {
+          router.push('/login');
+        } else if (!user.isAdmin) {
+          router.push('/dashboard');
+        }
+      }
+
+      if (router.asPath.startsWith('/company')) {
+        if (!user && !router.asPath.startsWith('/company/individual')) {
           router.push('/login');
         }
       }
@@ -81,7 +90,11 @@ function AppContentWrapper({ Component, pageProps }) {
                 noSidebarMargin={Component.hideDrawer}
               />
             )}
+            {!user && router.asPath.startsWith('/company/individual')
+              ? (Component.hideDrawer = true)
+              : null}
             {!Component.hideDrawer && <Drawer open={open} setOpen={setOpen} />}
+
             {conditionalWrapper(
               !Component.isFullWidth,
               Container,
