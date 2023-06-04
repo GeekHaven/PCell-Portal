@@ -1,4 +1,4 @@
-import { Container, Divider, Box, Chip, Paper } from '@mui/material';
+import { Container, Divider, Box, Chip, Paper, Button } from '@mui/material';
 import React, { useContext, useEffect, useState } from 'react';
 import ThemeContext from '@/contexts/theme.context';
 import Comment from '@/components/Post/Comment';
@@ -7,9 +7,16 @@ import NewComment from '@/components/Post/NewComment';
 import { useQuery } from 'react-query';
 import { getPostById } from '@/utils/API/admin/post';
 import { CircularProgress } from '@mui/material';
+import Discussion from '@/components/Post/Discussion';
+import { getComments } from '@/utils/API/admin/post';
 
 
 export default function IndividialPostAdmin({params}) {
+
+    const [showDiscussion, setShowDiscussion] = useState(false);    
+
+    
+   
 
     let { data: post, isLoading } = useQuery({
       queryKey: ['post'],
@@ -18,6 +25,14 @@ export default function IndividialPostAdmin({params}) {
       },
     });
 
+     const { commentsLoading } = useQuery({
+       queryKey: ['comments'],
+       queryFn: () => {
+         return getComments(params.id);
+       },
+       enabled: showDiscussion,
+     });
+
     if (isLoading) {
       return (
         <Container className="h-96 w-full flex justify-center items-center">
@@ -25,6 +40,7 @@ export default function IndividialPostAdmin({params}) {
         </Container>
       );
     }
+
 
 
   return (
@@ -60,16 +76,47 @@ export default function IndividialPostAdmin({params}) {
         </Box>
       </Paper>
 
-      <Paper maxWidth="xl" className="px-8 py-8 my-4 rounded-md">
-        <section className="  py-8 lg:py-0 px-2">
-          <div className=" mx-auto px-0">
-            <NewComment />
-            <Comment />
-            <Reply />
-            <Comment />
+      {!showDiscussion && (
+        <div className='flex justify-center'>
+          <Button
+          onClick={() => {
+            setShowDiscussion(true);
+          }}
+          className="w-1/3"
+        >
+          <div className="flex justify-center items-center gap-2">
+            <span className="w-full text-lg">Show Discussion</span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5 transform rotate-180"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+            >
+              <path
+                fillRule="evenodd"
+                d="M10 12a2 2 0 100-4 2 2 0 000 4z"
+                clipRule="evenodd"
+              />
+              <path
+                fillRule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zM2 10a8 8 0 1116 0 8 8 0 01-16 0z"
+                clipRule="evenodd"
+              />
+            </svg>
           </div>
-        </section>
-      </Paper>
+        </Button>
+        </div>
+      )}
+
+      {showDiscussion && <Discussion />}
+
+      {commentsLoading && (
+        <Container className="h-10 w-full flex justify-center items-center">
+          <CircularProgress />
+          </Container>
+          )
+      }
+
     </div>
   );
 }

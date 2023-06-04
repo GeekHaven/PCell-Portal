@@ -47,3 +47,12 @@ export async function getPostById(id) {
   }
   return Promise.reject(res.data.error);
 }
+
+export async function getComments(id) {
+  let res = await get(`/admin/post/${id}/comments`);
+  console.log(res);
+  if (res.status === 200) {
+    return Promise.resolve(res.data.message);
+  }
+  return Promise.reject(res.data.error);
+}

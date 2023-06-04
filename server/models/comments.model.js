@@ -15,6 +15,12 @@ const commentSchema = new mongoose.Schema({
     ref: 'Post',
     required: true,
   },
+  replyTo: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Comment',
+    default: null,
+    required: false,
+  },
     private: {
     type: Boolean,
     required: false,
