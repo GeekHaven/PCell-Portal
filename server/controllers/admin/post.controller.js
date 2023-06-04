@@ -12,13 +12,13 @@ export async function addPost(req, res) {
   try {
     let { title, description, company, comments, target, content } = req.body;
 
-    if (!title || !description || !target || !content)
+    if (!title || !description || !target || !content || !comments)
       return response_400(res, 'Invalid request');
 
     const post = await Post.create({
       title,
       description,
-      comments,
+      comments : comments.toLowerCase(),
       company,
       targets : target,
       content,
@@ -59,45 +59,29 @@ export async function addPost(req, res) {
 
 export async function getAllPosts(req, res) {
   try {
-    const posts = await Post.find({});
+    const posts = await Post.aggregate([
+     { $project: {
+      _id: 1,
+      title: 1,
+      description: 1,
+      company: 1,
+      createdAt: 1,
+    }},
+    {$sort: {
+      createdAt: -1,
+    }},
+    ]);
+
     return response_200(res, posts);
   } catch (error) {
     return response_500(res, error);
   }
 }
 
-export async function getAllUserPosts(req, res) {
+export async function getPostById(req, res) {
   try {
     const { id } = req.params;
-    if (!id) return response_400(res, 'Invalid request');
-    const user = await User.findById(id).populate('posts');
-    if (!user) return response_400(res, 'User Doesnot exist');
-    return response_200(res, user.posts);
-  } catch (error) {
-    return response_500(res, error);
-  }
-}
-
-export async function getPostByIdAdmin(req, res) {
-  try {
-    const { id } = req.params;
-    const post = await Post.findById(id)
-      .populate('publicComments')
-      .populate('privateComments');
-    return response_200(res, post);
-  } catch (error) {
-    return response_500(res, error);
-  }
-}
-
-export async function getPostByIdUser(req, res) {
-  try {
-    const { id } = req.params;
-    const post = await Post.findById(id)
-      .populate('publicComments')
-      .populate('privateComments');
-
-    post.status = 'read';
+    const post = await Post.findById(id);
     if (!post) return response_400(res, 'Invalid request');
     return response_200(res, post);
   } catch (error) {

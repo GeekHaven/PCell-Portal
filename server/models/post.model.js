@@ -18,6 +18,11 @@ const PostSchema = Schema(
     },
     comments: {
       type: String,
+      enum: [
+        'disabled',
+        'public',
+        'private',
+      ],
       required: true,
     },
     content: {
@@ -26,7 +31,7 @@ const PostSchema = Schema(
     },
     targets: {
       type: targetSchema,
-    }
+    },
   },
   { timestamps: true }
 );

@@ -28,28 +28,29 @@ import SearchIcon from '@mui/icons-material/Search';
 import { getAllPosts } from '@/utils/API/admin/post';
 import { useMutation } from 'react-query';
 import Link from 'next/link';
+import { useQuery } from 'react-query';
 
 export default function AllPosts() {
-  const [loading, setLoading] = useState(true);
   const [posts, setPosts] = useState([]);
   
+  const {
+    data : allPosts,
+    isLoading,
+  } = useQuery( {
+    queryKey: ['allPosts'],
+    queryFn: getAllPosts,
+    onSuccess: (data) => {
+      setPosts(data);
+    }
+  });
   
-   const searchMutation = useMutation(getAllPosts, {
-     onSuccess: (data) => {
-        setLoading(false);
-        console.log(data);
-       setPosts(data);
-     },
-   });
-
-   const handleSearch = () => {
-     searchMutation.mutate();
-   };
-
-   useEffect(() => {
-     handleSearch();
-   }, []);
-
+  if (isLoading) {
+    return (
+      <Container className="h-96 w-full flex justify-center items-center">
+        <CircularProgress />
+      </Container>
+    );
+  }
   return (
     <>
       <Container maxWidth="xl">
@@ -106,16 +107,11 @@ export default function AllPosts() {
             </div>
           </div>
         </Paper>
-        {loading ? (
-          <div className="flex justify-center items-center">
-            <CircularProgress />
-          </div>
-        ) : (
+        {!isLoading && (
           <>
             {posts &&
               posts.map((post) => (
                 <Box className="px-2 py-2">
-                  <Link href={`/admin/post/${post._id}`} key={post._id}>
                     <Post
                       key={post._id}
                       id={post._id}
@@ -124,7 +120,6 @@ export default function AllPosts() {
                       company={post.company}
                       status={post.status}
                     />
-                  </Link>
                 </Box>
               ))}
           </>

@@ -33,7 +33,15 @@ export async function addPost({
 }
 
 export async function getAllPosts() {
-  let res = await get('/admin/post/all');
+  let res = await get('/admin/post');
+  if (res.status === 200) {
+    return Promise.resolve(res.data.message);
+  }
+  return Promise.reject(res.data.error);
+}
+
+export async function getPostById(id) {
+  let res = await get(`/admin/post/${id}`);
   if (res.status === 200) {
     return Promise.resolve(res.data.message);
   }

@@ -4,20 +4,38 @@ import ThemeContext from '@/contexts/theme.context';
 import Comment from '@/components/Post/Comment';
 import Reply from '@/components/Post/Reply';
 import NewComment from '@/components/Post/NewComment';
+import { useQuery } from 'react-query';
+import { getPostById } from '@/utils/API/admin/post';
+import { CircularProgress } from '@mui/material';
 
-export default function IndividialPostAdmin() {
+
+export default function IndividialPostAdmin({params}) {
+
+    let { data: post, isLoading } = useQuery({
+      queryKey: ['post'],
+      queryFn: ()=>{
+        return getPostById(params.id);
+      },
+    });
+
+    if (isLoading) {
+      return (
+        <Container className="h-96 w-full flex justify-center items-center">
+          <CircularProgress />
+        </Container>
+      );
+    }
+
+    console.log(post);
+
   return (
     <div className="">
       <Paper maxWidth="xl" className="px-8 py-8 my-4 rounded-md">
         <div className="flex justify-start gap-4 text-3xl font-bold">
-          Title of the Post
+          {post.title}
         </div>
         <div className="flex justify-start gap-4 text-lg mt-4">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Maxime odio
-          nihil nemo dolor vitae totam optio quo neque earum quae sed sequi,
-          unde quia adipisci! Possimus quo mollitia facere iure quae laboriosam
-          nemo nisi, nihil beatae nesciunt quisquam dolores. Quas laboriosam
-          porro quisquam quo officiis, tenetur non modi dolores dolorem!
+          {post.description}
         </div>
         <Box className="flex flex-wrap gap-2 pt-2 pb-1 mt-2">
           <Chip
@@ -38,7 +56,7 @@ export default function IndividialPostAdmin() {
         <Box maxWidth="xl">
           <div
             className="content mb-10"
-            dangerouslySetInnerHTML={{ __html: 'Testing out the content' }}
+            dangerouslySetInnerHTML={{ __html: post.content }}
           ></div>
         </Box>
       </Paper>
@@ -55,4 +73,12 @@ export default function IndividialPostAdmin() {
       </Paper>
     </div>
   );
+}
+
+export async function getServerSideProps(context) {
+  return {
+    props: {
+      params: context.params,
+    },
+  };
 }
