@@ -21,7 +21,7 @@ import { useMutation } from 'react-query';
 import FileUpload from '@/components/FileUpload';
 import SelectTargets from '@/components/SelectTargets';
 import { addCompany, getAllCompanies } from '@/utils/API/admin/company';
-import { addNotification } from '@/utils/API/admin/notification';
+import { addPost } from '@/utils/API/admin/post';
 
 const NewPost = () => {
   const editorRef = useRef(null);
@@ -32,7 +32,7 @@ const NewPost = () => {
     [content, setContent] = useState(''),
     [companyNames, setCompanyNames] = useState(''),
     [companyName, setCompanyName] = useState('none'),
-    [comments, setComments] = useState(true),
+    [comments, setComments] = useState('public'),
     [target, setTarget] = useState({
       groups: [],
       include: [],
@@ -49,10 +49,10 @@ const NewPost = () => {
     AllCompanies.mutate();
   }, []);
 
-  let addNotificationMutation = useMutation(addNotification, {
+  let addPostMutation = useMutation(addPost, {
     onSuccess: (data) => {
-      enqueueSnackbar('Company added successfully', { variant: 'success' });
-      router.push('/admin/company');
+      enqueueSnackbar('Post sent successfully', { variant: 'success' });
+      // router.push('/admin/post/all');
     },
     onError: (err) => {
       enqueueSnackbar(err, { variant: 'error' });
@@ -61,13 +61,13 @@ const NewPost = () => {
 
   async function onSubmit(e) {
     e.preventDefault();
-    addNotificationMutation.mutate({
+    addPostMutation.mutate({
       title,
       description,
       companyName,
-      comments: !comments,
-      content,
+      comments,
       target,
+      content,
     });
   }
 
@@ -75,6 +75,10 @@ const NewPost = () => {
     if (editorRef.current) {
       setContent(editorRef.current.getContent());
     }
+  };
+
+  const handleChangeComment = (event) => {
+    setComments(event.target.value);
   };
 
   const handleChange = (event) => {
@@ -95,16 +99,16 @@ const NewPost = () => {
             className="w-fit flex-grow flex flex-nowrap justify-around items-center gap-4 flex-col m-0 p-0"
           >
             <TextField
-              label="Notification Title"
+              label="Post Title"
               required
-              placeholder="Enter the title for the Notification"
+              placeholder="Enter the title for the post"
               defaultValue={title}
               onChange={(e) => setTitle(e.target.value)}
               onFocus={(e) => setTitle(e.target.value)}
               fullWidth
             />
             <TextField
-              label="Brief Notification Description"
+              label="Brief Post Description"
               placeholder="Enter a brief description"
               defaultValue={description}
               onChange={(e) => setDescription(e.target.value)}
@@ -136,14 +140,18 @@ const NewPost = () => {
               </FormControl>
             </Box>
             <Box className="flex justify-between items-center">
-              <FormControlLabel
-                control={<Checkbox />}
-                label="Allow Comments"
-                value={comments}
-                onChange={() => {
-                  setComments(!comments);
-                }}
-              />
+              <FormControl className="w-40">
+                <InputLabel className="mr-5">Choose Comments Type</InputLabel>
+                <Select
+                  value={comments}
+                  label="Choose Comeents Type"
+                  onChange={handleChangeComment}
+                >
+                  <MenuItem value={'disabled'}>Disabled</MenuItem>
+                  <MenuItem value={'public'}>Public</MenuItem>
+                  <MenuItem value={'private'}>Private</MenuItem>
+                </Select>
+              </FormControl>
             </Box>
           </Container>
         </div>
@@ -184,7 +192,7 @@ const NewPost = () => {
         <SelectTargets target={target} setTarget={setTarget} />
         <Container maxWidth="xl" className="flex justify-end p-0 m-0">
           <LoadingButton type="submit" variant="contained">
-            Send Notification
+            Send Post
           </LoadingButton>
         </Container>
       </Container>

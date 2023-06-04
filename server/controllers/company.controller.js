@@ -8,12 +8,12 @@ import Company from '../models/company.model.js';
 import companyUserRelationModel from '../models/relations/companyUser.relation.model.js';
 import { isUserEligibleInTarget } from '../utils/queries/isUserEligibleInTarget.js';
 import { companyStatusPriority } from '../utils/queries/companyStatusPriority.js';
-import mongoose from 'mongoose';
+import { userStatusPriority } from '../utils/queries/userStatusPriority.js';
+import mongoose, { get } from 'mongoose';
 
 export const getPaginatedCompanies = async (req, res) => {
   const { q } = req.query;
   let { sort, sortBy, onlyEligible, page, limit } = req.query;
-
   if (!page || !limit || !sort || !sortBy) {
     return response_400(res, 'Invalid request');
   }
@@ -118,7 +118,6 @@ export const getIndividualCompany = async (req, res) => {
   }
 };
 
-// This function is not verified yet.
 export const registerUserToCompany = async (req, res) => {
   const companyId = req.params.id;
   const userId = req.user._id;
@@ -149,40 +148,88 @@ export const registerUserToCompany = async (req, res) => {
   }
 };
 
-//This function is not verified yet.
 export const getRegisteredCompanies = async (req, res) => {
-  const { sort, q, page, limit } = req.query;
-
-  const options = {
-    pagination: page !== -1,
-    page: page,
-    limit: limit,
-    sort: sort,
-  };
-
-  let query = {
-    userId: req.user._id,
-    status: {
-      $in: ['registered', 'shortlisted', 'selected'],
-    },
-  };
-
-  if (q) {
-    query = {
-      ...query,
-      companyName: { $regex: new RegExp(q), $options: 'i' },
-    };
+  let { sort, q, page, limit, sortBy } = req.query;
+  sort = parseInt(sort);
+  page = parseInt(page);
+  limit = parseInt(limit);
+  if (!page || !limit || !sort || !sortBy) {
+    return response_400(res, 'Invalid request');
   }
+  if (sortBy === 'status') sortBy = 'priority';
+  const sortQuery = {};
+
+  if (sortBy === 'name') {
+    sortQuery['company.name'] = sort;
+  } else {
+    sortQuery[sortBy] = sort;
+  }
+
   try {
-    const companies = await companyUserRelationModel.paginate(query, options);
+    let companyListAggregate = companyUserRelationModel.aggregate([
+      {
+        $match: {
+          userId: new mongoose.Types.ObjectId(req.user._id),
+          status: {
+            $in: ['registered', 'shortlisted', 'selected', 'rejected'],
+          },
+        },
+      },
+      {
+        $lookup: {
+          from: 'companies',
+          localField: 'companyId',
+          foreignField: '_id',
+          as: 'company',
+        },
+      },
+      {
+        $unwind: '$company',
+      },
+      {
+        $match: {
+          'company.name': { $regex: new RegExp(q), $options: 'i' },
+        },
+      },
+      {
+        $addFields: {
+          priority: userStatusPriority('status'),
+        },
+      },
+      {
+        $sort: {
+          ...sortQuery,
+        },
+      },
+      {
+        $project: {
+          'company.name': 1,
+          'company.logo': 1,
+          'company._id': 1,
+          'company.currentStatus': 1,
+          status: 1,
+          _id: 0,
+        },
+      },
+    ]);
+    let companyList = await companyUserRelationModel.aggregatePaginate(
+      companyListAggregate,
+      {
+        page,
+        limit,
+      }
+    );
 
-    const companyIds = companies.map((company) => company.companyId);
-
-    const companyData = await Company.find({
-      _id: { $in: companyIds },
-    });
-
-    return response_200(res, 'OK', companyData);
+    companyList = {
+      ...companyList,
+      docs: companyList.docs.map((data) => {
+        return {
+          ...data.company,
+          userStatus: data.status,
+        };
+      }),
+    };
+    return response_200(res, 'OK', companyList);
   } catch (err) {
     return response_500(res, err);
   }

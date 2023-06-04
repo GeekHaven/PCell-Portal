@@ -1,4 +1,5 @@
 import { Schema, model } from 'mongoose';
+import aggregatePaginate from 'mongoose-aggregate-paginate-v2';
 
 const CompanyUserRelationSchema = new Schema({
   companyId: {
@@ -21,5 +22,7 @@ const CompanyUserRelationSchema = new Schema({
     required: true,
   },
 });
+
+CompanyUserRelationSchema.plugin(aggregatePaginate);
 
 export default model('CompanyUserRelation', CompanyUserRelationSchema);

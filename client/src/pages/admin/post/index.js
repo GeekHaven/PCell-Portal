@@ -1,4 +1,4 @@
-import Notification from '@/components/Notification'
+import Post from '@/components/Post'
 import {
   Button,
   Checkbox,
@@ -17,16 +17,38 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { useRouter, useState, useEffect } from 'next/router';
-import React from 'react'
-
+import { useRouter } from 'next/router';
+import React from 'react';
+import { useEffect, useState } from 'react';  
 import FiberManualRecordTwoToneIcon from '@mui/icons-material/FiberManualRecordTwoTone';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import Tooltip from '@mui/material/Tooltip';
 import SearchIcon from '@mui/icons-material/Search';
+import { getAllPosts } from '@/utils/API/admin/post';
+import { useMutation } from 'react-query';
+import Link from 'next/link';
 
-export default function AllNotifications() {
+export default function AllPosts() {
+  const [loading, setLoading] = useState(true);
+  const [posts, setPosts] = useState([]);
+  
+  
+   const searchMutation = useMutation(getAllPosts, {
+     onSuccess: (data) => {
+        setLoading(false);
+        console.log(data);
+       setPosts(data);
+     },
+   });
+
+   const handleSearch = () => {
+     searchMutation.mutate();
+   };
+
+   useEffect(() => {
+     handleSearch();
+   }, []);
 
   return (
     <>
@@ -48,7 +70,7 @@ export default function AllNotifications() {
                 borderRadius: '8px',
                 marginRight: '4px',
               }}
-            //   onClick={handleSearch}
+              //   onClick={handleSearch}
             >
               <SearchIcon />
             </IconButton>
@@ -62,7 +84,7 @@ export default function AllNotifications() {
                 // value={sortBy}
                 label="Sort By"
                 onChange={(e) => {
-                //   setSortBy(e.target.value);
+                  //   setSortBy(e.target.value);
                 }}
               >
                 <MenuItem value={'name'}>Name</MenuItem>
@@ -84,15 +106,29 @@ export default function AllNotifications() {
             </div>
           </div>
         </Paper>
-        <Box className="px-2 py-2">
-          <Notification />
-        </Box>
-        <Box className="px-2 py-2">
-          <Notification />
-        </Box>
-        <Box className="px-2 py-2">
-          <Notification />
-        </Box>
+        {loading ? (
+          <div className="flex justify-center items-center">
+            <CircularProgress />
+          </div>
+        ) : (
+          <>
+            {posts &&
+              posts.map((post) => (
+                <Box className="px-2 py-2">
+                  <Link href={`/admin/post/${post._id}`} key={post._id}>
+                    <Post
+                      key={post._id}
+                      id={post._id}
+                      title={post.title}
+                      description={post.description}
+                      company={post.company}
+                      status={post.status}
+                    />
+                  </Link>
+                </Box>
+              ))}
+          </>
+        )}
       </Container>
     </>
   );

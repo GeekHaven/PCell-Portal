@@ -1,8 +1,11 @@
 import { Avatar, Container, Typography, Chip, Paper } from '@mui/material';
 import Box from '@mui/material/Box';
 import moment from 'moment';
+import Link from 'next/link';
 
-export const Notification = () => {
+
+export const Post = (props) => {
+  const basrUrl = 'admin/post/';
   return (
     <div>
       <Paper
@@ -13,9 +16,7 @@ export const Notification = () => {
         }}
       >
         <Container className="flex flex-col gap-1 p-2" maxWidth="xl">
-          <Typography variant="h6">
-            Amazon is not intrested in hiring today.
-          </Typography>
+          <Typography variant="h6">{props.title}</Typography>
           <Box className=" mb-2 flex flex-nowrap gap-2 items-center">
             <Avatar
               className="h-4 w-4"
@@ -24,7 +25,7 @@ export const Notification = () => {
               }}
             />
             <Typography variant="caption" color="text.secondary">
-              Mukesh Yadav
+              {props.company}
             </Typography>
             ·
             <Typography variant="caption" color="text.secondary">
@@ -36,24 +37,17 @@ export const Notification = () => {
             color="text.secondary"
             className="line-clamp-3 sm:line-clamp-2"
           >
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Vitae
-            tempora beatae earum itaque nobis officia laudantium mollitia
-            deserunt cupiditate deleniti vero ut qui nam corrupti a, assumenda
-            alias optio! Expedita?
+            {props.description}
           </Typography>
           <Box className="flex flex-wrap gap-2 pt-2 pb-1">
-            <Chip
-              variant="outlined"
-              label="Amazon"
-              color="primary"
-              className="font-semibold"
-            />
-            <Chip
-              variant="outlined"
-              label="Placement"
-              color="primary"
-              className="font-semibold"
-            />
+            <Link href={basrUrl + props.id}>
+              <Chip
+                variant="outlined"
+                label="Read More"
+                color="primary"
+                className="font-semibold"
+              />
+            </Link>
           </Box>
         </Container>
       </Paper>
@@ -61,4 +55,4 @@ export const Notification = () => {
   );
 };
 
-export default Notification;
+export default Post;
