@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Typography,
@@ -6,21 +6,171 @@ import {
   Divider,
   FormControlLabel,
   Switch,
-  Paper,
   Button,
-  Container,
+  ButtonGroup,
+  Paper,
+  Modal,
+  IconButton,
+  ListItem,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
 } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
+import EditIcon from '@mui/icons-material/Edit';
 import FiberManualRecordTwoToneIcon from '@mui/icons-material/FiberManualRecordTwoTone';
 
+let registeredStudentList = [];
+let shortlistedStudentList = [];
+
+for (let i = 0; i < 1000; i++) {
+  registeredStudentList.push({
+    name: 'Studentmb bnnb j hhjbigygyugyugyugybjhb hbugug ' + i,
+    rollNumber: i,
+  });
+}
+
+for (let i = 0; i < 100; i++) {
+  shortlistedStudentList.push({
+    name: 'Student ' + i,
+    rollNumber: i,
+  });
+}
+
+let studentList = {
+  registered: registeredStudentList,
+  shortlisted: shortlistedStudentList,
+  selected: [],
+};
+
+let statusToPreference = {
+  'registration open': 0,
+  'registration closed': 1,
+  shortlisting: 2,
+  completed: 3,
+};
+
+let preferenceToDefaultModalEntry = [
+  'registered',
+  'registered',
+  'shortlisted',
+  'selected',
+];
+
 export default function IndividualCompanyAdmin({ params }) {
+  let [studentListOpenWith, setStudentListOpenWith] = useState(false),
+    [chooseStudentModalOpen, setChooseStudentModalOpen] = useState(false);
+
   let companyData = {
     name: 'Google',
     logo: 'https://w7.pngwing.com/pngs/249/19/png-transparent-google-logo-g-suite-google-guava-google-plus-company-text-logo.png',
     techStack: 'React;Node;MongoDB;Express',
     userStatus: 'Registered',
+    status: 'shortlisting',
   };
+
   return (
     <>
+      <Modal
+        open={studentListOpenWith}
+        onClose={() => setStudentListOpenWith(false)}
+      >
+        <Paper
+          className="absolute top-1/2 left-1/2 p-4 w-full max-w-lg max-h-screen overflow-auto flex flex-col gap-4"
+          sx={{
+            backgroundColor: 'background.paper',
+            transform: 'translate(-50%,-50%)',
+          }}
+        >
+          <Box className="flex flex-row justify-between items-center">
+            <Typography variant="h6" color={'primary'}>
+              Student Lists
+            </Typography>
+            <IconButton onClick={() => setStudentListOpenWith(false)}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
+          <ButtonGroup size="small">
+            <Button
+              variant={
+                studentListOpenWith === 'registered' ? 'contained' : 'outlined'
+              }
+              onClick={() => setStudentListOpenWith('registered')}
+            >
+              Registered
+            </Button>
+            <Button
+              variant={
+                studentListOpenWith === 'shortlisted' ? 'contained' : 'outlined'
+              }
+              disabled={statusToPreference[companyData.status] < 2}
+              onClick={() => setStudentListOpenWith('shortlisted')}
+            >
+              Shortlisted
+            </Button>
+            <Button
+              variant={
+                studentListOpenWith === 'selected' ? 'contained' : 'outlined'
+              }
+              disabled={statusToPreference[companyData.status] < 3}
+              onClick={() => setStudentListOpenWith('selected')}
+            >
+              Selected
+            </Button>
+          </ButtonGroup>
+          <TableContainer className="max-h-96 overflow-auto">
+            <Table stickyHeader>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Sr.</TableCell>
+                  <TableCell>Name</TableCell>
+                  <TableCell className="min-w-[120px]">Roll Number</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {studentListOpenWith &&
+                  studentList[studentListOpenWith].map((student, index) => (
+                    <TableRow key={index} hover>
+                      <TableCell
+                        style={{
+                          width: 10,
+                        }}
+                      >
+                        {index + 1}
+                      </TableCell>
+                      <TableCell>{student.name}</TableCell>
+                      <TableCell>{student.rollNumber}</TableCell>
+                    </TableRow>
+                  ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <Box className="flex flex-row justify-between">
+            {studentListOpenWith !== 'registered' && (
+              <Button
+                className="w-fit self-end"
+                size="small"
+                variant="outlined"
+                startIcon={<EditIcon />}
+              >
+                Edit
+              </Button>
+            )}
+            <Button
+              className="w-fit ml-auto self-end"
+              variant="contained"
+              size="small"
+              endIcon={<ArrowRightAltIcon />}
+            >
+              Export Users
+            </Button>
+          </Box>
+        </Paper>
+      </Modal>
       <Box
         className="flex flex-row items-start justify-start gap-4"
         sx={{
@@ -29,22 +179,22 @@ export default function IndividualCompanyAdmin({ params }) {
         }}
       >
         <div className="flex flex-row w-full sm:flex-nowrap flex-wrap gap-4 justify-center sm:justify-start">
-          <div className="flex sm:flex-col flex-row gap-2 justify-start items-center">
+          <div className="flex sm:flex-col flex-row gap-4 w-full sm:w-fit justify-between">
             <Box
-              className="h-40 sm:w-40 w-full sm:m-0"
+              className="h-40 sm:m-0"
               sx={{
                 padding: 0,
               }}
             >
               <img
                 src={companyData.logo}
-                className="object-contain w-full h-full rounded-md"
+                className="object-contain h-full aspect-square rounded-md"
                 alt="Google"
               />
             </Box>
-            <Box className="flex justify-evenly flex-col">
+            <Box className="flex justify-evenly flex-col sm:items-center">
               <Typography
-                className="text-2xl font-semibold text-center mb-2"
+                className="text-2xl font-semibold md:text-center mb-2"
                 color={'primary'}
               >
                 {companyData.name}
@@ -60,8 +210,8 @@ export default function IndividualCompanyAdmin({ params }) {
             flexItem
             className="hidden sm:block"
           />
-          <Box className="flex-grow">
-            <Box className="flex flex-row items-center gap-2">
+          <Box className="flex flex-col gap-4 flex-grow">
+            <Box className="w-full flex flex-row flex-wrap items-center gap-2">
               <Typography
                 component="div"
                 className="text-xl font-semibold m-0"
@@ -69,24 +219,81 @@ export default function IndividualCompanyAdmin({ params }) {
               >
                 Current Status :
               </Typography>
-              <Chip
-                label={'Registration Closed'}
-                variant="outlined"
-                color="warning"
-                className="ml-2"
-                icon={
-                  <FiberManualRecordTwoToneIcon
-                    sx={{
-                      fontSize: '1rem',
-                    }}
-                  />
-                }
-              />
-              <Button size="small">View Registrations</Button>
+              <Box className="flex fle-row justify-start flex-wrap gap-2">
+                <Chip
+                  label={'Registration Closed'}
+                  variant="outlined"
+                  color="warning"
+                  icon={
+                    <FiberManualRecordTwoToneIcon
+                      sx={{
+                        fontSize: '1rem',
+                      }}
+                    />
+                  }
+                />
+                <Button
+                  size="small"
+                  onClick={() =>
+                    setStudentListOpenWith(
+                      preferenceToDefaultModalEntry[
+                        statusToPreference[companyData.status]
+                      ]
+                    )
+                  }
+                >
+                  View{' '}
+                  {
+                    preferenceToDefaultModalEntry[
+                      statusToPreference[companyData.status]
+                    ]
+                  }{' '}
+                  students
+                </Button>
+              </Box>
             </Box>
+            {statusToPreference[companyData.status] < 3 && (
+              <>
+                <Divider />
+                <Box className="w-full flex flex-row flex-wrap items-center gap-2">
+                  <Button
+                    variant="contained"
+                    color="success"
+                    size="small"
+                    onClick={() =>
+                      setChooseStudentModalOpen(
+                        preferenceToDefaultModalEntry[
+                          statusToPreference[companyData.status] + 1
+                        ]
+                      )
+                    }
+                  >
+                    Choose{' '}
+                    {
+                      preferenceToDefaultModalEntry[
+                        statusToPreference[companyData.status] + 1
+                      ]
+                    }{' '}
+                    Students
+                  </Button>
+                </Box>
+              </>
+            )}
           </Box>
         </div>
       </Box>
+      <Modal
+        open={chooseStudentModalOpen}
+        onClose={() => setChooseStudentModalOpen(false)}
+      >
+        <Paper
+          className="absolute top-1/2 left-1/2 p-4 w-full max-w-lg max-h-screen overflow-auto flex flex-col gap-4"
+          sx={{
+            backgroundColor: 'background.paper',
+            transform: 'translate(-50%,-50%)',
+          }}
+        ></Paper>
+      </Modal>
     </>
   );
 }

@@ -1,5 +1,8 @@
 import Head from 'next/head';
+import { useTheme } from '@mui/material';
+
 export default function SEO({ title, desc, img }) {
+  const theme = useTheme();
   return (
     <Head>
       <title>{title + ' · Placements · IIITA'}</title>
@@ -7,7 +10,7 @@ export default function SEO({ title, desc, img }) {
         name="viewport"
         content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
       />
-      <meta name="theme-color" content="#ffffff" />
+      <meta name="theme-color" content={theme.palette.background.default} />
       <meta name="title" content={title + ' · Placements · IIITA'} />
       <meta name="description" content={desc} />
       <link rel="manifest" href="/manifest.json" />

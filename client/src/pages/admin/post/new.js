@@ -156,7 +156,6 @@ const NewPost = () => {
             onChange={log}
             apiKey="ah9w9dtmhnrt5yhzobg11p0jj9sdldd1x64lj89aipllnqn6"
             onInit={(evt, editor) => (editorRef.current = editor)}
-            initialValue="<p>Enter the Body of the Notification here. You can style it as you wish.</p>"
             init={{
               height: '90vmin',
               toolbar_sticky: true,
@@ -164,6 +163,7 @@ const NewPost = () => {
               selector: 'textarea',
               skin: 'oxide-dark',
               content_css: 'dark',
+              statusbar: false,
               plugins: [
                 'autolink lists advlist link image charmap print preview anchor',
                 'searchreplace visualblocks code fullscreen',

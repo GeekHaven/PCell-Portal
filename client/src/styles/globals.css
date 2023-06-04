@@ -409,3 +409,18 @@ Ensure the default browser behavior of the `hidden` attribute.
     rotate: 360deg;
   }
 }
+
+/* Custom Scollbar Stylings */
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 4px;
+  background-color: #617C8B;
+}
