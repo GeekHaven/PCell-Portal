@@ -12,7 +12,13 @@ const app = express();
 
 app.use(cors());
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(
+  bodyParser.urlencoded({
+    limit: '5mb',
+    parameterLimit: 100000,
+    extended: false,
+  })
+);
 app.use(morgan('dev'));
 app.use('/api', routes);
 mongoose

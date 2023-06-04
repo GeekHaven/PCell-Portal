@@ -1,18 +1,20 @@
-import Post from '../models/post.model';
-import User from '../models/user.model';
-import { isUserEligibleInTarget } from '../utils/queries/isUserEligibleInTarget';
+import Post from '../models/post.model.js';
+import User from '../models/user.model.js';
+import { isUserEligibleInTarget } from '../utils/queries/isUserEligibleInTarget.js';
 import {
-  response_400,
-  response_500,
   response_200,
-} from '../utils/response.utils';
+  response_400,
+  response_404,
+  response_500,
+} from '../utils/responseCodes.js';
+import mongoose from 'mongoose';
 
 export async function getPostById(req, res) {
   try {
     const { postId } = req.params;
     const user  = req.user;
 
-    const post = await Post.aggregate([
+    const [post] = await Post.aggregate([
       {
         $addFields: {
           isEligible: isUserEligibleInTarget(user)
@@ -20,11 +22,25 @@ export async function getPostById(req, res) {
       },
       {
         $match: {
-          _id: postId,
+          _id: new mongoose.Types.ObjectId(postId),
           isEligible: true
+        },
+      },
+      {
+        $project: {
+          _id: 1,
+          title: 1,
+          description: 1,
+          content : 1,
+          company: 1,
+          createdAt: 1,
         },
       }
     ]);
+
+    console.log(post);
+
+    // const post = await Post.findById(postId);
 
     if (!post) return response_400(res, 'Invalid request');
     return response_200(res, post);

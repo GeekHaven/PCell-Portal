@@ -115,6 +115,7 @@ export default function AllPosts() {
                     <Post
                       key={post._id}
                       id={post._id}
+                      baseUrl = {'post/'}
                       title={post.title}
                       description={post.description}
                       company={post.company}

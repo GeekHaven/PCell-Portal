@@ -3,7 +3,7 @@ import { Router } from 'express';
 import {
     getPostById,
     getAllPosts
-} from '../../controllers/post.controller';
+} from '../../controllers/post.controller.js';
 
 const router = Router();
 

@@ -28,7 +28,7 @@ const dashboardRoutes = [
     baseUrl: '/dashboard',
     items: [
       {
-        path: '',
+        path: '/',
         name: 'Inbox',
         Icon: InboxIcon,
       },

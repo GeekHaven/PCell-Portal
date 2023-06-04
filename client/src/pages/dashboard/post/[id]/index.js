@@ -5,31 +5,29 @@ import Comment from '@/components/Post/Comment';
 import Reply from '@/components/Post/Reply';
 import NewComment from '@/components/Post/NewComment';
 import { useQuery } from 'react-query';
-import { getPostById } from '@/utils/API/admin/post';
+import { getPostById } from '@/utils/API/post';
 import { CircularProgress } from '@mui/material';
 
+export default function IndividialPostAdmin({ params }) {
+  let { data: post, isLoading } = useQuery({
+    queryKey: ['post'],
+    queryFn: () => {
+      return getPostById(params.id);
+    },
+  });
 
-export default function IndividialPostAdmin({params}) {
-
-    let { data: post, isLoading } = useQuery({
-      queryKey: ['post'],
-      queryFn: ()=>{
-        return getPostById(params.id);
-      },
-    });
-
-    if (isLoading) {
-      return (
-        <Container className="h-96 w-full flex justify-center items-center">
-          <CircularProgress />
-        </Container>
-      );
-    }
+  if (isLoading) {
+    return (
+      <Container className="h-96 w-full flex justify-center items-center">
+        <CircularProgress />
+      </Container>
+    );
+  }
 
 
   return (
     <div className="">
-      <Paper maxWidth="xl" className="sm:px-8 px-4 py-8 my-4 rounded-md">
+      <Paper maxWidth="xl" className="sm:px-8 px-4 py-8 my-4 rounded-md ">
         <div className="flex justify-start gap-4 text-3xl font-bold">
           {post.title}
         </div>
@@ -39,7 +37,7 @@ export default function IndividialPostAdmin({params}) {
         <Box className="flex flex-wrap gap-2 pt-2 pb-1 mt-2">
           <Chip
             variant="outlined"
-            label={post.company}
+            label="Amazon"
             color="primary"
             className="font-semibold"
           />

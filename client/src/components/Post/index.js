@@ -6,18 +6,16 @@ import { useRouter } from 'next/router';
 
 
 export const Post = (props) => {
-  const baseUrl = 'post/';
   const router = useRouter();
   return (
     <Button
-              className="w-full h-full"
-              sx={{
-                outlineColor: 'secondary.main',
-                padding : '0px',
-              }}
-     
+      className="w-full h-full"
+      sx={{
+        outlineColor: 'secondary.main',
+        padding: '0px',
+      }}
       onClick={() => {
-        router.push(baseUrl + props.id);
+        router.push(props.baseUrl + props.id);
       }}
     >
       <div className="w-full">
@@ -29,8 +27,10 @@ export const Post = (props) => {
           }}
         >
           <Container className="flex flex-col gap-1 p-2 w-full" maxWidth="xl">
-            <Typography variant="h6 text-left">{props.title}</Typography>
-            <Box className=" mb-2 flex flex-nowrap gap-2 items-center">
+            <Typography variant="h6" className="text-left capitalize">
+              {props.title}
+            </Typography>
+            <Box className=" mb-2 flex flex-nowrap gap-2 items-center normal-case">
               <Avatar
                 className="h-4 w-4"
                 sx={{
@@ -48,12 +48,12 @@ export const Post = (props) => {
             <Typography
               variant="body2"
               color="text.secondary"
-              className="line-clamp-3 sm:line-clamp-2 text-left"
+              className="line-clamp-3 sm:line-clamp-2 text-left normal-case"
             >
               {props.description}
             </Typography>
             <Box className="flex flex-wrap gap-2 pt-2 pb-1">
-              <Link href={baseUrl + props.id}>
+              <Link href={props.baseUrl + props.id}>
                 <Chip
                   variant="outlined"
                   label="Read More"
