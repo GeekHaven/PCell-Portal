@@ -7,12 +7,23 @@ import { useState } from 'react';
 import { useQuery } from 'react-query';
 import { getComments } from '@/utils/API/admin/post';
 import { useRouter } from 'next/router';
-
+import { useEffect } from 'react';
+import { useSnackbar } from 'notistack';
+import { useMutation } from 'react-query';
+import { Container, CircularProgress } from '@mui/material';
+import { useContext } from 'react';
+import ThemeContext from '@/contexts/theme.context';
 
 export default function Discussion({ params, showDiscussion }) {
     const router = useRouter();
   const [comments, setComments] = useState([]);
   const [replies, setReplies] = useState([]);
+  const { theme } = useContext(ThemeContext);
+  const [mode, setMode] = useState(theme.palette.mode);
+
+  useEffect(() => {
+    setMode(theme.palette.mode);
+  }, [theme]);
   
   const { data: allComments, commentsLoading } = useQuery({
     queryKey: ['comments'],
@@ -20,7 +31,6 @@ export default function Discussion({ params, showDiscussion }) {
       return getComments(router.query.id);
     },
     onSuccess: (data) => {
-      console.log(data);
       setComments(data);
     },
     enabled: showDiscussion,

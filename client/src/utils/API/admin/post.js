@@ -57,9 +57,8 @@ export async function addComment({ postId, replyTo, content }) {
     userId,
   };
   let res = await post('/admin/post/comment', body);
-  console.log(res);
-  if (res.status === 201) {
-    return Promise.resolve(res.data.data);
+  if (res.status === 200) {
+    return Promise.resolve(res.data.message);
   }
   return Promise.reject(res.data.error);
 }

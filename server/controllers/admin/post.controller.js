@@ -232,10 +232,31 @@ export async function addComment(req, res) {
           },
         },
         {
+          $lookup: {
+            from: 'users',
+            localField: 'author',
+            foreignField: '_id',
+            as: 'author',
+          },
+        },
+        {
           $project: {
             _id: 1,
             content: 1,
-            author: 1,
+            author: {
+              $arrayElemAt: [
+                {
+                  $map: {
+                    input: '$author',
+                    in: {
+                      name: '$$this.name',
+                      rollNumber: '$$this.rollNumber',
+                    },
+                  },
+                },
+                0,
+              ],
+            },
             private: 1,
             createdAt: 1,
           },

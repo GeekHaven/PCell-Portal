@@ -15,7 +15,7 @@ export const Post = (props) => {
   const router = useRouter();
   return (
     <Button
-      className="w-full h-full"
+      className="w-full h-full my-1"
       sx={{
         outlineColor: 'secondary.main',
         padding: '0px',
