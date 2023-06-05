@@ -32,6 +32,7 @@ export default function IndividialPostAdmin({ params }) {
 
   return (
     <div className="flex flex-col gap-4">
+      
       <Paper className="sm:p-4 p-2 rounded-md">
         <Typography variant="h4" className="text-2xl font-semibold mb-1">
           {post.title}

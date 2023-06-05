@@ -25,11 +25,14 @@ export const Post = (props) => {
       }}
     >
       <div className="w-full">
-        <Paper
-          elevation={1}
-          className="border-2 border-solid rounded-md py-1 px-2 gap-2 w-full"
+        <Box
+          // elevation={1}
+          className="border-[1px] border-solid rounded-md py-1 px-2 gap-2 w-full"
           sx={{
             borderColor: 'divider',
+            // '&:hover': {
+            //   backgroundColor: 'divider',
+            // },
           }}
         >
           <Container className="flex flex-col gap-1 p-2 w-full" maxWidth="xl">
@@ -67,7 +70,7 @@ export const Post = (props) => {
               </Link>
             </Box>
           </Container>
-        </Paper>
+        </Box>
       </div>
     </Button>
   );

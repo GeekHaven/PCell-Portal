@@ -10,6 +10,8 @@ import {
   Paper,
   Select,
   TextField,
+  Typography,
+  Divider,
 } from '@mui/material';
 import React from 'react';
 import { useState } from 'react';
@@ -34,6 +36,10 @@ export default function AllPosts() {
   }
   return (
     <>
+      <Typography variant="h4" className="text-center -mt-2" color="primary">
+        All Posts
+      </Typography>
+      <Divider className="mb-4 mt-2" />
       <Container maxWidth="xl" className="m-0 p-0">
         <Box className="mb-4 flex md:flex-row flex-col gap-4 md:gap-2 md:items-center">
           <div className="flex flex-nowrap flex-grow w-full">
