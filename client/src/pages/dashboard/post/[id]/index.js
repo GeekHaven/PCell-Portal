@@ -16,7 +16,7 @@ export default function IndividialPostAdmin({ params }) {
   const [showDiscussion, setShowDiscussion] = useState(false);
 
   let { data: post, isLoading } = useQuery({
-    queryKey: ['post'],
+    queryKey: ['post', params.id],
     queryFn: () => {
       return getPostById(params.id);
     },
@@ -40,7 +40,12 @@ export default function IndividialPostAdmin({ params }) {
           {post.description}
         </Typography>
         <Divider className="my-3" />
-        <div dangerouslySetInnerHTML={{ __html: post.content }}></div>
+        <Box>
+          <div
+            className="content"
+            dangerouslySetInnerHTML={{ __html: post.content }}
+          ></div>
+        </Box>
       </Paper>
       <Box className="flex">
         <ToggleButton

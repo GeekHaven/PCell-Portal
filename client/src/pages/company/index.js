@@ -64,7 +64,7 @@ const AllCompanies = () => {
       <SEO title="All Companies" />
       <Paper
         elevation={2}
-        className="py-4 px-4 mb-4 flex md:flex-row flex-col gap-4 md:gap-2 md:items-center"
+        className="p-2 mb-4 flex md:flex-row flex-col gap-4 md:gap-2 md:items-center"
       >
         <div className="flex flex-nowrap flex-grow w-full">
           <TextField
@@ -142,7 +142,7 @@ const AllCompanies = () => {
           <CircularProgress />
         </Container>
       ) : (
-        <div className="px-2 grid gap-2 grid-cols-1 sm:grid-cols-[repeat(auto-fill,minmax(300px,1fr))]">
+        <div className="grid gap-2 grid-cols-1 sm:grid-cols-[repeat(auto-fill,minmax(300px,1fr))]">
           {companyData?.docs?.map((company) => (
             <Button
               variant="outlined"

@@ -425,42 +425,37 @@ Ensure the default browser behavior of the `hidden` attribute.
   background-color: #617C8B;
 }
 
-.content{
-  border-radius: 2rem;
-  padding: 1.5rem;
+.content ol {
+  padding-left: 2rem;
+  list-style-type: decimal;
+  list-style-position: outside;
 }
 
-.content ol {
-    padding-left: 2rem; 
-    list-style-type: decimal;
-    list-style-position: outside;
-  }
+.content ul {
+  list-style-type: disc;
 
-.content  ul {
-    list-style-type: disc;
-    
-    list-style-position: outside;
-  }
+  list-style-position: outside;
+}
 
-.content  li {
-    margin-bottom: 10px;
-  }
+.content li {
+  margin-bottom: 10px;
+}
 
-.content h2{
+.content h2 {
   font-size: 2rem;
   font-weight: 750;
   margin-top: 1.15rem;
   margin-bottom: 1.15rem;
 }
 
-.content h1{
+.content h1 {
   font-size: 2.2rem;
   font-weight: 750;
   margin-top: 1.15rem;
   margin-bottom: 1.15rem;
 }
 
-.content h3{
+.content h3 {
   font-size: 1.5rem;
   font-weight: 750;
   margin-top: 1.15rem;
@@ -474,56 +469,56 @@ Ensure the default browser behavior of the `hidden` attribute.
   margin: 10px 0;
 }
 
-.content p{
+.content p {
   padding: 0.4rem;
   font-size: 1.15rem;
 }
 
 .content pre {
-      padding: 16px;
-      border-radius: 4px;
-      overflow-x: auto;
-    }
+  padding: 16px;
+  border-radius: 4px;
+  overflow-x: auto;
+}
 
-    .content code {
-      display: block;
-      white-space: pre;
-    }
+.content code {
+  display: block;
+  white-space: pre;
+}
 
-    .content .language-html .token.tag,
-    .content .language-html .token.doctype {
-      color: #569cd6;
-    }
+.content .language-html .token.tag,
+.content .language-html .token.doctype {
+  color: #569cd6;
+}
 
-    .content .language-html .token.tag .token.punctuation {
-      color: #d4d4d4;
-    }
+.content .language-html .token.tag .token.punctuation {
+  color: #d4d4d4;
+}
 
-    .content .language-html .token.tag .token.name {
-      color: #9cdcfe;
-    }
+.content .language-html .token.tag .token.name {
+  color: #9cdcfe;
+}
 
-    .content .language-html .token.punctuation {
-      color: #d4d4d4;
-    }
+.content .language-html .token.punctuation {
+  color: #d4d4d4;
+}
 
-    .content .language-html .token.string,
-    .content .language-html .token.attr-value {
-      color: #ce9178;
-    }
+.content .language-html .token.string,
+.content .language-html .token.attr-value {
+  color: #ce9178;
+}
 
-    .content .language-html .token.comment {
-      color: #6a9955;
-      font-style: italic;
-    }
+.content .language-html .token.comment {
+  color: #6a9955;
+  font-style: italic;
+}
 
-.content img{
+.content img {
   margin-top: 1rem;
   margin-bottom: 1rem;
 }
 
 @media screen and (max-width: 600px) {
-  .content{
+  .content {
     padding: 0rem;
   }
 }

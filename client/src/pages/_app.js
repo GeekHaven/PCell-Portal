@@ -21,6 +21,7 @@ import FullLoader from '@/components/FullLoader';
 import { isUserAuthenticated } from '@/utils/API/auth';
 import { getLS, storeLS } from '@/utils/localStorage';
 import { OfflineIndicator } from '@/components/OfflineIndicator';
+import SEO from '@/components/SEO';
 
 const queryClient = new QueryClient();
 
@@ -94,8 +95,11 @@ function AppContentWrapper({ Component, pageProps }) {
           });
         });
 
+      let refreshing;
       navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (refreshing) return;
         window.location.reload();
+        refreshing = true;
       });
     }
   }, []);
@@ -188,6 +192,7 @@ export default function App({ Component, pageProps }) {
           <ThemeProvider theme={theme}>
             <CssBaseline />
             <SnackbarProvider maxSnack={3}>
+              <SEO />
               <AppContentWrapper Component={Component} pageProps={pageProps} />
             </SnackbarProvider>
           </ThemeProvider>

@@ -1,11 +1,9 @@
 import {
   Button,
-  Checkbox,
   Chip,
   CircularProgress,
   Divider,
   FormControl,
-  FormControlLabel,
   IconButton,
   InputLabel,
   MenuItem,
@@ -59,7 +57,7 @@ const AllCompanies = () => {
     <>
       <Paper
         elevation={2}
-        className="py-4 px-4 mb-4 flex md:flex-row flex-col gap-4 md:gap-2 md:items-center"
+        className="p-2 mb-4 flex md:flex-row flex-col gap-4 md:gap-2 md:items-center"
       >
         <div className="flex flex-nowrap flex-grow w-full">
           <TextField
@@ -125,7 +123,7 @@ const AllCompanies = () => {
         </Container>
       ) : (
         <Container
-          className="grid gap-2 grid-cols-1 sm:grid-cols-[repeat(auto-fill,minmax(300px,1fr))]"
+          className="grid gap-2 grid-cols-1 p-0 sm:grid-cols-[repeat(auto-fill,minmax(300px,1fr))]"
           maxWidth="xl"
         >
           {companyData.map((company) => (
