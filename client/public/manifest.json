@@ -1,0 +1,9 @@
+{
+    "name": "Utkarsh IIIT Allahabad",
+    "short_name": "Utkarsh",
+    "description": "IIIT Allahabad's placement portal. This is a portal for students to register and track their placement activities.",
+    "display": "standalone",
+    "start_url": "/",
+    "background_color": "#0B1829",
+    "theme_color": "#0B1829"
+}

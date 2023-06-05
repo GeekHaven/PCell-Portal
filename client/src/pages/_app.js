@@ -20,6 +20,7 @@ import DrawerHeader from '@/components/DrawerHeader';
 import FullLoader from '@/components/FullLoader';
 import { isUserAuthenticated } from '@/utils/API/auth';
 import { getLS, storeLS } from '@/utils/localStorage';
+import { OfflineIndicator } from '@/components/OfflineIndicator';
 
 const queryClient = new QueryClient();
 
@@ -62,6 +63,14 @@ function AppContentWrapper({ Component, pageProps }) {
       }
     }
   }, [router, user]);
+
+  useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker
+        .register('/service-worker.js')
+        .then((registration) => console.log('scope is: ', registration.scope));
+    }
+  }, []);
 
   return (
     <>
@@ -114,6 +123,9 @@ function AppContentWrapper({ Component, pageProps }) {
                   <DrawerHeader />
                 )}
                 <Component {...pageProps} />
+                {!Component.isFullWidth && !Component.hideNavbar && (
+                  <OfflineIndicator />
+                )}
               </>
             )}
           </>

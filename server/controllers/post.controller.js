@@ -74,7 +74,6 @@ export async function getAllPosts(req, res) {
         },
       },
     ]);
-    console.log(post);
     if (!post) return response_400(res, 'Invalid request');
     return response_200(res, post);
   } catch (error) {

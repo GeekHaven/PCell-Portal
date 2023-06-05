@@ -58,6 +58,8 @@ export default function Navbar({ open, setOpen, noSidebarMargin }) {
         >
           {!noSidebarMargin && (
             <IconButton
+              aria-label="Sidebar Toggle"
+              aria-controls="sidebar-menu"
               size="large"
               color="primary"
               className="md:hidden mr-4"
@@ -109,6 +111,9 @@ export default function Navbar({ open, setOpen, noSidebarMargin }) {
                   {user.rollNumber}
                 </Button>
                 <Menu
+                  PaperProps={{
+                    id: 'menu-list',
+                  }}
                   anchorEl={menuRef.current}
                   open={menuOpen}
                   onClose={() => setMenuOpen(false)}
@@ -141,6 +146,7 @@ export default function Navbar({ open, setOpen, noSidebarMargin }) {
               </>
             ) : (
               <Button
+                aria-label="Login Button"
                 variant="outlined"
                 className="normal-case font-semibold tracking-wider border-2"
                 onClick={() => {
@@ -159,10 +165,12 @@ export default function Navbar({ open, setOpen, noSidebarMargin }) {
             ref={sideMenuRef}
             onClick={() => setSideMenuOpen(!sideMenuOpen)}
             className="md:hidden"
+            aria-label="User Actions"
           >
             <AccountCircleIcon />
           </IconButton>
           <Menu
+            id="menu-appbar"
             anchorEl={sideMenuRef.current}
             open={sideMenuOpen}
             onClose={() => setSideMenuOpen(false)}
