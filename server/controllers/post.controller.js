@@ -1,5 +1,7 @@
 import Post from '../models/post.model.js';
 import User from '../models/user.model.js';
+import Comment from '../models/comment.model.js';
+
 import { isUserEligibleInTarget } from '../utils/queries/isUserEligibleInTarget.js';
 import {
   response_200,
@@ -13,6 +15,8 @@ export async function getPostById(req, res) {
   try {
     const { postId } = req.params;
     const user = req.user;
+    console.log(user);
+
 
     const [post] = await Post.aggregate([
       {

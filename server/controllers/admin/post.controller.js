@@ -7,6 +7,8 @@ import {
   response_400,
   response_201,
 } from '../../utils/responseCodes.js';
+import Comment from '../../models/comment.model.js';
+import mongoose from 'mongoose';
 
 export async function addPost(req, res) {
   try {
@@ -130,7 +132,7 @@ export async function getPostById(req, res) {
 //   }
 // }
 
-export async function getAllComments(req, res) {
+export async function getComments(req, res) {
   try {
     const { id } = req.params;
     const comments = await Comment.aggregate([
@@ -141,10 +143,31 @@ export async function getAllComments(req, res) {
         },
       },
       {
+        $lookup: {
+          from: 'users',
+          localField: 'author',
+          foreignField: '_id',
+          as: 'author',
+        },
+      },
+      {
         $project: {
           _id: 1,
           content: 1,
-          author: 1,
+          author: {
+            $arrayElemAt: [
+              {
+                $map: {
+                  input: '$author',
+                  in: {
+                    name: '$$this.name',
+                    rollNumber: '$$this.rollNumber',
+                  },
+                },
+              },
+              0,
+            ],
+          },
           private: 1,
           createdAt: 1,
         },
@@ -155,6 +178,8 @@ export async function getAllComments(req, res) {
     return response_500(res, error);
   }
 }
+
+
 
 export async function getReplies(req, res) {
   try {
@@ -183,20 +208,20 @@ export async function getReplies(req, res) {
 
 export async function addComment(req, res) {
   try {
-    const { content, postId, replyTo } = req.body;
+    const { content, postId, replyTo, userId } = req.body;
     if (!content || !postId) return response_400(res, 'Invalid request');
 
     if (!replyTo) {
       const post = await Post.findById(postId);
       if (!post) return response_400(res, 'Invalid request');
 
-      const user = req.user;
+     const user = req.user; 
 
       const comment = await Comment.create({
         content,
         author: user._id,
         postId,
-        private: 'public',
+        private: false,
       });
 
       const comments = await Comment.aggregate([
