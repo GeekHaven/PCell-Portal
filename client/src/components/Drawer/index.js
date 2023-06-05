@@ -28,7 +28,7 @@ const dashboardRoutes = [
     baseUrl: '/dashboard',
     items: [
       {
-        path: '/',
+        path: '',
         name: 'Inbox',
         Icon: InboxIcon,
       },
@@ -120,7 +120,7 @@ function ResponsiveDrawer(props) {
   }
 
   const drawer = (
-    <div>
+    <div id="sidebar-menu">
       <Toolbar>
         <Typography variant="h6" className="w-full text-center" color="primary">
           {isAdmin() ? 'Admin' : 'Dashboard'}

@@ -26,7 +26,7 @@ import SearchIcon from '@mui/icons-material/Search';
 import { useState, useEffect } from 'react';
 import { getPaginatedCompanies } from '@/utils/API/company';
 import { useMutation } from 'react-query';
-import { previewData } from 'next/dist/client/components/headers';
+import SEO from '@/components/SEO';
 
 const AllCompanies = () => {
   const router = useRouter();
@@ -61,6 +61,7 @@ const AllCompanies = () => {
 
   return (
     <>
+      <SEO title="All Companies" />
       <Paper
         elevation={2}
         className="py-4 px-4 mb-4 flex md:flex-row flex-col gap-4 md:gap-2 md:items-center"

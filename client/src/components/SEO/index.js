@@ -1,7 +1,9 @@
 import Head from 'next/head';
 import { useTheme } from '@mui/material';
+import { API_URL } from '@/utils/API/request';
 
 export default function SEO({ title, desc, img }) {
+  let baseUrl = API_URL.split('/api')[0];
   const theme = useTheme();
   return (
     <Head>
@@ -16,6 +18,7 @@ export default function SEO({ title, desc, img }) {
       <link rel="manifest" href="/manifest.json" />
       <link rel="shortcut icon" href="/favicon.ico" />
       <link rel="apple-touch-icon" href="/apple-icon.png"></link>
+      <link rel="preconnect" href={baseUrl} />
       <meta property="og:type" content="website" />
       <meta property="og:title" content={title} />
       <meta property="og:description" content={desc} />
