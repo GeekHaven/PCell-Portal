@@ -74,7 +74,7 @@ export async function getAllPosts(req, res) {
         },
       },
     ]);
-
+    console.log(post);
     if (!post) return response_400(res, 'Invalid request');
     return response_200(res, post);
   } catch (error) {
@@ -183,7 +183,7 @@ export async function getComments(req, res) {
         },
         {
           $project: {
-            _id : 1,
+            _id: 1,
             content: 1,
             author: 1,
             private: 1,
@@ -243,63 +243,62 @@ export async function getReplies(req, res) {
 
     if (comment.private === 'public') {
       const replies = await Comment.aggregate([
-      {
-        $match: {
-          replyTo: new mongoose.Types.ObjectId(commentId),
+        {
+          $match: {
+            replyTo: new mongoose.Types.ObjectId(commentId),
+          },
         },
-      },
-      {
-        $project: {
-          _id: 1,
-          content: 1,
-          author: 1,
-          private: 1,
-          createdAt: 1,
+        {
+          $project: {
+            _id: 1,
+            content: 1,
+            author: 1,
+            private: 1,
+            createdAt: 1,
+          },
         },
-      },
-    ]);
-    return response_200(res, replies);
-  } else {
-    const user = req.user;
-    if (!user) return response_400(res, 'Invalid request');
-    if (comment.author.toString() !== user._id.toString()) return response_400(res, 'Invalid request');
+      ]);
+      return response_200(res, replies);
+    } else {
+      const user = req.user;
+      if (!user) return response_400(res, 'Invalid request');
+      if (comment.author.toString() !== user._id.toString())
+        return response_400(res, 'Invalid request');
 
-    const replies = await Comment.aggregate([
-      {
-        $match: {
-          replyTo: new mongoose.Types.ObjectId(id),
-          $or: [
-            {
-              private: 'public',
-            },
-            {
-               $and: [
+      const replies = await Comment.aggregate([
+        {
+          $match: {
+            replyTo: new mongoose.Types.ObjectId(id),
+            $or: [
+              {
+                private: 'public',
+              },
+              {
+                $and: [
                   {
                     private: 'private',
                   },
                   {
                     author: new mongoose.Types.ObjectId(user._id),
                   },
-                ]
-              }
+                ],
+              },
             ],
-          }
+          },
         },
         {
-        $project: {
-          _id: 1,
-          content: 1,
-          author: 1,
-          private: 1,
-          createdAt: 1,
+          $project: {
+            _id: 1,
+            content: 1,
+            author: 1,
+            private: 1,
+            createdAt: 1,
+          },
         },
-      },
-    ]);
-    return response_200(res, replies);
-  }
- }
-  catch (error) {
+      ]);
+      return response_200(res, replies);
+    }
+  } catch (error) {
     return response_500(res, error);
   }
 }
-

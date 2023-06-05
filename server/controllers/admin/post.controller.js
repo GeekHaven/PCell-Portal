@@ -24,31 +24,6 @@ export async function addPost(req, res) {
       content,
     });
 
-    const eligibleUsers = await User.aggregate([
-      {
-        $addFields: {
-          isEligible: getEligibleUsersForTarget(target),
-        },
-      },
-      {
-        $match: {
-          isEligible: true,
-        },
-      },
-      //  { $project: { items: { $concatArrays: [ "$instock", "$ordered" ] } } }
-      {
-        $project: {
-          _id: 1,
-        },
-      },
-    ]);
-
-    eligibleUsers.forEach(async (user) => {
-      const userObj = await User.findById(user._id);
-      userObj.posts.push(post._id);
-      userObj.save();
-    });
-
     return response_201(res, post);
   } catch (error) {
     console.log(error);

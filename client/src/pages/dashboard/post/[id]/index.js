@@ -24,30 +24,16 @@ export default function IndividialPostAdmin({ params }) {
     );
   }
 
-
   return (
     <div className="">
-      <Paper maxWidth="xl" className="sm:px-8 px-4 py-8 my-4 rounded-md ">
+      <Paper maxWidth="xl" className="sm:px-8 px-4 py-8 rounded-md ">
         <div className="flex justify-start gap-4 text-3xl font-bold">
           {post.title}
         </div>
         <div className="flex justify-start gap-4 text-lg mt-4">
           {post.description}
         </div>
-        <Box className="flex flex-wrap gap-2 pt-2 pb-1 mt-2">
-          <Chip
-            variant="outlined"
-            label="Amazon"
-            color="primary"
-            className="font-semibold"
-          />
-          <Chip
-            variant="outlined"
-            label="Placement"
-            color="primary"
-            className="font-semibold"
-          />
-        </Box>
+
         <Divider className="my-3" />
 
         <Box maxWidth="xl">

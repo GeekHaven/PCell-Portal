@@ -10,38 +10,31 @@ import { CircularProgress } from '@mui/material';
 import Discussion from '@/components/Post/Discussion';
 import { getComments } from '@/utils/API/admin/post';
 
+export default function IndividialPostAdmin({ params }) {
+  const [showDiscussion, setShowDiscussion] = useState(false);
 
-export default function IndividialPostAdmin({params}) {
+  let { data: post, isLoading } = useQuery({
+    queryKey: ['post'],
+    queryFn: () => {
+      return getPostById(params.id);
+    },
+  });
 
-    const [showDiscussion, setShowDiscussion] = useState(false);    
+  const { commentsLoading } = useQuery({
+    queryKey: ['comments'],
+    queryFn: () => {
+      return getComments(params.id);
+    },
+    enabled: showDiscussion,
+  });
 
-    
-   
-
-    let { data: post, isLoading } = useQuery({
-      queryKey: ['post'],
-      queryFn: ()=>{
-        return getPostById(params.id);
-      },
-    });
-
-     const { commentsLoading } = useQuery({
-       queryKey: ['comments'],
-       queryFn: () => {
-         return getComments(params.id);
-       },
-       enabled: showDiscussion,
-     });
-
-    if (isLoading) {
-      return (
-        <Container className="h-96 w-full flex justify-center items-center">
-          <CircularProgress />
-        </Container>
-      );
-    }
-
-
+  if (isLoading) {
+    return (
+      <Container className="h-96 w-full flex justify-center items-center">
+        <CircularProgress />
+      </Container>
+    );
+  }
 
   return (
     <div className="">
@@ -52,20 +45,7 @@ export default function IndividialPostAdmin({params}) {
         <div className="flex justify-start gap-4 text-lg mt-4">
           {post.description}
         </div>
-        <Box className="flex flex-wrap gap-2 pt-2 pb-1 mt-2">
-          <Chip
-            variant="outlined"
-            label={post.company}
-            color="primary"
-            className="font-semibold"
-          />
-          <Chip
-            variant="outlined"
-            label="Placement"
-            color="primary"
-            className="font-semibold"
-          />
-        </Box>
+
         <Divider className="my-3" />
 
         <Box maxWidth="xl">
@@ -77,34 +57,34 @@ export default function IndividialPostAdmin({params}) {
       </Paper>
 
       {!showDiscussion && (
-        <div className='flex justify-center'>
+        <div className="flex justify-center">
           <Button
-          onClick={() => {
-            setShowDiscussion(true);
-          }}
-          className="w-1/3"
-        >
-          <div className="flex justify-center items-center gap-2">
-            <span className="w-full text-lg">Show Discussion</span>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 transform rotate-180"
-              viewBox="0 0 20 20"
-              fill="currentColor"
-            >
-              <path
-                fillRule="evenodd"
-                d="M10 12a2 2 0 100-4 2 2 0 000 4z"
-                clipRule="evenodd"
-              />
-              <path
-                fillRule="evenodd"
-                d="M10 18a8 8 0 100-16 8 8 0 000 16zM2 10a8 8 0 1116 0 8 8 0 01-16 0z"
-                clipRule="evenodd"
-              />
-            </svg>
-          </div>
-        </Button>
+            onClick={() => {
+              setShowDiscussion(true);
+            }}
+            className="w-1/3"
+          >
+            <div className="flex justify-center items-center gap-2">
+              <span className="w-full text-lg">Show Discussion</span>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5 transform rotate-180"
+                viewBox="0 0 20 20"
+                fill="currentColor"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 12a2 2 0 100-4 2 2 0 000 4z"
+                  clipRule="evenodd"
+                />
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM2 10a8 8 0 1116 0 8 8 0 01-16 0z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </div>
+          </Button>
         </div>
       )}
 
@@ -113,10 +93,8 @@ export default function IndividialPostAdmin({params}) {
       {commentsLoading && (
         <Container className="h-10 w-full flex justify-center items-center">
           <CircularProgress />
-          </Container>
-          )
-      }
-
+        </Container>
+      )}
     </div>
   );
 }
