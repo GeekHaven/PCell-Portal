@@ -64,11 +64,39 @@ function AppContentWrapper({ Component, pageProps }) {
     }
   }, [router, user]);
 
+  function updateSW(worker) {
+    alert('New version available!  Ready to update?');
+    worker.postMessage({ action: 'SKIP_WAITING' });
+  }
+
+  function trackUpdate(worker) {
+    worker.addEventListener('statechange', () => {
+      if (worker.state === 'installed') {
+        updateSW(worker);
+      }
+    });
+  }
   useEffect(() => {
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker
         .register('/service-worker.js')
-        .then((registration) => console.log('scope is: ', registration.scope));
+        .then((registration) => {
+          if (registration.waiting) {
+            updateSW(registration.waiting);
+            return;
+          }
+          if (registration.installing) {
+            trackUpdate(registration.installing);
+            return;
+          }
+          registration.addEventListener('updatefound', () => {
+            trackUpdate(registration.installing);
+          });
+        });
+
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        window.location.reload();
+      });
     }
   }, []);
 
