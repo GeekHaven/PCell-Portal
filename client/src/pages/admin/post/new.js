@@ -4,8 +4,6 @@ import {
   TextField,
   Container,
   Box,
-  Checkbox,
-  FormControlLabel,
   InputLabel,
   MenuItem,
   FormControl,
@@ -18,9 +16,8 @@ import { useRouter } from 'next/router';
 import { useSnackbar } from 'notistack';
 import { useMutation } from 'react-query';
 
-import FileUpload from '@/components/FileUpload';
 import SelectTargets from '@/components/SelectTargets';
-import { addCompany, getAllCompanies } from '@/utils/API/admin/company';
+import { getAllCompanies } from '@/utils/API/admin/company';
 import { addPost } from '@/utils/API/admin/post';
 
 const NewPost = () => {
@@ -52,7 +49,7 @@ const NewPost = () => {
   let addPostMutation = useMutation(addPost, {
     onSuccess: (data) => {
       enqueueSnackbar('Post sent successfully', { variant: 'success' });
-      // router.push('/admin/post/all');
+      router.push('/admin/post/all');
     },
     onError: (err) => {
       enqueueSnackbar(err, { variant: 'error' });
@@ -89,39 +86,31 @@ const NewPost = () => {
     <>
       <Container
         component="form"
-        className="flex flex-col items-center gap-4"
+        className="flex flex-col items-center gap-4 m-0 p-0"
         maxWidth="xl"
         onSubmit={onSubmit}
       >
         <div className="flex flex-row w-full flex-wrap gap-4 justify-between">
-          <Container
-            maxWidth="xl"
-            className="w-fit flex-grow flex flex-nowrap justify-around items-center gap-4 flex-col m-0 p-0"
-          >
-            <TextField
-              label="Post Title"
-              required
-              placeholder="Enter the title for the post"
-              defaultValue={title}
-              onChange={(e) => setTitle(e.target.value)}
-              onFocus={(e) => setTitle(e.target.value)}
-              fullWidth
-            />
-            <TextField
-              label="Brief Post Description"
-              placeholder="Enter a brief description"
-              defaultValue={description}
-              onChange={(e) => setDescription(e.target.value)}
-              onFocus={(e) => setDescription(e.target.value)}
-              fullWidth
-            />
-          </Container>
+          <TextField
+            label="Post Title"
+            required
+            placeholder="Enter the title for the post"
+            defaultValue={title}
+            onChange={(e) => setTitle(e.target.value)}
+            onFocus={(e) => setTitle(e.target.value)}
+            fullWidth
+          />
+          <TextField
+            label="Brief Post Description"
+            placeholder="Enter a brief description"
+            defaultValue={description}
+            onChange={(e) => setDescription(e.target.value)}
+            onFocus={(e) => setDescription(e.target.value)}
+            fullWidth
+          />
 
-          <Container
-            maxWidth="xl"
-            className="justify-start px-1 inline sm:flex"
-          >
-            <Box className="flex justify-between items-center mr-5">
+          <Container maxWidth="xl" className="justify-start inline p-0 sm:flex">
+            <Box className="flex w-full items-center gap-2">
               <FormControl className="w-40">
                 <InputLabel className="mr-5">Choose Company</InputLabel>
                 <Select
@@ -138,8 +127,6 @@ const NewPost = () => {
                     ))}
                 </Select>
               </FormControl>
-            </Box>
-            <Box className="flex justify-between items-center">
               <FormControl className="w-40">
                 <InputLabel className="mr-5">Choose Comments Type</InputLabel>
                 <Select

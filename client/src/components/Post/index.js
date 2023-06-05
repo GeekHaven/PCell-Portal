@@ -1,9 +1,15 @@
-import { Avatar, Container, Typography, Chip, Paper, Button } from '@mui/material';
+import {
+  Avatar,
+  Container,
+  Typography,
+  Chip,
+  Paper,
+  Button,
+} from '@mui/material';
 import Box from '@mui/material/Box';
 import moment from 'moment';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-
 
 export const Post = (props) => {
   const router = useRouter();
@@ -31,16 +37,14 @@ export const Post = (props) => {
               {props.title}
             </Typography>
             <Box className=" mb-2 flex flex-nowrap gap-2 items-center normal-case">
-              <Avatar
-                className="h-4 w-4"
-                sx={{
-                  bgcolor: 'primary.main',
-                }}
-              />
-              <Typography variant="caption" color="text.secondary">
-                {props.company}
-              </Typography>
-              ·
+              {props.company && (
+                <>
+                  <Typography variant="caption" color="text.secondary">
+                    {props.company}
+                  </Typography>
+                  {' • '}
+                </>
+              )}
               <Typography variant="caption" color="text.secondary">
                 {moment(Date.now()).fromNow()}
               </Typography>

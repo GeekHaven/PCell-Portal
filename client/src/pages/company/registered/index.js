@@ -5,7 +5,6 @@ import {
   CircularProgress,
   Divider,
   FormControl,
-  FormControlLabel,
   IconButton,
   InputLabel,
   MenuItem,
@@ -26,7 +25,6 @@ import SearchIcon from '@mui/icons-material/Search';
 import { useState, useEffect } from 'react';
 import { getRegisteredCompanies } from '@/utils/API/company';
 import { useMutation } from 'react-query';
-import { previewData } from 'next/dist/client/components/headers';
 
 const AllCompanies = () => {
   const router = useRouter();
@@ -138,7 +136,7 @@ const AllCompanies = () => {
                 outlineColor: 'secondary.main',
               }}
               onClick={() => {
-                router.push(`/dashboard/company/${company._id}`);
+                router.push(`/company/individual/${company._id}`);
               }}
               key={company._id}
             >
