@@ -5,7 +5,7 @@ import Comment from '@/components/Post/Comment';
 import Reply from '@/components/Post/Reply';
 import NewComment from '@/components/Post/NewComment';
 import { useQuery } from 'react-query';
-import { getPostById } from '@/utils/API/admin/post';
+import { addComment, getPostById } from '@/utils/API/admin/post';
 import { CircularProgress } from '@mui/material';
 import Discussion from '@/components/Post/Discussion';
 import { getComments } from '@/utils/API/admin/post';
@@ -13,10 +13,7 @@ import { getComments } from '@/utils/API/admin/post';
 
 export default function IndividialPostAdmin({params}) {
 
-    const [showDiscussion, setShowDiscussion] = useState(false);    
-
-    
-   
+    const [showDiscussion, setShowDiscussion] = useState(false);
 
     let { data: post, isLoading } = useQuery({
       queryKey: ['post'],
@@ -25,13 +22,9 @@ export default function IndividialPostAdmin({params}) {
       },
     });
 
-     const { commentsLoading } = useQuery({
-       queryKey: ['comments'],
-       queryFn: () => {
-         return getComments(params.id);
-       },
-       enabled: showDiscussion,
-     });
+  
+  
+
 
     if (isLoading) {
       return (
@@ -108,15 +101,7 @@ export default function IndividialPostAdmin({params}) {
         </div>
       )}
 
-      {showDiscussion && <Discussion />}
-
-      {commentsLoading && (
-        <Container className="h-10 w-full flex justify-center items-center">
-          <CircularProgress />
-          </Container>
-          )
-      }
-
+      {showDiscussion && <Discussion showDiscussion={showDiscussion}/>}
     </div>
   );
 }

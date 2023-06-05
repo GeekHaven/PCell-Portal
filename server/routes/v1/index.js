@@ -11,7 +11,7 @@ var router = Router();
 
 router.use('/auth', authRoutes);
 router.use('/user', verifyUser, userRoutes);
-router.use('/admin', adminRoutes);
+router.use('/admin', verifyUser, adminRoutes);
 router.use('/company', verifyUser, companyRoutes);
 router.use('/public', publicRoutes);
 router.use('/post', verifyUser,  postRoutes);

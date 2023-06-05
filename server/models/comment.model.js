@@ -1,6 +1,7 @@
+import { Schema, model } from 'mongoose';
 import mongoose from 'mongoose';
 
-const commentSchema = new mongoose.Schema({
+const commentSchema = Schema({
   content: {
     type: String,
     required: true,
@@ -21,14 +22,14 @@ const commentSchema = new mongoose.Schema({
     default: null,
     required: false,
   },
-    private: {
+  private: {
     type: Boolean,
     required: false,
-    },
+  },
   createdAt: {
     type: Date,
     default: Date.now,
   },
 });
 
-export const Comment = mongoose.model('Comment', commentSchema);
+export default model('Comment', commentSchema);
