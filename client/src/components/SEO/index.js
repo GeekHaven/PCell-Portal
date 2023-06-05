@@ -7,18 +7,15 @@ export default function SEO({ title, desc, img }) {
   const theme = useTheme();
   return (
     <Head>
-      <title>{title + ' · Placements · IIITA'}</title>
-      <meta
-        name="viewport"
-        content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
-      />
+      <title>{title + ' · Utkarsh'}</title>
       <meta name="theme-color" content={theme.palette.background.default} />
-      <meta name="title" content={title + ' · Placements · IIITA'} />
+      <meta name="title" content={title + ' · Utkarsh'} />
       <meta name="description" content={desc} />
       <link rel="manifest" href="/manifest.json" />
       <link rel="shortcut icon" href="/favicon.ico" />
       <link rel="apple-touch-icon" href="/apple-icon.png"></link>
       <link rel="preconnect" href={baseUrl} />
+
       <meta property="og:type" content="website" />
       <meta property="og:title" content={title} />
       <meta property="og:description" content={desc} />

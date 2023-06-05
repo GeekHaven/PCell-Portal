@@ -1,4 +1,4 @@
-CACHE_NAME = 'static-cache-v1';
+CACHE_NAME = 'dev-0.0.1';
 
 let cacheUI = () => {
   self.addEventListener('fetch', (event) => {

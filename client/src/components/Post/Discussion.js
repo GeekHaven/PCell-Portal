@@ -1,4 +1,4 @@
-import React from 'react'
+import React from 'react';
 import { Paper } from '@mui/material';
 import Comment from './Comment';
 import Reply from './Reply';
@@ -15,7 +15,7 @@ import { useContext } from 'react';
 import ThemeContext from '@/contexts/theme.context';
 
 export default function Discussion({ params, showDiscussion }) {
-    const router = useRouter();
+  const router = useRouter();
   const [comments, setComments] = useState([]);
   const [replies, setReplies] = useState([]);
   const { theme } = useContext(ThemeContext);
@@ -24,7 +24,7 @@ export default function Discussion({ params, showDiscussion }) {
   useEffect(() => {
     setMode(theme.palette.mode);
   }, [theme]);
-  
+
   const { data: allComments, commentsLoading } = useQuery({
     queryKey: ['comments'],
     queryFn: () => {
@@ -45,25 +45,21 @@ export default function Discussion({ params, showDiscussion }) {
   }
 
   return (
-    <Paper maxWidth="xl" className="px-8 py-8 my-4 rounded-md">
-      <section className="  py-8 lg:py-0 px-2">
-        <div className=" mx-auto px-0">
-          <NewComment setComments={setComments} comments={comments}/>
+    <Paper className="p-4 rounded-md">
+      <div className="flex flex-col gap-4">
+        <NewComment setComments={setComments} comments={comments} />
 
-          {comments.map((comment) => (
-            <Comment
-              key={comment.id}
-              comment={comment}
-              setComments={setComments}
-              comments={comments}
-              setReplies={setReplies}
-              replies={replies}
-            />
-          ))}
-          
-        </div>
-      </section>
+        {comments.map((comment) => (
+          <Comment
+            key={comment.id}
+            comment={comment}
+            setComments={setComments}
+            comments={comments}
+            setReplies={setReplies}
+            replies={replies}
+          />
+        ))}
+      </div>
     </Paper>
   );
 }
-

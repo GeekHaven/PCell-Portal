@@ -7,17 +7,20 @@ import {
   Menu,
   MenuItem,
   IconButton,
+  Box,
 } from '@mui/material';
 import { useContext, useState, useRef } from 'react';
 import { useRouter } from 'next/router';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import MenuIcon from '@mui/icons-material/Menu';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import Image from 'next/image';
 import { useQuery, useQueryClient } from 'react-query';
 
 import { isUserAuthenticated } from '@/utils/API/auth';
 import { logout } from '@/utils/API/request';
 import ThemeContext from '@/contexts/theme.context';
+import Logo from '@/assets/logo.svg';
 import ThemeSwitch from './ThemeSwitch';
 
 export default function Navbar({ open, setOpen, noSidebarMargin }) {
@@ -69,28 +72,50 @@ export default function Navbar({ open, setOpen, noSidebarMargin }) {
             </IconButton>
           )}
 
-          <Typography
-            variant="h5"
-            fontFamily={'"Oswald", sans-serif;'}
-            color="title"
-            className="justify-self-center md:justify-self-start block md:hidden cursor-pointer"
-            onClick={() => {
-              router.push('/');
-            }}
-          >
-            IIITA Placement Portal
-          </Typography>
-          <Typography
-            variant="h4"
-            fontFamily={'"Oswald", sans-serif;'}
-            color="title"
-            className="justify-self-center md:justify-self-start hidden md:block cursor-pointer"
-            onClick={() => {
-              router.push('/');
-            }}
-          >
-            IIITA Placement Portal
-          </Typography>
+          <Box className="flex flex-row gap-2">
+            <Image
+              src={Logo.src}
+              alt="Utkarsh Logo"
+              width={32}
+              height={32}
+              className="cursor-pointer block md:hidden"
+              onClick={() => {
+                router.push('/');
+              }}
+            />
+            <Image
+              src={Logo.src}
+              alt="Utkarsh Logo"
+              width={40}
+              height={40}
+              className="cursor-pointer hidden md:block"
+              onClick={() => {
+                router.push('/');
+              }}
+            />
+            <Typography
+              variant="h1"
+              fontFamily={'"Oswald", sans-serif;'}
+              color="title"
+              className="justify-self-center md:justify-self-start text-2xl block md:hidden cursor-pointer"
+              onClick={() => {
+                router.push('/');
+              }}
+            >
+              Utkarsh
+            </Typography>
+            <Typography
+              variant="h1"
+              fontFamily={'"Oswald", sans-serif;'}
+              color="title"
+              className="justify-self-center md:justify-self-start text-4xl hidden md:block cursor-pointer"
+              onClick={() => {
+                router.push('/');
+              }}
+            >
+              Utkarsh
+            </Typography>
+          </Box>
           <div className="flex-row justify-end items-center gap-2 hidden md:flex">
             <ThemeSwitch
               checked={theme.palette.mode === 'dark'}

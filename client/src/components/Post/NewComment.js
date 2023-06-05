@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext } from 'react';
 import { Paper, Container } from '@mui/material';
 import ThemeContext from '@/contexts/theme.context';
 import { useState, useEffect } from 'react';
@@ -31,17 +31,22 @@ export default function NewComment({ params, setComments, comments }) {
     },
   });
 
-  async function handleSubmit(e){
+  async function handleSubmit(e) {
     e.preventDefault();
-     postComment.mutate({
-       postId: router.query.id,
-       replyTo,
-       content,
-     });     
-  };
+    postComment.mutate({
+      postId: router.query.id,
+      replyTo,
+      content,
+    });
+  }
 
   return (
-    <Container className="mb-8" component="form" onSubmit={handleSubmit}>
+    <Container
+      maxWidth="xl"
+      className="p-0"
+      component="form"
+      onSubmit={handleSubmit}
+    >
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-lg lg:text-2xl font-bold">Discussion (20)</h2>
       </div>
@@ -52,7 +57,7 @@ export default function NewComment({ params, setComments, comments }) {
 
         <textarea
           id="comment"
-          rows="6"
+          // rows="6"
           className={`px-0 w-full text-sm text-gray-900 border-0  focus:ring-0 focus:outline-none dark:text-white dark:placeholder-gray-400 ${
             mode === 'dark' && `bg-[#1e2a3a]`
           } ${mode === 'light' && `bg-[#fefeff]`}`}
@@ -73,4 +78,3 @@ export default function NewComment({ params, setComments, comments }) {
     </Container>
   );
 }
-

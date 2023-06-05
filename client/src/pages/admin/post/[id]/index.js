@@ -1,4 +1,12 @@
-import { Container, Divider, Box, Chip, Paper, Button } from '@mui/material';
+import {
+  Container,
+  Divider,
+  Box,
+  Chip,
+  Paper,
+  Button,
+  Typography,
+} from '@mui/material';
 import React, { useContext, useEffect, useState } from 'react';
 import ThemeContext from '@/contexts/theme.context';
 import Comment from '@/components/Post/Comment';
@@ -10,10 +18,8 @@ import { CircularProgress } from '@mui/material';
 import Discussion from '@/components/Post/Discussion';
 import { getComments } from '@/utils/API/admin/post';
 
-
-export default function IndividialPostAdmin({params}) {
-
-    const [showDiscussion, setShowDiscussion] = useState(false);
+export default function IndividialPostAdmin({ params }) {
+  const [showDiscussion, setShowDiscussion] = useState(false);
 
   let { data: post, isLoading } = useQuery({
     queryKey: ['post'],
@@ -21,10 +27,6 @@ export default function IndividialPostAdmin({params}) {
       return getPostById(params.id);
     },
   });
-
-  
-  
-
 
   if (isLoading) {
     return (
@@ -36,17 +38,15 @@ export default function IndividialPostAdmin({params}) {
 
   return (
     <div className="">
-      <Paper maxWidth="xl" className="sm:px-8 px-4 py-8 my-4 rounded-md">
-        <div className="flex justify-start gap-4 text-3xl font-bold">
-          {post.title}
-        </div>
+      <Paper className="sm:px-8 px-4 py-8 my-4 rounded-md">
+        <Typography variant="h6">{post.title}</Typography>
         <div className="flex justify-start gap-4 text-lg mt-4">
           {post.description}
         </div>
 
         <Divider className="my-3" />
 
-        <Box maxWidth="xl">
+        <Box>
           <div
             className="content mb-10"
             dangerouslySetInnerHTML={{ __html: post.content }}
@@ -86,7 +86,7 @@ export default function IndividialPostAdmin({params}) {
         </div>
       )}
 
-      {showDiscussion && <Discussion showDiscussion={showDiscussion}/>}
+      {showDiscussion && <Discussion showDiscussion={showDiscussion} />}
     </div>
   );
 }
