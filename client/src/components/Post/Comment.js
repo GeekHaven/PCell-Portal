@@ -5,10 +5,9 @@ import Avatar from '@mui/material/Avatar';
 import ReplyIcon from '@mui/icons-material/Reply';
 import { useContext } from 'react';
 import { useState, useEffect } from 'react';
-
 import ThemeContext from '@/contexts/theme.context';
 
-function stringToColor(string) {
+export function stringToColor(string) {
   let hash = 0;
   let i;
 
@@ -28,7 +27,7 @@ function stringToColor(string) {
   return color;
 }
 
-function stringAvatar(name) {
+export function stringAvatar(name) {
   return {
     sx: {
       bgcolor: stringToColor(name),
@@ -39,7 +38,17 @@ function stringAvatar(name) {
 
 export default function Comment(props) {
   const createdAt = moment(props.comment.createdAt).fromNow();
-  const author = props.comment.author.name;
+  const fullName = props.comment.author.name;
+  const nameParts = fullName
+    .toLowerCase()
+    .replace(/(^|\s)\S/g, (letter) => letter.toUpperCase())
+    .split(' ');
+  if (nameParts.length > 2) {
+    nameParts.splice(1, 1);
+  }
+
+  const author = nameParts.join(' ');
+  console.log(author);
 
   const { theme } = useContext(ThemeContext);
 
