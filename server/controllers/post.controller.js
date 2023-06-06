@@ -1,5 +1,7 @@
 import Post from '../models/post.model.js';
 import User from '../models/user.model.js';
+import Comment from '../models/comment.model.js';
+
 import { isUserEligibleInTarget } from '../utils/queries/isUserEligibleInTarget.js';
 import {
   response_200,
@@ -13,7 +15,6 @@ export async function getPostById(req, res) {
   try {
     const { postId } = req.params;
     const user = req.user;
-
     const [post] = await Post.aggregate([
       {
         $addFields: {
@@ -74,7 +75,6 @@ export async function getAllPosts(req, res) {
         },
       },
     ]);
-    console.log(post);
     if (!post) return response_400(res, 'Invalid request');
     return response_200(res, post);
   } catch (error) {
@@ -177,15 +177,36 @@ export async function getComments(req, res) {
       const comments = await Comment.aggregate([
         {
           $match: {
-            postId: new mongoose.Types.ObjectId(postId),
+            postId: new mongoose.Types.ObjectId(id),
             replyTo: null,
+          },
+        },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'author',
+            foreignField: '_id',
+            as: 'author',
           },
         },
         {
           $project: {
             _id: 1,
             content: 1,
-            author: 1,
+            author: {
+              $arrayElemAt: [
+                {
+                  $map: {
+                    input: '$author',
+                    in: {
+                      name: '$$this.name',
+                      rollNumber: '$$this.rollNumber',
+                    },
+                  },
+                },
+                0,
+              ],
+            },
             private: 1,
             createdAt: 1,
           },

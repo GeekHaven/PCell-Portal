@@ -1,16 +1,22 @@
-import { Container, Divider, Box, Chip, Paper } from '@mui/material';
-import React, { useContext, useEffect, useState } from 'react';
-import ThemeContext from '@/contexts/theme.context';
-import Comment from '@/components/Post/Comment';
-import Reply from '@/components/Post/Reply';
-import NewComment from '@/components/Post/NewComment';
+import {
+  Container,
+  Divider,
+  Box,
+  Paper,
+  Typography,
+  ToggleButton,
+} from '@mui/material';
+import React, { useState } from 'react';
 import { useQuery } from 'react-query';
-import { getPostById } from '@/utils/API/post';
+import { getPostById } from '@/utils/API/admin/post';
 import { CircularProgress } from '@mui/material';
+import Discussion from '@/components/Post/Discussion';
 
 export default function IndividialPostAdmin({ params }) {
+  const [showDiscussion, setShowDiscussion] = useState(false);
+
   let { data: post, isLoading } = useQuery({
-    queryKey: ['post'],
+    queryKey: ['post', params.id],
     queryFn: () => {
       return getPostById(params.id);
     },
@@ -25,35 +31,38 @@ export default function IndividialPostAdmin({ params }) {
   }
 
   return (
-    <div className="">
-      <Paper maxWidth="xl" className="sm:px-8 px-4 py-8 rounded-md ">
-        <div className="flex justify-start gap-4 text-3xl font-bold">
+    <div className="flex flex-col gap-4">
+      
+      <Paper className="sm:p-4 p-2 rounded-md">
+        <Typography variant="h4" className="text-2xl font-semibold mb-1">
           {post.title}
-        </div>
-        <div className="flex justify-start gap-4 text-lg mt-4">
+        </Typography>
+        <Typography variant="h5" className="text-lg">
           {post.description}
-        </div>
-
+        </Typography>
         <Divider className="my-3" />
-
-        <Box maxWidth="xl">
+        <Box>
           <div
-            className="content mb-10"
+            className="content"
             dangerouslySetInnerHTML={{ __html: post.content }}
           ></div>
         </Box>
       </Paper>
-
-      <Paper maxWidth="xl" className="px-8 py-8 my-4 rounded-md">
-        <section className="  py-8 lg:py-0 px-2">
-          <div className=" mx-auto px-0">
-            <NewComment />
-            <Comment />
-            <Reply />
-            <Comment />
-          </div>
-        </section>
-      </Paper>
+      <Box className="flex">
+        <ToggleButton
+          className="ml-auto"
+          size="small"
+          value="check"
+          color="primary"
+          selected={!showDiscussion}
+          onChange={() => {
+            setShowDiscussion(!showDiscussion);
+          }}
+        >
+          {showDiscussion ? 'Hide Discussion' : 'Show Discussion'}
+        </ToggleButton>
+      </Box>
+      {showDiscussion && <Discussion showDiscussion={showDiscussion} />}
     </div>
   );
 }

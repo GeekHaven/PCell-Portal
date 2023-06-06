@@ -52,6 +52,10 @@ const NewCompany = () => {
 
   return (
     <>
+      <Typography variant="h4" className="text-center -mt-2" color="primary">
+        Edit Companies
+      </Typography>
+      <Divider className="mb-4 mt-2" />
       <Container
         component="form"
         className="flex flex-col items-center gap-4"

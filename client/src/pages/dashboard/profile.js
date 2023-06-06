@@ -105,10 +105,10 @@ const Dashboard = () => {
             paddingX: '8px',
           }}
         >
-          <Typography variant="h4" className="hidden md:block">
+          <Typography variant="h4" className="hidden md:block" color="primary">
             My Profile
           </Typography>
-          <Typography variant="h5" className="md:hidden block">
+          <Typography variant="h5" className="md:hidden block" color="primary">
             My Profile
           </Typography>
           {!isError && (

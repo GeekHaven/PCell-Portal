@@ -48,8 +48,34 @@ export async function getPostById(id) {
   return Promise.reject(res.data.error);
 }
 
+export async function addComment({ postId, replyTo, content }) {
+  const userId = localStorage.getItem('userId');
+  let body = {
+    postId,
+    replyTo,
+    content,
+    userId,
+  };
+  let res = await post('/admin/post/comment', body);
+  if (res.status === 200) {
+    return Promise.resolve(res.data.message);
+  }
+  return Promise.reject(res.data.error);
+}
+
 export async function getComments(id) {
   let res = await get(`/admin/post/${id}/comments`);
+  if (res.status === 200) {
+    return Promise.resolve(res.data.message);
+  }
+  return Promise.reject(res.data.error);
+}
+
+export async function getReplies({
+  postId,
+  replyTo,
+}) {
+ let res = await get(`/admin/post/${postId}/comment/${replyTo}`);
   console.log(res);
   if (res.status === 200) {
     return Promise.resolve(res.data.message);

@@ -20,6 +20,8 @@ import DrawerHeader from '@/components/DrawerHeader';
 import FullLoader from '@/components/FullLoader';
 import { isUserAuthenticated } from '@/utils/API/auth';
 import { getLS, storeLS } from '@/utils/localStorage';
+import { OfflineIndicator } from '@/components/OfflineIndicator';
+import SEO from '@/components/SEO';
 
 const queryClient = new QueryClient();
 
@@ -62,6 +64,45 @@ function AppContentWrapper({ Component, pageProps }) {
       }
     }
   }, [router, user]);
+
+  function updateSW(worker) {
+    alert('New version available!  Ready to update?');
+    worker.postMessage({ action: 'SKIP_WAITING' });
+  }
+
+  function trackUpdate(worker) {
+    worker.addEventListener('statechange', () => {
+      if (worker.state === 'installed') {
+        updateSW(worker);
+      }
+    });
+  }
+  useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker
+        .register('/service-worker.js')
+        .then((registration) => {
+          if (registration.waiting) {
+            updateSW(registration.waiting);
+            return;
+          }
+          if (registration.installing) {
+            trackUpdate(registration.installing);
+            return;
+          }
+          registration.addEventListener('updatefound', () => {
+            trackUpdate(registration.installing);
+          });
+        });
+
+      let refreshing;
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        if (refreshing) return;
+        window.location.reload();
+        refreshing = true;
+      });
+    }
+  }, []);
 
   return (
     <>
@@ -114,6 +155,9 @@ function AppContentWrapper({ Component, pageProps }) {
                   <DrawerHeader />
                 )}
                 <Component {...pageProps} />
+                {!Component.isFullWidth && !Component.hideNavbar && (
+                  <OfflineIndicator />
+                )}
               </>
             )}
           </>
@@ -148,6 +192,7 @@ export default function App({ Component, pageProps }) {
           <ThemeProvider theme={theme}>
             <CssBaseline />
             <SnackbarProvider maxSnack={3}>
+              <SEO />
               <AppContentWrapper Component={Component} pageProps={pageProps} />
             </SnackbarProvider>
           </ThemeProvider>

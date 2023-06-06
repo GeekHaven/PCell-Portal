@@ -78,7 +78,7 @@ export default function Home() {
                 Get Started
               </Button>
             </div>
-            <Image src={vector} className="m-auto" />
+            <Image src={vector} className="m-auto" alt="Placements vector" />
           </div>
         </Container>
         <Container
