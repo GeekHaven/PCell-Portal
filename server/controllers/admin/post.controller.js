@@ -17,11 +17,14 @@ export async function addPost(req, res) {
     if (!title || !description || !target || !content || !comments)
       return response_400(res, 'Invalid request');
 
+    const authorId = req.user._id;
+
     const post = await Post.create({
       title,
       description,
       comments: comments.toLowerCase(),
       company,
+      authorId,
       targets: target,
       content,
     });
@@ -61,7 +64,35 @@ export async function getAllPosts(req, res) {
 export async function getPostById(req, res) {
   try {
     const { id } = req.params;
-    const post = await Post.findById(id);
+    const [post] = await Post.aggregate([
+      {
+        $match: {
+          _id: new mongoose.Types.ObjectId(id),
+        },
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'authorId',
+          foreignField: '_id',
+          as: 'author',
+        },
+      },
+      {
+        $unwind: '$author',
+      },
+      {
+        $project: {
+          _id: 1,
+          title: 1,
+          description: 1,
+          content: 1,
+          company: 1,
+          createdAt: 1,
+          'author.name': 1,
+        },
+      },
+    ]);
     if (!post) return response_400(res, 'Invalid request');
     return response_200(res, post);
   } catch (error) {
@@ -179,8 +210,6 @@ export async function getComments(req, res) {
   }
 }
 
-
-
 export async function getReplies(req, res) {
   try {
     const { id } = req.params;
@@ -215,7 +244,7 @@ export async function addComment(req, res) {
       const post = await Post.findById(postId);
       if (!post) return response_400(res, 'Invalid request');
 
-     const user = req.user; 
+      const user = req.user;
 
       const comment = await Comment.create({
         content,

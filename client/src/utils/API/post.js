@@ -1,7 +1,9 @@
 import { post, get } from './request';
 
-export async function getAllPosts() {
-  let res = await get('/post');
+export async function getAllPosts({ search = '' }) {
+  let res = await get('/post', null, {
+    q: search,
+  });
   if (res.status === 200) {
     return Promise.resolve(res.data.message);
   }

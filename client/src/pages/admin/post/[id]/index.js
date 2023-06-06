@@ -33,12 +33,20 @@ export default function IndividialPostAdmin({ params }) {
   return (
     <div className="flex flex-col gap-4">
       <Paper className="sm:p-4 p-2 rounded-md">
-        <Typography variant="h4" className="text-2xl font-semibold mb-1">
+        <Typography variant="h4" className="text-2xl font-semibold">
           {post.title}
         </Typography>
-        <Typography variant="h5" className="text-lg">
+        <Typography
+          variant="subtitle1"
+          className="capitalize"
+          color="text.secondary"
+        >
+          {post?.author?.name?.toLowerCase()}
+        </Typography>
+        <Typography variant="body1" className="mt-1">
           {post.description}
         </Typography>
+
         <Divider className="my-3" />
         <Box>
           <div

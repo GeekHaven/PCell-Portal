@@ -8,24 +8,28 @@ import {
   Typography,
   Divider,
 } from '@mui/material';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 import { getAllPosts } from '@/utils/API/post';
-import { useQuery } from 'react-query';
+import { useQuery, useMutation } from 'react-query';
 
 export const Notification = () => {
-  let { data: allPosts, isLoading } = useQuery({
-    queryKey: ['allPosts'],
-    queryFn: getAllPosts,
+  const [allPosts, setAllPosts] = useState([]);
+  const [search, setSearch] = useState('');
+  const searchMutation = useMutation(getAllPosts, {
+    onSuccess: (data) => {
+      setAllPosts(data);
+    },
+    onError: (error) => {
+      console.log(error);
+    },
   });
-
-  if (isLoading) {
-    return (
-      <Container className="h-96 w-full flex justify-center items-center">
-        <CircularProgress />
-      </Container>
-    );
-  }
+  useEffect(() => {
+    searchMutation.mutate({ search });
+  }, []);
+  const handleSearch = () => {
+    searchMutation.mutate({ search });
+  };
 
   return (
     <>
@@ -41,6 +45,13 @@ export const Notification = () => {
               variant="outlined"
               size="small"
               className="flex-grow mr-1"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleSearch();
+                }
+              }}
             />
             <IconButton
               sx={{
@@ -48,13 +59,18 @@ export const Notification = () => {
                 borderRadius: '8px',
                 marginRight: '4px',
               }}
-              //   onClick={handleSearch}
+              onClick={handleSearch}
             >
               <SearchIcon />
             </IconButton>
           </div>
         </Box>
-        {!isLoading && (
+        {searchMutation.isLoading && (
+          <Container className="h-96 w-full flex justify-center items-center">
+            <CircularProgress />
+          </Container>
+        )}
+        {
           <Box className="flex flex-col gap-2">
             {allPosts &&
               allPosts.map((post) => (
@@ -70,7 +86,7 @@ export const Notification = () => {
                 />
               ))}
           </Box>
-        )}
+        }
       </Container>
     </>
   );
