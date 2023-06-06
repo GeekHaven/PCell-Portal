@@ -62,6 +62,10 @@ const AllCompanies = () => {
   return (
     <>
       <SEO title="All Companies" />
+      <Typography variant="subtitle1" className="-mt-2" color="primary">
+        All Companies
+      </Typography>
+      <Divider className="mb-4 mt-2" />
       <Paper
         elevation={2}
         className="p-2 mb-4 flex md:flex-row flex-col gap-4 md:gap-2 md:items-center"

@@ -165,4 +165,19 @@ export const getAllCompanies = async (req, res) => {
     console.log(err);
     return response_500(res, err);
   }
-}
+};
+export const getCompanyById = async (req, res) => {
+  let { id } = req.params;
+  if (!id) {
+    return response_400(res, 'Invalid request');
+  }
+  try {
+    const companyData = await Company.findById(id);
+    if (!companyData) {
+      return response_400(res, 'Invalid request');
+    }
+    return response_200(res, 'OK', companyData);
+  } catch (err) {
+    return response_500(res, err);
+  }
+};

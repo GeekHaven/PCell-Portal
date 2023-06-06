@@ -6,6 +6,8 @@ import {
   Box,
   FormControlLabel,
   Checkbox,
+  Typography,
+  Divider,
 } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { useRouter } from 'next/router';
@@ -52,6 +54,10 @@ const NewCompany = () => {
 
   return (
     <>
+      <Typography variant="subtitle1" className="-mt-2" color="primary">
+        Add Company
+      </Typography>
+      <Divider className="mb-4 mt-2" />
       <Container
         component="form"
         className="flex flex-col items-center gap-4"

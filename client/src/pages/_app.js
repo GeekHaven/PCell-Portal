@@ -22,6 +22,7 @@ import { isUserAuthenticated } from '@/utils/API/auth';
 import { getLS, storeLS } from '@/utils/localStorage';
 import { OfflineIndicator } from '@/components/OfflineIndicator';
 import SEO from '@/components/SEO';
+import manageServiceWorker from '@/utils/manageServiceWorker';
 
 const queryClient = new QueryClient();
 
@@ -65,43 +66,8 @@ function AppContentWrapper({ Component, pageProps }) {
     }
   }, [router, user]);
 
-  function updateSW(worker) {
-    alert('New version available!  Ready to update?');
-    worker.postMessage({ action: 'SKIP_WAITING' });
-  }
-
-  function trackUpdate(worker) {
-    worker.addEventListener('statechange', () => {
-      if (worker.state === 'installed') {
-        updateSW(worker);
-      }
-    });
-  }
   useEffect(() => {
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker
-        .register('/service-worker.js')
-        .then((registration) => {
-          if (registration.waiting) {
-            updateSW(registration.waiting);
-            return;
-          }
-          if (registration.installing) {
-            trackUpdate(registration.installing);
-            return;
-          }
-          registration.addEventListener('updatefound', () => {
-            trackUpdate(registration.installing);
-          });
-        });
-
-      let refreshing;
-      navigator.serviceWorker.addEventListener('controllerchange', () => {
-        if (refreshing) return;
-        window.location.reload();
-        refreshing = true;
-      });
-    }
+    manageServiceWorker();
   }, []);
 
   return (

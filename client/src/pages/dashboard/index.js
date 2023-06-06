@@ -5,6 +5,8 @@ import {
   Box,
   IconButton,
   TextField,
+  Typography,
+  Divider,
 } from '@mui/material';
 import React from 'react';
 import SearchIcon from '@mui/icons-material/Search';
@@ -25,9 +27,12 @@ export const Notification = () => {
     );
   }
 
-  // console.log(allPosts);
   return (
     <>
+      <Typography variant="subtitle1" className="-mt-2" color="primary">
+        All Posts
+      </Typography>
+      <Divider className="mb-4 mt-2" />
       <Container maxWidth="xl" className="p-0 m-0">
         <Box className="mb-4 flex md:flex-row flex-col gap-4 md:gap-2 md:items-center">
           <div className="flex flex-nowrap flex-grow w-full">
@@ -61,6 +66,7 @@ export const Notification = () => {
                   description={post.description}
                   company={post.company}
                   status={post.status}
+                  createdAt={post.createdAt}
                 />
               ))}
           </Box>

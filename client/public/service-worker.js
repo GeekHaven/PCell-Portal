@@ -1,4 +1,4 @@
-STATIC_CACHE_NAME = 'dev-static-v1';
+STATIC_CACHE_NAME = 'dev-static-v2';
 
 let deleteOldCache = () => {
   self.addEventListener('activate', function (event) {

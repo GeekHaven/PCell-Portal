@@ -3,18 +3,12 @@ import {
   CircularProgress,
   Container,
   Box,
-  FormControl,
   IconButton,
-  InputLabel,
-  MenuItem,
-  Paper,
-  Select,
   TextField,
+  Typography,
+  Divider,
 } from '@mui/material';
 import React from 'react';
-import { useState } from 'react';
-import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
-import Tooltip from '@mui/material/Tooltip';
 import SearchIcon from '@mui/icons-material/Search';
 import { getAllPosts } from '@/utils/API/admin/post';
 import { useQuery } from 'react-query';
@@ -34,6 +28,10 @@ export default function AllPosts() {
   }
   return (
     <>
+      <Typography variant="subtitle1" className="-mt-2" color="primary">
+        All Posts
+      </Typography>
+      <Divider className="mb-4 mt-2" />
       <Container maxWidth="xl" className="m-0 p-0">
         <Box className="mb-4 flex md:flex-row flex-col gap-4 md:gap-2 md:items-center">
           <div className="flex flex-nowrap flex-grow w-full">
@@ -67,6 +65,7 @@ export default function AllPosts() {
                   description={post.description}
                   company={post.company}
                   status={post.status}
+                  createdAt={post.createdAt}
                 />
               ))}
           </Box>

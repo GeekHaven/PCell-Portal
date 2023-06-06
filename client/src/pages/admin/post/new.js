@@ -7,6 +7,8 @@ import {
   InputLabel,
   MenuItem,
   FormControl,
+  Typography,
+  Divider,
 } from '@mui/material';
 import Select from '@mui/material/Select';
 import { Editor } from '@tinymce/tinymce-react';
@@ -84,6 +86,10 @@ const NewPost = () => {
 
   return (
     <>
+      <Typography variant="subtitle1" className="-mt-2" color="primary">
+        Create Post
+      </Typography>
+      <Divider className="mb-4 mt-2" />
       <Container
         component="form"
         className="flex flex-col items-center gap-4 m-0 p-0"

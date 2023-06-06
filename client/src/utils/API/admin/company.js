@@ -26,7 +26,11 @@ export async function getAllCompanies() {
   if (res.status === 200) return Promise.resolve(res.data.data);
   return Promise.reject(res.data.message);
 }
-
+export async function getCompanyById(id) {
+  let res = await get(`/admin/company/${id}`);
+  if (res.status === 200) return Promise.resolve(res.data.data);
+  return Promise.reject(res.data.message);
+}
 export async function getPaginatedCompanies({
   sort = 1,
   search = '',
