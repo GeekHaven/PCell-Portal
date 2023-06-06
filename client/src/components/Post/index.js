@@ -49,7 +49,7 @@ export const Post = (props) => {
                 </>
               )}
               <Typography variant="caption" color="text.secondary">
-                {moment(Date.now()).fromNow()}
+                {moment(new Date(props.createdAt)).fromNow()}
               </Typography>
             </Box>
             <Typography

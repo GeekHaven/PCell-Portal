@@ -62,7 +62,7 @@ const AllCompanies = () => {
   return (
     <>
       <SEO title="All Companies" />
-      <Typography variant="h4" className="text-center -mt-2" color="primary">
+      <Typography variant="subtitle1" className="-mt-2" color="primary">
         All Companies
       </Typography>
       <Divider className="mb-4 mt-2" />

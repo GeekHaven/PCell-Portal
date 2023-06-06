@@ -27,10 +27,9 @@ export const Notification = () => {
     );
   }
 
-  // console.log(allPosts);
   return (
     <>
-      <Typography variant="h4" className="text-center -mt-2" color="primary">
+      <Typography variant="subtitle1" className="-mt-2" color="primary">
         All Posts
       </Typography>
       <Divider className="mb-4 mt-2" />
@@ -67,6 +66,7 @@ export const Notification = () => {
                   description={post.description}
                   company={post.company}
                   status={post.status}
+                  createdAt={post.createdAt}
                 />
               ))}
           </Box>
