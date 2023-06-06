@@ -8,7 +8,7 @@ import {
 } from '@mui/material';
 import React, { useState } from 'react';
 import { useQuery } from 'react-query';
-import { getPostById } from '@/utils/API/admin/post';
+import { getPostById } from '@/utils/API/post';
 import { CircularProgress } from '@mui/material';
 import Discussion from '@/components/Post/Discussion';
 
