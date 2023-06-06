@@ -30,7 +30,7 @@ export const Notification = () => {
   return (
     <>
       <Typography variant="subtitle1" className="-mt-2" color="primary">
-        All Posts
+        Your Inbox
       </Typography>
       <Divider className="mb-4 mt-2" />
       <Container maxWidth="xl" className="p-0 m-0">

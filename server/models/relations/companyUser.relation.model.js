@@ -18,7 +18,7 @@ const CompanyUserRelationSchema = new Schema({
   },
   status: {
     type: String,
-    enum: ['registered', 'shortlisted', 'selected', 'rejected'],
+    enum: ['registered', 'shortlisted', 'selected'],
     required: true,
   },
 });

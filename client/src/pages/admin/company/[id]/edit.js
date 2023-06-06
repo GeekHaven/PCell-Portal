@@ -1,27 +1,24 @@
 import React from 'react';
 import { useState } from 'react';
-import {
-  TextField,
-  Container,
-  Box,
-  FormControlLabel,
-  Checkbox,
-} from '@mui/material';
+import { TextField, Container, Box, Typography, Divider } from '@mui/material';
 import LoadingButton from '@mui/lab/LoadingButton';
 import { useRouter } from 'next/router';
 import { useSnackbar } from 'notistack';
-import { useMutation } from 'react-query';
+import { useQuery, useMutation, useQueryClient } from 'react-query';
 
 import FileUpload from '@/components/FileUpload';
 import SelectTargets from '@/components/SelectTargets';
-import { addCompany } from '@/utils/API/admin/company';
+import { editCompany, getCompanyById } from '@/utils/API/admin/company';
 
-const NewCompany = () => {
+const EditCompany = () => {
   const router = useRouter(),
     { enqueueSnackbar } = useSnackbar();
+
+  const { id } = router.query;
+  const queryClient = useQueryClient();
+
   const [techStack, setTechStack] = useState(''),
     [companyName, setCompanyName] = useState(''),
-    [hidden, setHidden] = useState(false),
     [files, setFiles] = useState([]),
     [target, setTarget] = useState({
       groups: [],
@@ -29,10 +26,24 @@ const NewCompany = () => {
       exclude: [],
     });
 
-  let addCompanyMutation = useMutation(addCompany, {
+  const { data: companyData, isLoading } = useQuery(
+    ['company', id],
+    () => getCompanyById(id),
+    {
+      enabled: !!id,
+      onSuccess: (data) => {
+        setCompanyName(data.name);
+        setTechStack(data.techStack);
+        setFiles([{ src: data.logo, name: 'logo' }]);
+        setTarget(data.targets);
+      },
+    }
+  );
+
+  let editCompanyMutation = useMutation(editCompany, {
     onSuccess: (data) => {
-      enqueueSnackbar('Company added successfully', { variant: 'success' });
-      router.push('/admin/company');
+      enqueueSnackbar('Company Updated successfully', { variant: 'success' });
+      router.back();
     },
     onError: (err) => {
       enqueueSnackbar(err, { variant: 'error' });
@@ -41,12 +52,12 @@ const NewCompany = () => {
 
   async function onSubmit(e) {
     e.preventDefault();
-    addCompanyMutation.mutate({
+    editCompanyMutation.mutate({
+      id,
       companyName,
       techStack,
       files,
       target,
-      hidden,
     });
   }
 
@@ -79,7 +90,7 @@ const NewCompany = () => {
               label="Company Name"
               required
               placeholder="Enter the name of Company"
-              defaultValue={companyName}
+              value={companyName}
               onChange={(e) => setCompanyName(e.target.value)}
               onFocus={(e) => setCompanyName(e.target.value)}
               fullWidth
@@ -87,7 +98,7 @@ const NewCompany = () => {
             <TextField
               label="Tech Stack"
               placeholder="Enter the stacks used by the company"
-              defaultValue={techStack}
+              value={techStack}
               onChange={(e) => setTechStack(e.target.value)}
               onFocus={(e) => setTechStack(e.target.value)}
               fullWidth
@@ -99,9 +110,9 @@ const NewCompany = () => {
           <LoadingButton
             type="submit"
             variant="contained"
-            loading={addCompanyMutation.isLoading}
+            loading={editCompanyMutation.isLoading}
           >
-            Add Company
+            Edit Company
           </LoadingButton>
         </Container>
       </Container>
@@ -109,4 +120,4 @@ const NewCompany = () => {
   );
 };
 
-export default NewCompany;
+export default EditCompany;

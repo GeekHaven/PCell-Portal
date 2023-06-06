@@ -31,85 +31,27 @@ export async function addCompany(req, res) {
   }
 }
 export async function updateCompany(req, res) {
-  const { name, targets, techStack, logo } = req.body;
+  let { name, targets, techStack, logo } = req.body;
   if (!name) return response_400(res, 'Invalid request');
   const companyId = req.params.id;
-  try {
-    if (req.file) {
-      await deleteImage(logo);
-      const logoUrl = await uploadImage(req.file);
-      if (!logoUrl) return response_400(res, 'Invalid image');
-      logo = logoUrl;
-    }
-    const company = await Company.findByIdAndUpdate(companyId, {
-      name,
-      targets,
-      techStack,
-      logo,
-    });
-    if (!company) return response_400(res, 'Company not found');
-    return response_201(res, 'OK', company);
-  } catch (err) {
-    return response_500(res, err);
-  }
-}
-export async function deleteCompany(req, res) {
-  const companyId = req.params.id;
-  try {
-    const company = await Company.findByIdAndDelete(companyId);
-    if (!company) return response_400(res, 'Company not found');
+  let company = await Company.findById(companyId);
+  if (!company) return response_400(res, 'Company not found');
+  if (req.file) {
     await deleteImage(company.logo);
-    return response_200(res, 'OK');
-  } catch (err) {
-    response_500(res, err);
+    const logoUrl = await uploadImage(req.file);
+    if (!logoUrl) return response_400(res, 'Invalid image');
+    logo = logoUrl;
   }
-}
-export async function getStudentsByCompanyStatus(req, res) {
+  company.name = name;
+  company.targets = JSON.parse(targets);
+  company.techStack = techStack;
+  company.logo = logo;
   try {
-    const { companyId, status } = req.query;
-    if (!companyId || !status) return response_400(res, 'Invalid request');
-    const list = await companyUserRelationModel
-      .find({ companyId, status })
-      .populate('userId')
-      .select('userId');
-    const users = list.userId;
-    return response_200(res, 'OK', users);
+    await company.save();
   } catch (err) {
     return response_500(res, err);
   }
-}
-export async function searchByCompanyStatus(req, res) {
-  try {
-    const { q, companyId, status } = req.query;
-    if (!q || !companyId || !status)
-      return response_400(res, 'Invalid request');
-    const list = companyUserRelationModel.aggregate([
-      {
-        $populate: {
-          path: 'userId',
-        },
-      },
-      {
-        $match: {
-          $and: [
-            { $match: { companyId, status } },
-            {
-              $or: [
-                { 'userId.name': { $regex: new RegExp(q), $options: 'i' } },
-                {
-                  'userId.rollNumber': { $regex: new RegExp(q), $options: 'i' },
-                },
-              ],
-            },
-          ],
-        },
-      },
-    ]);
-    const users = list.userId;
-    return response_200(res, 'OK', users);
-  } catch (err) {
-    return response_500(res, err);
-  }
+  return response_201(res, 'OK', company);
 }
 
 export const getPaginatedCompanies = async (req, res) => {
@@ -166,6 +108,7 @@ export const getAllCompanies = async (req, res) => {
     return response_500(res, err);
   }
 };
+
 export const getCompanyById = async (req, res) => {
   let { id } = req.params;
   if (!id) {
@@ -177,6 +120,104 @@ export const getCompanyById = async (req, res) => {
       return response_400(res, 'Invalid request');
     }
     return response_200(res, 'OK', companyData);
+  } catch (err) {
+    return response_500(res, err);
+  }
+};
+
+export const getUsersRelatedToCompany = async (req, res) => {
+  let id = req.params.id;
+  if (!id) {
+    return response_400(res, 'Invalid request');
+  }
+  try {
+    const users = await companyUserRelationModel
+      .find({ companyId: id })
+      .populate('userId', '_id name rollNumber');
+    return response_200(res, 'OK', users);
+  } catch (err) {
+    return response_500(res, err);
+  }
+};
+
+export const batchUpdateUsersRelatedToCompany = async (req, res) => {
+  let { id } = req.params;
+  let { relations } = req.body;
+  if (!id || !relations) {
+    return response_400(res, 'Invalid request');
+  }
+  try {
+    const company = await Company.findById(id);
+    if (!company) {
+      return response_400(res, 'Invalid request');
+    }
+    await companyUserRelationModel.deleteMany({ companyId: id });
+    const newRelations = relations.map((relation) => ({
+      companyId: id,
+      userId: relation.userId,
+      status: relation.status,
+    }));
+    await companyUserRelationModel.insertMany(newRelations);
+    return response_201(res, 'OK');
+  } catch (err) {
+    return response_500(res, err);
+  }
+};
+
+export const setCompanyVisibility = async (req, res) => {
+  let { id } = req.params;
+  let { hidden } = req.body;
+  if (!id || hidden === undefined) {
+    return response_400(res, 'Invalid request');
+  }
+  try {
+    const company = await Company.findById(id);
+    if (!company) {
+      return response_400(res, 'Invalid request');
+    }
+    company.hidden = hidden;
+    await company.save();
+    return response_201(res, 'OK', company);
+  } catch (err) {
+    return response_500(res, err);
+  }
+};
+
+export const setCompanyStatus = async (req, res) => {
+  let { id } = req.params;
+  let { status } = req.body;
+  if (!id || status === undefined) {
+    return response_400(res, 'Invalid request');
+  }
+  try {
+    const company = await Company.findById(id);
+    if (!company) {
+      return response_400(res, 'Invalid request');
+    }
+    company.currentStatus = status;
+    await company.save();
+    return response_201(res, 'OK', company);
+  } catch (err) {
+    return response_500(res, err);
+  }
+};
+
+export const deleteCompany = async (req, res) => {
+  let { id } = req.params;
+  if (!id) {
+    return response_400(res, 'Invalid request');
+  }
+  try {
+    const company = await Company.findById(id);
+    if (!company) {
+      return response_400(res, 'Invalid request');
+    }
+    let tasks = [];
+    tasks.push(Company.findByIdAndDelete(id));
+    tasks.push(companyUserRelationModel.deleteMany({ companyId: id }));
+    await Promise.all(tasks);
+    await deleteImage(company.logo);
+    return response_200(res, 'OK');
   } catch (err) {
     return response_500(res, err);
   }

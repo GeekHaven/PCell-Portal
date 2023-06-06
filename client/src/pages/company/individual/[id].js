@@ -71,7 +71,6 @@ const IndividualCompany = ({ params }) => {
         <DrawerHeader />
         <Box
           className="flex flex-row items-start justify-start gap-4"
-          fullWidth
           sx={{
             padding: 0,
           }}
@@ -127,7 +126,7 @@ const IndividualCompany = ({ params }) => {
               className="hidden sm:block"
             />
             <Box className="flex-grow">
-              <Divider fullWidth className="block sm:hidden mb-2" />
+              <Divider className="block sm:hidden mb-2" />
               {companyData.techStack && (
                 <>
                   <Typography
@@ -149,12 +148,13 @@ const IndividualCompany = ({ params }) => {
                       />
                     ))}
                   </Box>
-                  <Divider fullWidth className="my-4" />
+                  <Divider className="my-4" />
                 </>
               )}
 
               {user.user && (
                 <Typography
+                  component="div"
                   className="text-xl font-semibold mt-2 ml-2"
                   color={'primary'}
                 >
