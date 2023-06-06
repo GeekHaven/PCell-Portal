@@ -378,6 +378,7 @@ export default function IndividualCompanyAdmin({ params }) {
                 </Link>
                 <Button
                   color="error"
+                  size="small"
                   onClick={() => setConfirmDeleteModalOpen(true)}
                 >
                   Delete Company
