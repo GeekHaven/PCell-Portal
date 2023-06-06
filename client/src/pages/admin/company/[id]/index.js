@@ -18,11 +18,17 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Checkbox,
+  TextField,
+  Container,
+  CircularProgress,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
 import EditIcon from '@mui/icons-material/Edit';
 import FiberManualRecordTwoToneIcon from '@mui/icons-material/FiberManualRecordTwoTone';
+import { useQuery, useMutation } from 'react-query';
+import { getCompanyById } from '@/utils/API/admin/company';
 
 let registeredStudentList = [];
 let shortlistedStudentList = [];
@@ -64,15 +70,22 @@ let preferenceToDefaultModalEntry = [
 export default function IndividualCompanyAdmin({ params }) {
   let [studentListOpenWith, setStudentListOpenWith] = useState(false),
     [chooseStudentModalOpen, setChooseStudentModalOpen] = useState(false);
-
-  let companyData = {
-    name: 'Google',
-    logo: 'https://w7.pngwing.com/pngs/249/19/png-transparent-google-logo-g-suite-google-guava-google-plus-company-text-logo.png',
-    techStack: 'React;Node;MongoDB;Express',
-    userStatus: 'Registered',
-    status: 'shortlisting',
-  };
-
+  const {
+    data: companyData,
+    isLoading,
+    isError,
+    refetch,
+    isSuccess,
+  } = useQuery(['company', params.id], () => getCompanyById(params.id), {
+    enabled: !!params.id,
+  });
+  if (isLoading) {
+    return (
+      <Container className="h-96 w-full flex justify-center items-center">
+        <CircularProgress />
+      </Container>
+    );
+  }
   return (
     <>
       <Modal
@@ -122,6 +135,14 @@ export default function IndividualCompanyAdmin({ params }) {
               Selected
             </Button>
           </ButtonGroup>
+          {studentListOpenWith && (
+            <Typography
+              className="text-md font-base m-0"
+              color="text.secondary"
+            >
+              {`${studentList[studentListOpenWith].length} students ${studentListOpenWith}`}
+            </Typography>
+          )}
           <TableContainer className="max-h-96 overflow-auto">
             <Table stickyHeader>
               <TableHead>
@@ -292,8 +313,74 @@ export default function IndividualCompanyAdmin({ params }) {
             backgroundColor: 'background.paper',
             transform: 'translate(-50%,-50%)',
           }}
-        ></Paper>
+        >
+          <Box className="flex flex-row justify-between items-center">
+            <Typography variant="h6" color={'primary'}>
+              Student Lists
+            </Typography>
+            <IconButton onClick={() => setChooseStudentModalOpen(false)}>
+              <CloseIcon />
+            </IconButton>
+          </Box>
+          <Typography className="text-md font-base m-0" color="text.secondary">
+            {`100 students shortlisted`}
+          </Typography>
+          <Box className="mb-1 flex md:flex-row flex-col gap-4 md:gap-2 md:items-center">
+            <TextField
+              label="Search"
+              variant="outlined"
+              size="small"
+              className="flex-grow mr-1"
+            />
+          </Box>
+          <TableContainer className="max-h-96 overflow-auto">
+            <Table stickyHeader>
+              <TableHead>
+                <TableRow>
+                  <TableCell>Sr.</TableCell>
+                  <TableCell>Name</TableCell>
+                  <TableCell className="min-w-[120px]">Roll Number</TableCell>
+                  <TableCell></TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {registeredStudentList.map((student, index) => (
+                  <TableRow key={index} hover>
+                    <TableCell
+                      style={{
+                        width: 10,
+                      }}
+                    >
+                      {index + 1}
+                    </TableCell>
+                    <TableCell>{student.name}</TableCell>
+                    <TableCell>{student.rollNumber}</TableCell>
+                    <TableCell>
+                      <Checkbox />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+          <Box className="flex flex-row justify-between">
+            <Button
+              className="w-fit ml-auto self-end"
+              variant="contained"
+              size="small"
+            >
+              Confirm
+            </Button>
+          </Box>
+        </Paper>
       </Modal>
     </>
   );
+}
+export async function getServerSideProps(context) {
+  return {
+    props: {
+      params: context.params,
+    },
+  };
 }
