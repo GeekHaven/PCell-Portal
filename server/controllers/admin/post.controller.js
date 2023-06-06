@@ -37,8 +37,28 @@ export async function addPost(req, res) {
 }
 
 export async function getAllPosts(req, res) {
+  const { q } = req.query;
+  console.log(q);
   try {
     const posts = await Post.aggregate([
+      {
+        $match: {
+          $or: [
+            {
+              title: {
+                $regex: new RegExp(q),
+                $options: 'i',
+              },
+            },
+            {
+              description: {
+                $regex: new RegExp(q),
+                $options: 'i',
+              },
+            },
+          ],
+        },
+      },
       {
         $project: {
           _id: 1,

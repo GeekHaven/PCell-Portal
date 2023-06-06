@@ -8,24 +8,29 @@ import {
   Typography,
   Divider,
 } from '@mui/material';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 import { getAllPosts } from '@/utils/API/admin/post';
-import { useQuery } from 'react-query';
+import { useMutation } from 'react-query';
 
 export default function AllPosts() {
-  const { data: allPosts, isLoading } = useQuery({
-    queryKey: ['allPosts'],
-    queryFn: getAllPosts,
+  const [allPosts, setAllPosts] = useState([]);
+  const [search, setSearch] = useState('');
+  const searchMutation = useMutation(getAllPosts, {
+    onSuccess: (data) => {
+      setAllPosts(data);
+    },
+    onError: (error) => {
+      console.log(error);
+    },
   });
+  useEffect(() => {
+    searchMutation.mutate({ search });
+  }, []);
+  const handleSearch = () => {
+    searchMutation.mutate({ search });
+  };
 
-  if (isLoading) {
-    return (
-      <Container className="h-96 w-full flex justify-center items-center">
-        <CircularProgress />
-      </Container>
-    );
-  }
   return (
     <>
       <Typography variant="subtitle1" className="-mt-2" color="primary">
@@ -40,6 +45,12 @@ export default function AllPosts() {
               variant="outlined"
               size="small"
               className="flex-grow mr-1"
+              onChange={(e) => setSearch(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleSearch();
+                }
+              }}
             />
             <IconButton
               sx={{
@@ -47,13 +58,18 @@ export default function AllPosts() {
                 borderRadius: '8px',
                 marginRight: '4px',
               }}
-              //   onClick={handleSearch}
+              onClick={handleSearch}
             >
               <SearchIcon />
             </IconButton>
           </div>
         </Box>
-        {!isLoading && (
+        {searchMutation.isLoading && (
+          <Container className="h-96 w-full flex justify-center items-center">
+            <CircularProgress />
+          </Container>
+        )}
+        {
           <Box className="flex flex-col gap-2">
             {allPosts &&
               allPosts.map((post) => (
@@ -69,7 +85,7 @@ export default function AllPosts() {
                 />
               ))}
           </Box>
-        )}
+        }
       </Container>
     </>
   );

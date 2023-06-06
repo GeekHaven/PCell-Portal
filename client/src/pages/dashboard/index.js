@@ -11,7 +11,7 @@ import {
 import React, { useEffect, useState } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 import { getAllPosts } from '@/utils/API/post';
-import { useQuery, useMutation } from 'react-query';
+import { useMutation } from 'react-query';
 
 export const Notification = () => {
   const [allPosts, setAllPosts] = useState([]);
