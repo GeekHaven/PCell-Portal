@@ -12,6 +12,7 @@ import React, { useEffect, useState } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 import { getAllPosts } from '@/utils/API/admin/post';
 import { useMutation } from 'react-query';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 
 export default function AllPosts() {
   const [allPosts, setAllPosts] = useState([]);

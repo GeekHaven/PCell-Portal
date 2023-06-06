@@ -14,10 +14,11 @@ export async function addPost(req, res) {
   try {
     let { title, description, company, comments, target, content } = req.body;
 
+    const authorId = req.user._id;
+    console.log(authorId);
+
     if (!title || !description || !target || !content || !comments)
       return response_400(res, 'Invalid request');
-
-    const authorId = req.user._id;
 
     const post = await Post.create({
       title,
@@ -115,6 +116,17 @@ export async function getPostById(req, res) {
     ]);
     if (!post) return response_400(res, 'Invalid request');
     return response_200(res, post);
+  } catch (error) {
+    return response_500(res, error);
+  }
+}
+
+export async function deletePostById(req, res) {
+  try {
+    const { id } = req.params;
+    const post = await Post.findByIdAndDelete(id);
+    if (!post) return response_400(res, 'Invalid request');
+    return response_200(res, 'Post deleted successfully');
   } catch (error) {
     return response_500(res, error);
   }

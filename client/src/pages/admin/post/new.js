@@ -51,7 +51,7 @@ const NewPost = () => {
   let addPostMutation = useMutation(addPost, {
     onSuccess: (data) => {
       enqueueSnackbar('Post sent successfully', { variant: 'success' });
-      router.push('/admin/post/all');
+      router.push('/admin/post');
     },
     onError: (err) => {
       enqueueSnackbar(err, { variant: 'error' });

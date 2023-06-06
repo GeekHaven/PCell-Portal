@@ -1,4 +1,4 @@
-import { post, get } from '../request';
+import { post, get, remove } from '../request';
 
 export async function addPost({
   title,
@@ -32,7 +32,7 @@ export async function addPost({
 }
 
 export async function getAllPosts({ search = '' }) {
-  let res = await get('/admin/post', null, { q: search });
+  let res = await get('/admin/post/', null, { q: search });
   if (res.status === 200) {
     return Promise.resolve(res.data.message);
   }
@@ -73,6 +73,14 @@ export async function getComments(id) {
 export async function getReplies({ postId, replyTo }) {
   let res = await get(`/admin/post/${postId}/comment/${replyTo}`);
   console.log(res);
+  if (res.status === 200) {
+    return Promise.resolve(res.data.message);
+  }
+  return Promise.reject(res.data.error);
+}
+
+export async function deletePost(id) {
+  let res = await remove(`/admin/post/${id}`);
   if (res.status === 200) {
     return Promise.resolve(res.data.message);
   }
