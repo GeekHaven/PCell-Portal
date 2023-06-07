@@ -21,11 +21,13 @@ import { useMutation } from 'react-query';
 import SelectTargets from '@/components/SelectTargets';
 import { getAllCompanies } from '@/utils/API/admin/company';
 import { addPost } from '@/utils/API/admin/post';
+import FullLoader from '@/components/FullLoader';
 
 const NewPost = () => {
   const editorRef = useRef(null);
   const router = useRouter(),
     { enqueueSnackbar } = useSnackbar();
+
   const [title, setTitle] = useState(''),
     [description, setDescription] = useState(''),
     [content, setContent] = useState(''),
@@ -37,6 +39,15 @@ const NewPost = () => {
       include: [],
       exclude: [],
     });
+
+  useEffect(() => {
+    if (router.query.companyName) {
+      setCompanyName(router.query.companyName);
+    }
+    if (router.query.target) {
+      setTarget(JSON.parse(router.query.target));
+    }
+  }, []);
 
   const AllCompanies = useMutation(getAllCompanies, {
     onSuccess: (data) => {
@@ -83,6 +94,8 @@ const NewPost = () => {
   const handleChange = (event) => {
     setCompanyName(event.target.value);
   };
+
+  if (AllCompanies.isLoading) return <FullLoader />;
 
   return (
     <>
@@ -166,9 +179,25 @@ const NewPost = () => {
               content_css: 'dark',
               statusbar: false,
               plugins: [
-                'autolink lists advlist link image charmap print preview anchor',
-                'searchreplace visualblocks code fullscreen',
-                'insertdatetime media table paste code help wordcount quickbars',
+                'autolink',
+                'lists',
+                'advlist',
+                'link',
+                'image',
+                'charmap',
+                'preview',
+                'anchor',
+                'searchreplace',
+                'visualblocks',
+                'code',
+                'fullscreen',
+                'insertdatetime',
+                'media',
+                'table',
+                'code',
+                'help',
+                'wordcount',
+                'quickbars',
               ],
               menubar: false,
               toolbar: [

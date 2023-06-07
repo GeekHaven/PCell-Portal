@@ -1,4 +1,13 @@
-STATIC_CACHE_NAME = 'dev-static-v2';
+STATIC_CACHE_NAME = 'dev-static-v3';
+
+function isCacheable(request) {
+  return (
+    request.method === 'GET' &&
+    (request.url.includes('/_next/') ||
+      request.url.includes('/images') ||
+      request.url.includes('/image'))
+  );
+}
 
 let deleteOldCache = () => {
   self.addEventListener('activate', function (event) {
@@ -20,10 +29,7 @@ let deleteOldCache = () => {
 
 let cacheUI = () => {
   self.addEventListener('fetch', (event) => {
-    if (
-      !event.request.url.includes('api') &&
-      !event.request.url.includes('/company/individual/')
-    ) {
+    if (isCacheable(event.request)) {
       event.respondWith(
         caches.open(STATIC_CACHE_NAME).then(async (cache) => {
           const response = await cache.match(event.request);
