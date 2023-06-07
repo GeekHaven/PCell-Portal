@@ -16,13 +16,14 @@ const PostSchema = Schema(
       ref: 'Company',
       required: false,
     },
+    authorId: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
     comments: {
       type: String,
-      enum: [
-        'disabled',
-        'public',
-        'private',
-      ],
+      enum: ['disabled', 'public', 'private'],
       required: true,
     },
     content: {

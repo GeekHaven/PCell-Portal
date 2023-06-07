@@ -14,6 +14,9 @@ export async function addPost(req, res) {
   try {
     let { title, description, company, comments, target, content } = req.body;
 
+    const authorId = req.user._id;
+    console.log(authorId);
+
     if (!title || !description || !target || !content || !comments)
       return response_400(res, 'Invalid request');
 
@@ -22,6 +25,7 @@ export async function addPost(req, res) {
       description,
       comments: comments.toLowerCase(),
       company,
+      authorId,
       targets: target,
       content,
     });
@@ -34,8 +38,28 @@ export async function addPost(req, res) {
 }
 
 export async function getAllPosts(req, res) {
+  const { q } = req.query;
+  console.log(q);
   try {
     const posts = await Post.aggregate([
+      {
+        $match: {
+          $or: [
+            {
+              title: {
+                $regex: new RegExp(q),
+                $options: 'i',
+              },
+            },
+            {
+              description: {
+                $regex: new RegExp(q),
+                $options: 'i',
+              },
+            },
+          ],
+        },
+      },
       {
         $project: {
           _id: 1,
@@ -61,9 +85,48 @@ export async function getAllPosts(req, res) {
 export async function getPostById(req, res) {
   try {
     const { id } = req.params;
-    const post = await Post.findById(id);
+    const [post] = await Post.aggregate([
+      {
+        $match: {
+          _id: new mongoose.Types.ObjectId(id),
+        },
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'authorId',
+          foreignField: '_id',
+          as: 'author',
+        },
+      },
+      {
+        $unwind: '$author',
+      },
+      {
+        $project: {
+          _id: 1,
+          title: 1,
+          description: 1,
+          content: 1,
+          company: 1,
+          createdAt: 1,
+          'author.name': 1,
+        },
+      },
+    ]);
     if (!post) return response_400(res, 'Invalid request');
     return response_200(res, post);
+  } catch (error) {
+    return response_500(res, error);
+  }
+}
+
+export async function deletePostById(req, res) {
+  try {
+    const { id } = req.params;
+    const post = await Post.findByIdAndDelete(id);
+    if (!post) return response_400(res, 'Invalid request');
+    return response_200(res, 'Post deleted successfully');
   } catch (error) {
     return response_500(res, error);
   }
@@ -179,8 +242,6 @@ export async function getComments(req, res) {
   }
 }
 
-
-
 export async function getReplies(req, res) {
   try {
     const { id } = req.params;
@@ -215,7 +276,7 @@ export async function addComment(req, res) {
       const post = await Post.findById(postId);
       if (!post) return response_400(res, 'Invalid request');
 
-     const user = req.user; 
+      const user = req.user;
 
       const comment = await Comment.create({
         content,

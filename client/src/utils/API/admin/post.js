@@ -1,4 +1,4 @@
-import { post, get } from '../request';
+import { post, get, remove } from '../request';
 
 export async function addPost({
   title,
@@ -8,14 +8,13 @@ export async function addPost({
   target,
   content,
 }) {
-
   target.groups = target.groups.map((group) => {
     return {
-      year : parseInt(group.year),
-      program : group.program,
-      minCGPA : parseFloat(group.minCGPA),
-      minCredits : parseInt(group.minCredits),
-    }
+      year: parseInt(group.year),
+      program: group.program,
+      minCGPA: parseFloat(group.minCGPA),
+      minCredits: parseInt(group.minCredits),
+    };
   });
   let body = {
     title,
@@ -32,8 +31,8 @@ export async function addPost({
   return Promise.reject(res.data.error);
 }
 
-export async function getAllPosts() {
-  let res = await get('/admin/post');
+export async function getAllPosts({ search = '' }) {
+  let res = await get('/admin/post/', null, { q: search });
   if (res.status === 200) {
     return Promise.resolve(res.data.message);
   }
@@ -71,12 +70,17 @@ export async function getComments(id) {
   return Promise.reject(res.data.error);
 }
 
-export async function getReplies({
-  postId,
-  replyTo,
-}) {
- let res = await get(`/admin/post/${postId}/comment/${replyTo}`);
+export async function getReplies({ postId, replyTo }) {
+  let res = await get(`/admin/post/${postId}/comment/${replyTo}`);
   console.log(res);
+  if (res.status === 200) {
+    return Promise.resolve(res.data.message);
+  }
+  return Promise.reject(res.data.error);
+}
+
+export async function deletePost(id) {
+  let res = await remove(`/admin/post/${id}`);
   if (res.status === 200) {
     return Promise.resolve(res.data.message);
   }

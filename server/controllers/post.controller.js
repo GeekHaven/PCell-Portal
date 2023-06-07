@@ -49,6 +49,8 @@ export async function getPostById(req, res) {
 export async function getAllPosts(req, res) {
   try {
     const user = req.user;
+    const { q } = req.query;
+    // console.log(q);
     const post = await Post.aggregate([
       {
         $addFields: {
@@ -58,6 +60,20 @@ export async function getAllPosts(req, res) {
       {
         $match: {
           isEligible: true,
+          $or: [
+            {
+              title: {
+                $regex: new RegExp(q),
+                $options: 'i',
+              },
+            },
+            {
+              description: {
+                $regex: new RegExp(q),
+                $options: 'i',
+              },
+            },
+          ],
         },
       },
       {
