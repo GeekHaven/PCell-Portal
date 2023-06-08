@@ -8,11 +8,10 @@ import { useRouter } from 'next/router';
 import { useSnackbar } from 'notistack';
 import { LoadingButton } from '@mui/lab';
 
-export default function NewComment({setComments}) {
+export default function NewReply({ setReplies, replyTo }) {
   const { enqueueSnackbar } = useSnackbar();
   const router = useRouter();
   const [content, setContent] = useState('');
-  const [replyTo, setreplyTo] = useState(null);
   const { theme } = useContext(ThemeContext);
   const [mode, setMode] = useState(theme.palette.mode);
 
@@ -20,10 +19,10 @@ export default function NewComment({setComments}) {
     setMode(theme.palette.mode);
   }, [theme]);
 
-  const postComment = useMutation(addComment, {
+  const postReply = useMutation(addComment, {
     onSuccess: (data) => {
-      enqueueSnackbar('Comment added successfully', { variant: 'success' });
-      setComments(data);
+      enqueueSnackbar('Reply added successfully', { variant: 'success' });
+      setReplies(data);
       setContent('');
     },
     onError: (err) => {
@@ -33,9 +32,9 @@ export default function NewComment({setComments}) {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    postComment.mutate({
+    postReply.mutate({
       postId: router.query.id,
-      replyTo,
+      replyTo : replyTo,
       content,
     });
   }
@@ -43,25 +42,25 @@ export default function NewComment({setComments}) {
   return (
     <Container
       maxWidth="xl"
-      className="p-0 mb-4"
+      className="p-0 pl-12"
       component="form"
       onSubmit={handleSubmit}
     >
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-lg lg:text-2xl ml-2 font-bold">Discussion</h2>
-      </div>
+      {/* <div className="flex justify-between items-center mb-6">
+        <h2 className="text-md lg:text-2xl font-bold">Add Reply</h2>
+      </div> */}
       <Paper className="py-2 px-4 mb-4 rounded-lg rounded-t-lg" elevation={3}>
         <label for="comment" className="sr-only">
-          Your comment
+          Your reply
         </label>
 
         <textarea
           id="comment"
-          rows="6"
+          // rows="6"
           className={`px-0 w-full text-sm text-gray-900 border-0  focus:ring-0 focus:outline-none dark:text-white dark:placeholder-gray-400 ${
             mode === 'dark' && `bg-[#1e2a3a]`
           } ${mode === 'light' && `bg-[#fefeff]`}`}
-          placeholder="Write a comment..."
+          placeholder="Write a reply..."
           required
           value={content}
           onChange={(e) => setContent(e.target.value)}
@@ -70,10 +69,10 @@ export default function NewComment({setComments}) {
       <LoadingButton
         type="submit"
         variant="contained"
-        loading={postComment.isLoading}
+        loading={postReply.isLoading}
         className="inline-flex items-center py-2.5 px-4 text-xs font-medium text-center text-white bg-primary-700 rounded-lg focus:ring-4 focus:ring-primary-200 dark:focus:ring-primary-900 hover:bg-primary-800"
       >
-        Post comment
+        Add Reply
       </LoadingButton>
     </Container>
   );

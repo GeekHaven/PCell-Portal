@@ -1,5 +1,5 @@
 import React from 'react';
-import { Paper } from '@mui/material';
+import { Divider, Paper } from '@mui/material';
 import Comment from './Comment';
 import Reply from './Reply';
 import NewComment from './NewComment';
@@ -31,6 +31,7 @@ export default function Discussion({ params, showDiscussion }) {
       return getComments(router.query.id);
     },
     onSuccess: (data) => {
+      console.log(data);
       setComments(data);
     },
     enabled: showDiscussion,
@@ -48,7 +49,7 @@ export default function Discussion({ params, showDiscussion }) {
     <Paper className="p-4 rounded-md">
       <div className="flex flex-col gap-4">
         <NewComment setComments={setComments} comments={comments} />
-
+        <Divider className='mb-4'/>
         {comments.map((comment) => (
           <Comment
             key={comment.id}

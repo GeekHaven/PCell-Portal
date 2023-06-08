@@ -70,7 +70,7 @@ export async function getComments(id) {
   return Promise.reject(res.data.error);
 }
 
-export async function getReplies({ postId, replyTo }) {
+export async function getReplies( {postId, replyTo} ) {
   let res = await get(`/admin/post/${postId}/comment/${replyTo}`);
   console.log(res);
   if (res.status === 200) {
