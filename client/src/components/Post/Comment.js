@@ -8,7 +8,7 @@ import NewComment from './NewComment';
 import NewReply from './NewReply';
 import Reply from './Reply';
 import { getReplies } from '@/utils/API/admin/post';
-import { stringAvatar } from '@/utils/styledAvatar.js'
+import { stringAvatar } from '@/utils/styledAvatar.js';
 import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { CircularProgress, Container } from '@mui/material';
@@ -41,14 +41,14 @@ export default function Comment(props) {
     queryKey: ['replies', router.query.id, props.comment._id],
     queryFn: () => {
       const reply = {
-        postId : router.query.id,
-        replyTo : props.comment._id
-      }
+        postId: router.query.id,
+        replyTo: props.comment._id,
+      };
       return getReplies(reply);
     },
     onSuccess: (data) => {
       setReplies(data);
-      console.log("These are the replies" ,data);
+      console.log('These are the replies', data);
     },
     enabled: showReply,
   });
@@ -76,17 +76,22 @@ export default function Comment(props) {
               </time>
             </p>
           </div>
-          <CommentActions/>
+          <CommentActions
+            postId={router.query.id}
+            commentId={props.comment._id}
+            setComments={props.setComments}
+          />
         </div>
-        
+
         <p className="text-gray-500 dark:text-gray-400">
           {props.comment.content}
         </p>
         <div className="flex items-center mt-4 space-x-4">
           <button
             type="button"
-            className={`flex items-center text-sm text-gray-500 hover:underline dark:text-gray-400 ${mode === 'dark' && `bg-[#1e2a3a]`
-              } ${mode === 'light' && `bg-[#fefeff]`}`}
+            className={`flex items-center text-sm text-gray-500 hover:underline dark:text-gray-400 ${
+              mode === 'dark' && `bg-[#1e2a3a]`
+            } ${mode === 'light' && `bg-[#fefeff]`}`}
             onClick={() => setShowReply(!showReply)}
           >
             <ReplyIcon className="mr-1" />
@@ -99,10 +104,12 @@ export default function Comment(props) {
         <>
           <NewReply setReplies={setReplies} replyTo={replyTo} />
           {replies.map((reply) => (
-            <Reply 
+            <Reply
               key={reply._id}
               reply={reply}
-              />
+              postId={props.comment.postId}
+              setReplies={setReplies}
+            />
           ))}
         </>
       )}

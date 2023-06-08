@@ -3,22 +3,56 @@ import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import { editComment, deleteComment } from '@/utils/API/admin/post';
+import { useMutation } from 'react-query';
 
-const options = [
-  'Edit',
-  'Delete',
-];
+const options = ['Edit', 'Delete'];
 
 const ITEM_HEIGHT = 48;
 
-export default function LongMenu() {
+export default function LongMenu({ postId, commentId, setComments }) {
+  const { mutateAsync: editCommentMutate } = useMutation(editComment, {
+    onSuccess: (data) => {
+      setComments((prev) => {
+        return prev.map((comment) => {
+          if (comment._id === commentId) {
+            comment.content = data.content;
+          }
+          return comment;
+        });
+      });
+    },
+  });
+  const { mutateAsync: deleteCommentMutate } = useMutation(deleteComment, {
+    onSuccess: (data) => {
+      setComments((prev) => {
+        return prev.filter((comment) => comment._id !== commentId);
+      });
+    },
+  });
+
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
+    setAnchorEl((prev) => event.currentTarget);
+    // console.log(event.target);
   };
   const handleClose = () => {
     setAnchorEl(null);
+  };
+  const handleValue = async (event) => {
+    const value = event.target.getAttribute('value');
+    console.log(postId);
+
+    if (value === 'edit') {
+      const content = prompt('Enter new content');
+      if (content) {
+        await editCommentMutate({ postId, commentId, content });
+      }
+    }
+    if (value === 'delete') {
+      await deleteCommentMutate({ postId, commentId });
+    }
   };
 
   return (
@@ -31,7 +65,7 @@ export default function LongMenu() {
         aria-haspopup="true"
         onClick={handleClick}
       >
-        <MoreVertIcon />  
+        <MoreVertIcon />
       </IconButton>
       <Menu
         id="long-menu"
@@ -49,7 +83,12 @@ export default function LongMenu() {
         }}
       >
         {options.map((option) => (
-          <MenuItem key={option} selected={option === 'Pyxis'} onClick={handleClose}>
+          <MenuItem
+            key={option}
+            selected={option === 'Pyxis'}
+            onClick={handleValue}
+            value={option.toLowerCase()}
+          >
             {option}
           </MenuItem>
         ))}

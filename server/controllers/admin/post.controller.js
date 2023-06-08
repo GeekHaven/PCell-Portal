@@ -132,69 +132,6 @@ export async function deletePostById(req, res) {
   }
 }
 
-// export async function getAllUserPosts(req, res) {
-//     try{
-//         const { id } = req.params;
-//         const user = await User.findById(id).populate('posts').populate('posts.publicComments');
-//         return response_200(res, user.posts);
-//     }
-//     catch(error){
-//         return response_500(res, error);
-//     }
-// }
-
-// export async function addPublicComment(req, res) {
-//   try {
-//     const { content, postId, author } = req.body;
-//     const post = await Post.findById(postId);
-//     if (!post || !content || !author)
-//       return response_400(res, 'Invalid request');
-
-//     if (post.comment != 'public')
-//       return response_400(res, 'Invalid request');
-
-//     const comment = await Comment.create({
-//       content,
-//       author,
-//       postId,
-//       private: false,
-//     });
-
-//     post.publicComments.push(comment);
-//     post.status = 'unread';
-//     post.save();
-//     return response_200(res, post);
-//   } catch (error) {
-//     return response_500(res, error);
-//   }
-// }
-
-// export async function addPrivateComment(req, res) {
-//   try {
-//     const { content, postId, author } = req.body;
-//     const post = await Post.findById(postId);
-//     if (!post || !content || !author)
-//       return response_400(res, 'Invalid request');
-
-//     if (post.comment != 'private')
-//       return response_400(res, 'Invalid request');
-
-//     const comment = await Comment.create({
-//       content,
-//       author,
-//       postId,
-//       private: true,
-//     });
-
-//     post.privateComments.push(comment);
-//     post.status = 'unread';
-//     post.save();
-//     return response_200(res, post);
-//   } catch (error) {
-//     return response_500(res, error);
-//   }
-// }
-
 export async function getComments(req, res) {
   try {
     const { id } = req.params;
@@ -214,23 +151,14 @@ export async function getComments(req, res) {
         },
       },
       {
+        $unwind: '$author',
+      },
+      {
         $project: {
           _id: 1,
           content: 1,
-          author: {
-            $arrayElemAt: [
-              {
-                $map: {
-                  input: '$author',
-                  in: {
-                    name: '$$this.name',
-                    rollNumber: '$$this.rollNumber',
-                  },
-                },
-              },
-              0,
-            ],
-          },
+          'author.name': 1,
+          'author.rollNumber': 1,
           private: 1,
           createdAt: 1,
         },
@@ -260,23 +188,14 @@ export async function getReplies(req, res) {
         },
       },
       {
+        $unwind: '$author',
+      },
+      {
         $project: {
           _id: 1,
           content: 1,
-          author: {
-            $arrayElemAt: [
-              {
-                $map: {
-                  input: '$author',
-                  in: {
-                    name: '$$this.name',
-                    rollNumber: '$$this.rollNumber',
-                  },
-                },
-              },
-              0,
-            ],
-          },
+          'author.name': 1,
+          'author.rollNumber': 1,
           private: 1,
           createdAt: 1,
         },
@@ -290,7 +209,7 @@ export async function getReplies(req, res) {
 
 export async function addComment(req, res) {
   try {
-    const { content, postId, replyTo, userId } = req.body;
+    const { content, postId, replyTo } = req.body;
     if (!content || !postId) return response_400(res, 'Invalid request');
 
     if (!replyTo) {
@@ -322,23 +241,14 @@ export async function addComment(req, res) {
           },
         },
         {
+          $unwind: '$author',
+        },
+        {
           $project: {
             _id: 1,
             content: 1,
-            author: {
-              $arrayElemAt: [
-                {
-                  $map: {
-                    input: '$author',
-                    in: {
-                      name: '$$this.name',
-                      rollNumber: '$$this.rollNumber',
-                    },
-                  },
-                },
-                0,
-              ],
-            },
+            'author.name': 1,
+            'author.rollNumber': 1,
             private: 1,
             createdAt: 1,
           },
@@ -375,23 +285,14 @@ export async function addComment(req, res) {
           },
         },
         {
+          $unwind: '$author',
+        },
+        {
           $project: {
             _id: 1,
             content: 1,
-            author: {
-              $arrayElemAt: [
-                {
-                  $map: {
-                    input: '$author',
-                    in: {
-                      name: '$$this.name',
-                      rollNumber: '$$this.rollNumber',
-                    },
-                  },
-                },
-                0,
-              ],
-            },
+            'author.name': 1,
+            'author.rollNumber': 1,
             private: 1,
             createdAt: 1,
           },
@@ -399,6 +300,41 @@ export async function addComment(req, res) {
       ]);
       return response_200(res, replies);
     }
+  } catch (error) {
+    return response_500(res, error);
+  }
+}
+
+export async function deleteCommentById(req, res) {
+  try {
+    const { id } = req.params;
+    const comment = await Comment.findByIdAndDelete(id);
+    if (!comment) return response_400(res, 'Invalid request');
+    return response_200(res, 'Comment deleted successfully');
+  } catch (error) {
+    return response_500(res, error);
+  }
+}
+
+export async function updateCommentById(req, res) {
+  try {
+    const { id } = req.params;
+    const { content } = req.body;
+    const author = req.user._id;
+    const comment = await Comment.findOneAndUpdate(
+      {
+        _id: new mongoose.Types.ObjectId(id),
+        author,
+      },
+      {
+        content,
+      },
+      {
+        new: true,
+      }
+    );
+    if (!comment) return response_400(res, 'Invalid request');
+    return response_200(res, comment);
   } catch (error) {
     return response_500(res, error);
   }

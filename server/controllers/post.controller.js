@@ -189,82 +189,91 @@ export async function getComments(req, res) {
     const post = await Post.findById(postId);
     if (!post) return response_400(res, 'Invalid request');
 
-    if (post.comments === 'public' || post.comments === 'disabled') {
-      const comments = await Comment.aggregate([
-        {
-          $match: {
-            postId: new mongoose.Types.ObjectId(id),
-            replyTo: null,
-          },
-        },
-        {
-          $lookup: {
-            from: 'users',
-            localField: 'author',
-            foreignField: '_id',
-            as: 'author',
-          },
-        },
-        {
-          $project: {
-            _id: 1,
-            content: 1,
-            author: {
-              $arrayElemAt: [
+    // if (post.comments === 'public' || post.comments === 'disabled') {
+    //   const comments = await Comment.aggregate([
+    //     {
+    //       $match: {
+    //         postId: new mongoose.Types.ObjectId(id),
+    //         replyTo: null,
+    //       },
+    //     },
+    //     {
+    //       $lookup: {
+    //         from: 'users',
+    //         localField: 'author',
+    //         foreignField: '_id',
+    //         as: 'author',
+    //       },
+    //     },
+    //     {
+    //       $unwind: {
+    //         path: '$author',
+    //         preserveNullAndEmptyArrays: true,
+    //       },
+    //     },
+    //     {
+    //       $project: {
+    //         _id: 1,
+    //         content: 1,
+    //         'author.name': 1,
+    //         'author.rollNumber': 1,
+    //         private: 1,
+    //         createdAt: 1,
+    //       },
+    //     },
+    //   ]);
+    //   return response_200(res, comments);
+    // } else {
+    const user = req.user;
+    const comments = await Comment.aggregate([
+      {
+        $match: {
+          postId: new mongoose.Types.ObjectId(postId),
+          replyTo: null,
+          $or: [
+            {
+              private: 'public',
+            },
+            {
+              $and: [
                 {
-                  $map: {
-                    input: '$author',
-                    in: {
-                      name: '$$this.name',
-                      rollNumber: '$$this.rollNumber',
-                    },
-                  },
+                  private: 'private',
                 },
-                0,
+                {
+                  author: new mongoose.Types.ObjectId(user._id),
+                },
               ],
             },
-            private: 1,
-            createdAt: 1,
-          },
+          ],
         },
-      ]);
-      return response_200(res, comments);
-    } else {
-      const user = req.user;
-      const comments = await Comment.aggregate([
-        {
-          $match: {
-            postId: new mongoose.Types.ObjectId(postId),
-            replyTo: null,
-            $or: [
-              {
-                private: 'public',
-              },
-              {
-                $and: [
-                  {
-                    private: 'private',
-                  },
-                  {
-                    author: new mongoose.Types.ObjectId(user._id),
-                  },
-                ],
-              },
-            ],
-          },
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'author',
+          foreignField: '_id',
+          as: 'author',
         },
-        {
-          $project: {
-            _id: 1,
-            content: 1,
-            author: 1,
-            private: 1,
-            createdAt: 1,
-          },
+      },
+      {
+        $unwind: {
+          path: '$author',
+          preserveNullAndEmptyArrays: true,
         },
-      ]);
-      return response_200(res, comments);
-    }
+      },
+      {
+        $project: {
+          _id: 1,
+          content: 1,
+          'author.name': 1,
+          'author.rollNumber': 1,
+          private: 1,
+          createdAt: 1,
+        },
+      },
+    ]);
+    return response_200(res, comments);
+    // }
   } catch (error) {
     return response_500(res, error);
   }
@@ -277,64 +286,78 @@ export async function getReplies(req, res) {
 
     const comment = await Comment.findById(commentId);
     if (!comment) return response_400(res, 'Invalid request');
+    // if (comment.private === 'public') {
+    //   const replies = await Comment.aggregate([
+    //     {
+    //       $match: {
+    //         replyTo: new mongoose.Types.ObjectId(commentId),
+    //       },
+    //     },
+    //     {
+    //       $project: {
+    //         _id: 1,
+    //         content: 1,
+    //         author: 1,
+    //         private: 1,
+    //         createdAt: 1,
+    //       },
+    //     },
+    //   ]);
+    //   return response_200(res, replies);
+    // } else {
+    const user = req.user;
+    if (!user) return response_400(res, 'Invalid request');
+    if (comment.author.toString() !== user._id.toString())
+      return response_400(res, 'Invalid request');
 
-    if (comment.private === 'public') {
-      const replies = await Comment.aggregate([
-        {
-          $match: {
-            replyTo: new mongoose.Types.ObjectId(commentId),
-          },
+    const replies = await Comment.aggregate([
+      {
+        $match: {
+          replyTo: new mongoose.Types.ObjectId(id),
+          $or: [
+            {
+              private: 'public',
+            },
+            {
+              $and: [
+                {
+                  private: 'private',
+                },
+                {
+                  author: new mongoose.Types.ObjectId(user._id),
+                },
+              ],
+            },
+          ],
         },
-        {
-          $project: {
-            _id: 1,
-            content: 1,
-            author: 1,
-            private: 1,
-            createdAt: 1,
-          },
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'author',
+          foreignField: '_id',
+          as: 'author',
         },
-      ]);
-      return response_200(res, replies);
-    } else {
-      const user = req.user;
-      if (!user) return response_400(res, 'Invalid request');
-      if (comment.author.toString() !== user._id.toString())
-        return response_400(res, 'Invalid request');
-
-      const replies = await Comment.aggregate([
-        {
-          $match: {
-            replyTo: new mongoose.Types.ObjectId(id),
-            $or: [
-              {
-                private: 'public',
-              },
-              {
-                $and: [
-                  {
-                    private: 'private',
-                  },
-                  {
-                    author: new mongoose.Types.ObjectId(user._id),
-                  },
-                ],
-              },
-            ],
-          },
+      },
+      {
+        $unwind: {
+          path: '$author',
+          preserveNullAndEmptyArrays: true,
         },
-        {
-          $project: {
-            _id: 1,
-            content: 1,
-            author: 1,
-            private: 1,
-            createdAt: 1,
-          },
+      },
+      {
+        $project: {
+          _id: 1,
+          content: 1,
+          'author.name': 1,
+          'author.rollNumber': 1,
+          private: 1,
+          createdAt: 1,
         },
-      ]);
-      return response_200(res, replies);
-    }
+      },
+    ]);
+    return response_200(res, replies);
+    // }
   } catch (error) {
     return response_500(res, error);
   }
