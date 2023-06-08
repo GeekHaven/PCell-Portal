@@ -11,9 +11,18 @@ import { useQuery } from 'react-query';
 import { getPostById } from '@/utils/API/post';
 import { CircularProgress } from '@mui/material';
 import Discussion from '@/components/Post/Discussion';
+import { isUserAuthenticated } from '@/utils/API/auth';
 
 export default function IndividialPostAdmin({ params }) {
   const [showDiscussion, setShowDiscussion] = useState(false);
+
+
+  let { data: user } = useQuery({
+    queryKey: 'user',
+    queryFn: isUserAuthenticated,
+    staleTime: 1000 * 60 * 60 * 24 * 30,
+  });
+
 
   let { data: post, isLoading } = useQuery({
     queryKey: ['post', params.id],
@@ -21,6 +30,8 @@ export default function IndividialPostAdmin({ params }) {
       return getPostById(params.id);
     },
   });
+
+
 
   if (isLoading) {
     return (
@@ -48,21 +59,21 @@ export default function IndividialPostAdmin({ params }) {
           ></div>
         </Box>
       </Paper>
-      <Box className="flex">
-        <ToggleButton
-          className="ml-auto"
-          size="small"
-          value="check"
-          color="primary"
-          selected={!showDiscussion}
-          onChange={() => {
-            setShowDiscussion(!showDiscussion);
-          }}
-        >
-          {showDiscussion ? 'Hide Discussion' : 'Show Discussion'}
-        </ToggleButton>
-      </Box>
-      {showDiscussion && <Discussion showDiscussion={showDiscussion} />}
+        <Box className="flex">
+          <ToggleButton
+            className="ml-auto"
+            size="small"
+            value="check"
+            color="primary"
+            selected={!showDiscussion}
+            onChange={() => {
+              setShowDiscussion(!showDiscussion);
+            }}
+          >
+            {showDiscussion ? 'Hide Discussion' : 'Show Discussion'}
+          </ToggleButton>
+        </Box>
+        {showDiscussion && <Discussion showDiscussion={showDiscussion} commentsType={post.comments} isAdmin={user.isAdmin}/>}
     </div>
   );
 }

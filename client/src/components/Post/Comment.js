@@ -13,6 +13,7 @@ import { useQuery } from 'react-query';
 import { useRouter } from 'next/router';
 import { CircularProgress, Container } from '@mui/material';
 import CommentActions from './CommentActions';
+import { getRepliesUser } from '@/utils/API/post';
 
 export default function Comment(props) {
   const router = useRouter();
@@ -44,11 +45,12 @@ export default function Comment(props) {
         postId : router.query.id,
         replyTo : props.comment._id
       }
-      return getReplies(reply);
+      console.log(getRepliesUser(reply));
+      if(props.isAdmin) return getReplies(reply);
+      else return getRepliesUser(reply);
     },
     onSuccess: (data) => {
       setReplies(data);
-      console.log("These are the replies" ,data);
     },
     enabled: showReply,
   });
@@ -83,7 +85,7 @@ export default function Comment(props) {
           {props.comment.content}
         </p>
         <div className="flex items-center mt-4 space-x-4">
-          <button
+          {props.isEnabled && <button
             type="button"
             className={`flex items-center text-sm text-gray-500 hover:underline dark:text-gray-400 ${mode === 'dark' && `bg-[#1e2a3a]`
               } ${mode === 'light' && `bg-[#fefeff]`}`}
@@ -91,13 +93,13 @@ export default function Comment(props) {
           >
             <ReplyIcon className="mr-1" />
             Reply
-          </button>
+          </button>}
         </div>
       </Paper>
 
       {showReply && (
         <>
-          <NewReply setReplies={setReplies} replyTo={replyTo} />
+          <NewReply setReplies={setReplies} replyTo={replyTo} isAdmin={props.isAdmin}/>
           {replies.map((reply) => (
             <Reply 
               key={reply._id}

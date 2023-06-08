@@ -24,6 +24,9 @@ export const Notification = () => {
       console.log(error);
     },
   });
+
+
+
   useEffect(() => {
     searchMutation.mutate({ search });
   }, []);

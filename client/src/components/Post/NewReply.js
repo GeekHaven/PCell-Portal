@@ -7,8 +7,9 @@ import { addComment } from '@/utils/API/admin/post';
 import { useRouter } from 'next/router';
 import { useSnackbar } from 'notistack';
 import { LoadingButton } from '@mui/lab';
+import { addCommentUser } from '@/utils/API/post';
 
-export default function NewReply({ setReplies, replyTo }) {
+export default function NewReply({ setReplies, replyTo, isAdmin }) {
   const { enqueueSnackbar } = useSnackbar();
   const router = useRouter();
   const [content, setContent] = useState('');
@@ -19,16 +20,35 @@ export default function NewReply({ setReplies, replyTo }) {
     setMode(theme.palette.mode);
   }, [theme]);
 
-  const postReply = useMutation(addComment, {
-    onSuccess: (data) => {
-      enqueueSnackbar('Reply added successfully', { variant: 'success' });
-      setReplies(data);
-      setContent('');
-    },
-    onError: (err) => {
-      enqueueSnackbar(err, { variant: 'error' });
-    },
-  });
+  let postReply;
+
+
+  if(isAdmin)
+  {
+    postReply = useMutation(addComment, {
+      onSuccess: (data) => {
+        enqueueSnackbar('Reply added successfully', { variant: 'success' });
+        setReplies(data);
+        setContent('');
+      },
+      onError: (err) => {
+        enqueueSnackbar(err, { variant: 'error' });
+      },
+    });
+  }
+  else
+  {
+    postReply = useMutation(addCommentUser, {
+      onSuccess: (data) => {
+        enqueueSnackbar('Reply added successfully', { variant: 'success' });
+        setReplies(data);
+        setContent('');
+      },
+      onError: (err) => {
+        enqueueSnackbar(err, { variant: 'error' });
+      },
+    });
+  }
 
   async function handleSubmit(e) {
     e.preventDefault();

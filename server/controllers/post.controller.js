@@ -35,6 +35,7 @@ export async function getPostById(req, res) {
           content: 1,
           company: 1,
           createdAt: 1,
+          comments: 1,
         },
       },
     ]);
@@ -83,6 +84,7 @@ export async function getAllPosts(req, res) {
           description: 1,
           company: 1,
           createdAt: 1,
+          comments: 1,
         },
       },
       {
@@ -116,84 +118,13 @@ export async function addComment(req, res) {
         content,
         author: user._id,
         postId,
-        private: post.comments,
+        private: post.comments==='private',
       });
 
       const comments = await Comment.aggregate([
         {
           $match: {
             postId: new mongoose.Types.ObjectId(postId),
-            replyTo: null,
-          },
-        },
-        {
-          $project: {
-            _id: 1,
-            content: 1,
-            author: 1,
-            private: 1,
-            createdAt: 1,
-          },
-        },
-      ]);
-      return response_200(res, comments);
-    } else {
-      const user = req.user;
-
-      const comment = await Comment.findById(replyTo);
-      if (!comment) return response_400(res, 'Invalid request');
-
-      if (
-        comment.private === 'private' &&
-        comment.author.toString() !== user._id.toString()
-      )
-        return response_400(res, 'Invalid request');
-
-      const reply = await Comment.create({
-        content,
-        author: user._id,
-        postId: comment.postId,
-        replyTo,
-        private: comment.private,
-      });
-
-      const replies = await Comment.aggregate([
-        {
-          $match: {
-            postId: new mongoose.Types.ObjectId(comment.postId),
-            replyTo: new mongoose.Types.ObjectId(replyTo),
-          },
-        },
-        {
-          $project: {
-            _id: 1,
-            content: 1,
-            author: 1,
-            private: 1,
-            createdAt: 1,
-          },
-        },
-      ]);
-      return response_200(res, replies);
-    }
-  } catch (error) {
-    return response_500(res, error);
-  }
-}
-
-export async function getComments(req, res) {
-  try {
-    const { postId } = req.params;
-    if (!postId) return response_400(res, 'Invalid request');
-
-    const post = await Post.findById(postId);
-    if (!post) return response_400(res, 'Invalid request');
-
-    if (post.comments === 'public' || post.comments === 'disabled') {
-      const comments = await Comment.aggregate([
-        {
-          $match: {
-            postId: new mongoose.Types.ObjectId(id),
             replyTo: null,
           },
         },
@@ -231,38 +162,167 @@ export async function getComments(req, res) {
       return response_200(res, comments);
     } else {
       const user = req.user;
-      const comments = await Comment.aggregate([
+
+      const comment = await Comment.findById(replyTo);
+      if (!comment) return response_400(res, 'Invalid request');
+
+      if (
+        comment.private === 'private' &&
+        comment.author.toString() !== user._id.toString()
+      )
+        return response_400(res, 'Invalid request');
+
+      const reply = await Comment.create({
+        content,
+        author: user._id,
+        postId: comment.postId,
+        replyTo,
+        private: comment.private,
+      });
+
+      const replies = await Comment.aggregate([
         {
           $match: {
-            postId: new mongoose.Types.ObjectId(postId),
-            replyTo: null,
-            $or: [
-              {
-                private: 'public',
-              },
-              {
-                $and: [
-                  {
-                    private: 'private',
-                  },
-                  {
-                    author: new mongoose.Types.ObjectId(user._id),
-                  },
-                ],
-              },
-            ],
+            postId: new mongoose.Types.ObjectId(comment.postId),
+            replyTo: new mongoose.Types.ObjectId(replyTo),
+          },
+        },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'author',
+            foreignField: '_id',
+            as: 'author',
           },
         },
         {
           $project: {
             _id: 1,
             content: 1,
-            author: 1,
+            author: {
+              $arrayElemAt: [
+                {
+                  $map: {
+                    input: '$author',
+                    in: {
+                      name: '$$this.name',
+                      rollNumber: '$$this.rollNumber',
+                    },
+                  },
+                },
+                0,
+              ],
+            },
             private: 1,
             createdAt: 1,
           },
         },
       ]);
+      return response_200(res, replies);
+    }
+  } catch (error) {
+    return response_500(res, error);
+  }
+}
+
+export async function getComments(req, res) {
+  try {
+    const { postId } = req.params;
+    if (!postId) return response_400(res, 'Invalid request');
+
+    const post = await Post.findById(postId);
+    if (!post) return response_400(res, 'Invalid request');
+
+    if (post.comments === 'public' || post.comments === 'disabled') {
+      const comments = await Comment.aggregate([
+        {
+          $match: {
+            postId: new mongoose.Types.ObjectId(postId),
+            replyTo: null,
+          },
+        },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'author',
+            foreignField: '_id',
+            as: 'author',
+          },
+        },
+        {
+          $project: {
+            _id: 1,
+            content: 1,
+            author: {
+              $arrayElemAt: [
+                {
+                  $map: {
+                    input: '$author',
+                    in: {
+                      name: '$$this.name',
+                      rollNumber: '$$this.rollNumber',
+                    },
+                  },
+                },
+                0,
+              ],
+            },
+            private: 1,
+            createdAt: 1,
+          },
+        },
+      ]);
+      return response_200(res, comments);
+    } else {
+      const user = req.user;
+      let admins = await User.find({ isAdmin: true });
+      admins = admins.map(user => new mongoose.Types.ObjectId(user._id));
+      const userId = new mongoose.Types.ObjectId(user._id);
+
+      const comments = await Comment.aggregate([
+        {
+          $match: {
+            postId: new mongoose.Types.ObjectId(postId),
+            replyTo: null,
+            author : {
+              $in : [...admins, userId]
+            }
+          },
+        },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'author',
+            foreignField: '_id',
+            as: 'authorData',
+          },
+        },
+        {
+          $project: {
+            _id: 1,
+            content: 1,
+            author: {
+              $arrayElemAt: [
+                {
+                  $map: {
+                    input: '$authorData',
+                    in: {
+                      name: '$$this.name',
+                      rollNumber: '$$this.rollNumber',
+                    },
+                  },
+                },
+                0,
+              ],
+            },
+            private: 1,
+            createdAt: 1,
+          },
+        },
+      ]);
+
+
+
       return response_200(res, comments);
     }
   } catch (error) {
@@ -286,10 +346,31 @@ export async function getReplies(req, res) {
           },
         },
         {
+          $lookup: {
+            from: 'users',
+            localField: 'author',
+            foreignField: '_id',
+            as: 'author',
+          },
+        },
+        {
           $project: {
             _id: 1,
             content: 1,
-            author: 1,
+            author: {
+              $arrayElemAt: [
+                {
+                  $map: {
+                    input: '$author',
+                    in: {
+                      name: '$$this.name',
+                      rollNumber: '$$this.rollNumber',
+                    },
+                  },
+                },
+                0,
+              ],
+            },
             private: 1,
             createdAt: 1,
           },
@@ -302,32 +383,46 @@ export async function getReplies(req, res) {
       if (comment.author.toString() !== user._id.toString())
         return response_400(res, 'Invalid request');
 
+      admins = admins.map(user => new mongoose.Types.ObjectId(user._id));
+      const userId = new mongoose.Types.ObjectId(user._id);
+
+
       const replies = await Comment.aggregate([
         {
           $match: {
-            replyTo: new mongoose.Types.ObjectId(id),
-            $or: [
-              {
-                private: 'public',
-              },
-              {
-                $and: [
-                  {
-                    private: 'private',
-                  },
-                  {
-                    author: new mongoose.Types.ObjectId(user._id),
-                  },
-                ],
-              },
-            ],
+            postId: new mongoose.Types.ObjectId(postId),
+            replyTo: null,
+            author: {
+              $in: [...admins, userId]
+            }
+          },
+        },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'author',
+            foreignField: '_id',
+            as: 'author',
           },
         },
         {
           $project: {
             _id: 1,
             content: 1,
-            author: 1,
+            author: {
+              $arrayElemAt: [
+                {
+                  $map: {
+                    input: '$author',
+                    in: {
+                      name: '$$this.name',
+                      rollNumber: '$$this.rollNumber',
+                    },
+                  },
+                },
+                0,
+              ],
+            },
             private: 1,
             createdAt: 1,
           },

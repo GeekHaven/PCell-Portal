@@ -13,29 +13,43 @@ import { useMutation } from 'react-query';
 import { Container, CircularProgress } from '@mui/material';
 import { useContext } from 'react';
 import ThemeContext from '@/contexts/theme.context';
+import { isUserAuthenticated } from '@/utils/API/auth';
+import { getCommentsUser } from '@/utils/API/post';
 
-export default function Discussion({ params, showDiscussion }) {
+export default function Discussion({ params, showDiscussion, commentsType, isAdmin }) {
   const router = useRouter();
   const [comments, setComments] = useState([]);
   const [replies, setReplies] = useState([]);
+  const [commentsEnable, setCommentsEnable] = useState(true);
   const { theme } = useContext(ThemeContext);
   const [mode, setMode] = useState(theme.palette.mode);
+  const [isEnabled, setIsEnabled] = useState(true);
+
+ 
 
   useEffect(() => {
     setMode(theme.palette.mode);
   }, [theme]);
 
+
   const { data: allComments, commentsLoading } = useQuery({
     queryKey: ['comments'],
     queryFn: () => {
-      return getComments(router.query.id);
+      if(isAdmin) return getComments(router.query.id);
+       return getCommentsUser(router.query.id);
     },
     onSuccess: (data) => {
-      console.log(data);
       setComments(data);
+      console.log(data);
     },
     enabled: showDiscussion,
   });
+
+  useEffect(() => {
+    if (commentsType === 'disabled') {
+      setIsEnabled(false);
+    }
+  }, [commentsType]);
 
   if (commentsLoading) {
     return (
@@ -48,16 +62,21 @@ export default function Discussion({ params, showDiscussion }) {
   return (
     <Paper className="p-4 rounded-md">
       <div className="flex flex-col gap-4">
-        <NewComment setComments={setComments} comments={comments} />
-        <Divider className='mb-4'/>
+        {
+          (isEnabled || isAdmin) && (
+            <>
+              <NewComment setComments={setComments} isAdmin={isAdmin}/>
+              <Divider className='mb-4' />
+            </>
+          )
+        }
+        
         {comments.map((comment) => (
           <Comment
             key={comment.id}
             comment={comment}
-            setComments={setComments}
-            comments={comments}
-            setReplies={setReplies}
-            replies={replies}
+            isEnabled={isEnabled}
+            isAdmin={isAdmin}
           />
         ))}
       </div>

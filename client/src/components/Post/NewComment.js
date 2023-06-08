@@ -7,8 +7,9 @@ import { addComment } from '@/utils/API/admin/post';
 import { useRouter } from 'next/router';
 import { useSnackbar } from 'notistack';
 import { LoadingButton } from '@mui/lab';
+import { addCommentUser } from '@/utils/API/post';
 
-export default function NewComment({setComments}) {
+export default function NewComment({setComments, isAdmin}) {
   const { enqueueSnackbar } = useSnackbar();
   const router = useRouter();
   const [content, setContent] = useState('');
@@ -20,17 +21,32 @@ export default function NewComment({setComments}) {
     setMode(theme.palette.mode);
   }, [theme]);
 
-  const postComment = useMutation(addComment, {
-    onSuccess: (data) => {
-      enqueueSnackbar('Comment added successfully', { variant: 'success' });
-      setComments(data);
-      setContent('');
-    },
-    onError: (err) => {
-      enqueueSnackbar(err, { variant: 'error' });
-    },
-  });
+  let postComment;
 
+ if(isAdmin){
+    postComment = useMutation(addComment, {
+     onSuccess: (data) => {
+       enqueueSnackbar('Comment added successfully', { variant: 'success' });
+       setComments(data);
+       setContent('');
+     },
+     onError: (err) => {
+       enqueueSnackbar(err, { variant: 'error' });
+     },
+   });
+  }else{
+    postComment = useMutation(addCommentUser, {
+      onSuccess: (data) => {
+        enqueueSnackbar('Comment added successfully', { variant: 'success' });
+        setComments(data);
+        setContent('');
+      },
+      onError: (err) => {
+        enqueueSnackbar(err, { variant: 'error' });
+      },
+    });
+  }
+  
   async function handleSubmit(e) {
     e.preventDefault();
     postComment.mutate({
@@ -39,6 +55,7 @@ export default function NewComment({setComments}) {
       content,
     });
   }
+
 
   return (
     <Container
