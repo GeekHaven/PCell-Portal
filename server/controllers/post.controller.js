@@ -51,7 +51,6 @@ export async function getAllPosts(req, res) {
   try {
     const user = req.user;
     const { q } = req.query;
-    // console.log(q);
     const post = await Post.aggregate([
       {
         $addFields: {

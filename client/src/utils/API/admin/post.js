@@ -1,4 +1,4 @@
-import { post, get, remove } from '../request';
+import { post, get, remove, update } from '../request';
 
 export async function addPost({
   title,
@@ -70,9 +70,8 @@ export async function getComments(id) {
   return Promise.reject(res.data.error);
 }
 
-export async function getReplies( {postId, replyTo} ) {
+export async function getReplies({ postId, replyTo }) {
   let res = await get(`/admin/post/${postId}/comment/${replyTo}`);
-  console.log(res);
   if (res.status === 200) {
     return Promise.resolve(res.data.message);
   }
@@ -81,6 +80,27 @@ export async function getReplies( {postId, replyTo} ) {
 
 export async function deletePost(id) {
   let res = await remove(`/admin/post/${id}`);
+  if (res.status === 200) {
+    return Promise.resolve(res.data.message);
+  }
+  return Promise.reject(res.data.error);
+}
+
+export async function editComment({ postId, commentId, content }) {
+  let body = {
+    postId,
+    commentId,
+    content,
+  };
+  let res = await update(`/admin/post/${postId}/comment/${commentId}`, body);
+  if (res.status === 200 || res.status === 201) {
+    return Promise.resolve(res.data.message);
+  }
+  return Promise.reject(res.data.error);
+}
+
+export async function deleteComment({ postId, commentId }) {
+  let res = await remove(`/admin/post/${postId}/comment/${commentId}`);
   if (res.status === 200) {
     return Promise.resolve(res.data.message);
   }

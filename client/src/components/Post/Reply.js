@@ -1,7 +1,7 @@
-import React from 'react'
+import React from 'react';
 import { Paper } from '@mui/material';
-import { stringAvatar } from '@/utils/styledAvatar.js'
-import { Avatar} from '@mui/material';
+import { stringAvatar } from '@/utils/styledAvatar.js';
+import { Avatar } from '@mui/material';
 import moment from 'moment';
 import { useRouter } from 'next/router';
 import CommentActions from './CommentActions';
@@ -18,7 +18,6 @@ export default function Reply(props) {
     nameParts.splice(1, 1);
   }
   const author = nameParts.join(' ');
-
   return (
     <Paper className="p-6 mb-2 ml-6 lg:ml-12 text-base" elevation={2}>
       <div className="flex justify-between items-center mb-2">
@@ -33,11 +32,13 @@ export default function Reply(props) {
             </time>
           </p>
         </div>
-        <CommentActions/>
+        <CommentActions
+          postId={props.postId}
+          commentId={props.reply._id}
+          setComments={props.setReplies}
+        />
       </div>
-      <p className="text-gray-500 dark:text-gray-400">
-        {props.reply.content}
-      </p>
+      <p className="text-gray-500 dark:text-gray-400">{props.reply.content}</p>
       {/* <div className="flex items-center mt-4 space-x-4">
         <button
           type="button"

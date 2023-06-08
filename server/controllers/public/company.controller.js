@@ -8,7 +8,6 @@ import mongoose from 'mongoose';
 
 export const getIndividualCompany = async (req, res) => {
   let { id } = req.params;
-  console.log('seckss');
   if (!id) {
     return response_400(res, 'Invalid request');
   }
