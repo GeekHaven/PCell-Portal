@@ -24,6 +24,7 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import ArrowRightAltIcon from '@mui/icons-material/ArrowRightAlt';
+import SendIcon from '@mui/icons-material/Send';
 import EditIcon from '@mui/icons-material/Edit';
 import { LoadingButton } from '@mui/lab';
 import FiberManualRecordTwoToneIcon from '@mui/icons-material/FiberManualRecordTwoTone';
@@ -487,7 +488,7 @@ export default function IndividualCompanyAdmin({ params }) {
                   </TableBody>
                 </Table>
               </TableContainer>
-              <Box className="flex flex-row justify-between">
+              <Box className="flex flex-row justify-end gap-2">
                 {studentListOpenWith !== 'registered' &&
                   studentListOpenWith ===
                     preferenceToDefaultModalEntry[
@@ -510,7 +511,30 @@ export default function IndividualCompanyAdmin({ params }) {
                     </Button>
                   )}
                 <Button
-                  className="w-fit ml-auto self-end"
+                  className="w-fit self-end"
+                  variant="contained"
+                  size="small"
+                  endIcon={<SendIcon />}
+                  onClick={() => {
+                    router.push({
+                      pathname: '/admin/post/new',
+                      query: {
+                        companyName: companyData.name,
+                        target: JSON.stringify({
+                          groups: [],
+                          include: studentList
+                            .filter((r) => r.status === studentListOpenWith)
+                            .map((r) => r.userId.rollNumber),
+                          exclude: [],
+                        }),
+                      },
+                    });
+                  }}
+                >
+                  Notify Students
+                </Button>
+                <Button
+                  className="w-fit self-end"
                   variant="contained"
                   size="small"
                   endIcon={<ArrowRightAltIcon />}

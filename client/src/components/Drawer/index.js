@@ -3,6 +3,7 @@ import * as React from 'react';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
+import { SwipeableDrawer } from '@mui/material';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListSubheader from '@mui/material/ListSubheader';
@@ -59,22 +60,6 @@ const dashboardRoutes = [
 
 const adminRoutes = [
   {
-    title: 'Companies',
-    baseUrl: '/admin/company',
-    items: [
-      {
-        path: '',
-        name: 'All Companies',
-        Icon: StoreIcon,
-      },
-      {
-        path: '/new',
-        name: 'Add Company',
-        Icon: AddBusinessIcon,
-      },
-    ],
-  },
-  {
     title: 'Posts',
     baseUrl: '/admin/post',
     items: [
@@ -91,12 +76,28 @@ const adminRoutes = [
     ],
   },
   {
-    // title: 'Users',
-    baseUrl: '/admin/users',
+    title: 'Companies',
+    baseUrl: '/admin/company',
     items: [
       {
         path: '',
-        name: 'All Users',
+        name: 'All Companies',
+        Icon: StoreIcon,
+      },
+      {
+        path: '/new',
+        name: 'Add Company',
+        Icon: AddBusinessIcon,
+      },
+    ],
+  },
+  {
+    // title: 'Users',
+    baseUrl: '/admin/export',
+    items: [
+      {
+        path: '',
+        name: 'Export Users',
         Icon: AccountCircleIcon,
       },
     ],
@@ -202,10 +203,11 @@ function ResponsiveDrawer(props) {
       className={`w-0 md:w-[${drawerWidth}px] flex-shrink md:flex-shrink-0`}
       aria-label="mailbox folders"
     >
-      <Drawer
+      <SwipeableDrawer
         variant="temporary"
         open={open}
         onClose={handleDrawerToggle}
+        onOpen={handleDrawerToggle}
         ModalProps={{
           keepMounted: false,
         }}
@@ -220,7 +222,7 @@ function ResponsiveDrawer(props) {
         className="md:hidden block"
       >
         {drawer}
-      </Drawer>
+      </SwipeableDrawer>
       <Drawer
         variant="permanent"
         sx={{
