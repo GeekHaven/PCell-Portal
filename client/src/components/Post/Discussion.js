@@ -31,7 +31,6 @@ export default function Discussion({ params, showDiscussion }) {
       return getComments(router.query.id);
     },
     onSuccess: (data) => {
-      console.log(data);
       setComments(data);
     },
     enabled: showDiscussion,

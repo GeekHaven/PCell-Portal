@@ -48,7 +48,6 @@ export default function Comment(props) {
     },
     onSuccess: (data) => {
       setReplies(data);
-      console.log('These are the replies', data);
     },
     enabled: showReply,
   });

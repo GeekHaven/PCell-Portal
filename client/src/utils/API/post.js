@@ -12,7 +12,6 @@ export async function getAllPosts({ search = '' }) {
 
 export async function getPostById(id) {
   let res = await get(`/post/${id}`);
-  console.log(res);
   if (res.status === 200) {
     return Promise.resolve(res.data.message);
   }

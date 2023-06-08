@@ -91,7 +91,6 @@ export async function isUser(req, res) {
 
 export async function isUserAdmin(req, res) {
   const token = req.header('Authorization');
-  console.log(token);
   if (!token) return response_200(res, { status: false });
   try {
     const decoded = jwt.verify(token, process.env.SECRET);

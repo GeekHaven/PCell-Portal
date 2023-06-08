@@ -15,7 +15,6 @@ export async function addPost(req, res) {
     let { title, description, company, comments, target, content } = req.body;
 
     const authorId = req.user._id;
-    console.log(authorId);
 
     if (!title || !description || !target || !content || !comments)
       return response_400(res, 'Invalid request');
@@ -39,7 +38,6 @@ export async function addPost(req, res) {
 
 export async function getAllPosts(req, res) {
   const { q } = req.query;
-  console.log(q);
   try {
     const posts = await Post.aggregate([
       {

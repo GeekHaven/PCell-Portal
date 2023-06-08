@@ -72,7 +72,6 @@ export async function getComments(id) {
 
 export async function getReplies({ postId, replyTo }) {
   let res = await get(`/admin/post/${postId}/comment/${replyTo}`);
-  console.log(res);
   if (res.status === 200) {
     return Promise.resolve(res.data.message);
   }
@@ -93,7 +92,6 @@ export async function editComment({ postId, commentId, content }) {
     commentId,
     content,
   };
-  console.log(postId, commentId, content);
   let res = await update(`/admin/post/${postId}/comment/${commentId}`, body);
   if (res.status === 200 || res.status === 201) {
     return Promise.resolve(res.data.message);

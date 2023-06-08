@@ -18,7 +18,6 @@ export default function Reply(props) {
     nameParts.splice(1, 1);
   }
   const author = nameParts.join(' ');
-  // console.log(props.)
   return (
     <Paper className="p-6 mb-2 ml-6 lg:ml-12 text-base" elevation={2}>
       <div className="flex justify-between items-center mb-2">

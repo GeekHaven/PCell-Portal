@@ -13,9 +13,7 @@ export const uploadImage = async (image) => {
 export const deleteImage = async (imageUrl) => {
   try {
     const image = imageUrl.split('/').pop().split('.')[0];
-    console.log(image);
     const data = await cloudinary.uploader.destroy(image);
-    console.log(data);
     return data;
   } catch (err) {
     console.log(err);

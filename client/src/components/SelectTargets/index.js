@@ -81,7 +81,6 @@ export default function SelectTargets({ target, setTarget, disabled = false }) {
       return next;
     });
   }
-  console.log();
 
   if (isLoading) return <FullLoader />;
   return (

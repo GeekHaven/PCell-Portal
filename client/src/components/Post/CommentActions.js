@@ -35,14 +35,12 @@ export default function LongMenu({ postId, commentId, setComments }) {
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl((prev) => event.currentTarget);
-    // console.log(event.target);
   };
   const handleClose = () => {
     setAnchorEl(null);
   };
   const handleValue = async (event) => {
     const value = event.target.getAttribute('value');
-    console.log(postId);
 
     if (value === 'edit') {
       const content = prompt('Enter new content');
