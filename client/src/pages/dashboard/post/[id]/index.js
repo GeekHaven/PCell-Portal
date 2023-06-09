@@ -11,9 +11,16 @@ import { useQuery } from 'react-query';
 import { getPostById } from '@/utils/API/post';
 import { CircularProgress } from '@mui/material';
 import Discussion from '@/components/Post/Discussion';
+import { isUserAuthenticated } from '@/utils/API/auth';
 
 export default function IndividialPostAdmin({ params }) {
   const [showDiscussion, setShowDiscussion] = useState(false);
+
+  let { data: user } = useQuery({
+    queryKey: 'user',
+    queryFn: isUserAuthenticated,
+    staleTime: 1000 * 60 * 60 * 24 * 30,
+  });
 
   let { data: post, isLoading } = useQuery({
     queryKey: ['post', params.id],
@@ -32,7 +39,6 @@ export default function IndividialPostAdmin({ params }) {
 
   return (
     <div className="flex flex-col gap-4">
-      
       <Paper className="sm:p-4 p-2 rounded-md">
         <Typography variant="h4" className="text-2xl font-semibold mb-1">
           {post.title}
@@ -62,7 +68,13 @@ export default function IndividialPostAdmin({ params }) {
           {showDiscussion ? 'Hide Discussion' : 'Show Discussion'}
         </ToggleButton>
       </Box>
-      {showDiscussion && <Discussion showDiscussion={showDiscussion} />}
+      {showDiscussion && (
+        <Discussion
+          showDiscussion={showDiscussion}
+          commentsType={post.comments}
+          isAdmin={false}
+        />
+      )}
     </div>
   );
 }

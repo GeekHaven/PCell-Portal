@@ -16,11 +16,18 @@ import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import PopupModal from '@/components/PopupModal';
 import { deletePost } from '@/utils/API/admin/post';
 import { useRouter } from 'next/router';
+import { isUserAuthenticated } from '@/utils/API/auth';
 
 export default function IndividialPostAdmin({ params }) {
   const router = useRouter();
   const [showDiscussion, setShowDiscussion] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
+
+  let { data: user } = useQuery({
+    queryKey: 'user',
+    queryFn: isUserAuthenticated,
+    staleTime: 1000 * 60 * 60 * 24 * 30,
+  });
 
   let { data: post, isLoading } = useQuery({
     queryKey: ['post', params.id],
@@ -104,7 +111,13 @@ export default function IndividialPostAdmin({ params }) {
             {showDiscussion ? 'Hide Discussion' : 'Show Discussion'}
           </ToggleButton>
         </Box>
-        {showDiscussion && <Discussion showDiscussion={showDiscussion} />}
+        {showDiscussion && (
+          <Discussion
+            showDiscussion={showDiscussion}
+            commentsType={post.comments}
+            isAdmin={user.isAdmin}
+          />
+        )}
       </div>
     </>
   );

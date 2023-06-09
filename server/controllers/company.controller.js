@@ -105,10 +105,20 @@ export const getIndividualCompany = async (req, res) => {
       return response_400(res, 'Invalid request');
     }
     if (companyData.isEligible) {
-      const companyRelation = await companyUserRelationModel.findOne({
+      const companyRelationPromise = companyUserRelationModel.findOne({
         companyId: id,
         userId: req.user._id,
       });
+      const isSelectedPromise = companyUserRelationModel.findOne({
+        userId: req.user._id,
+        status: 'selected',
+      });
+      const [companyRelation, isSelected] = await Promise.all([
+        companyRelationPromise,
+        isSelectedPromise,
+      ]);
+
+      companyData.isSelected = isSelected ? true : false;
       companyData.userStatus = companyRelation?.status;
       return response_200(res, 'OK', companyData);
     }

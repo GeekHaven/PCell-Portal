@@ -11,6 +11,7 @@ import NextNProgress from 'nextjs-progressbar';
 import { SnackbarProvider } from 'notistack';
 
 import { QueryClient, QueryClientProvider, useQuery } from 'react-query';
+import { ReactQueryDevtools } from 'react-query/devtools';
 
 import ThemeContext from '@/contexts/theme.context';
 import Navbar from '@/components/Navbar';
@@ -164,6 +165,7 @@ export default function App({ Component, pageProps }) {
           </ThemeProvider>
         </ThemeContext.Provider>
       </StyledEngineProvider>
+      <ReactQueryDevtools initialIsOpen={false} position="bottom-right" />
     </QueryClientProvider>
   );
 }

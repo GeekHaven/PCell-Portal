@@ -15,7 +15,6 @@ export async function addPost(req, res) {
     let { title, description, company, comments, target, content } = req.body;
 
     const authorId = req.user._id;
-    console.log(authorId);
 
     if (!title || !description || !target || !content || !comments)
       return response_400(res, 'Invalid request');
@@ -39,7 +38,6 @@ export async function addPost(req, res) {
 
 export async function getAllPosts(req, res) {
   const { q } = req.query;
-  console.log(q);
   try {
     const posts = await Post.aggregate([
       {
@@ -132,69 +130,6 @@ export async function deletePostById(req, res) {
   }
 }
 
-// export async function getAllUserPosts(req, res) {
-//     try{
-//         const { id } = req.params;
-//         const user = await User.findById(id).populate('posts').populate('posts.publicComments');
-//         return response_200(res, user.posts);
-//     }
-//     catch(error){
-//         return response_500(res, error);
-//     }
-// }
-
-// export async function addPublicComment(req, res) {
-//   try {
-//     const { content, postId, author } = req.body;
-//     const post = await Post.findById(postId);
-//     if (!post || !content || !author)
-//       return response_400(res, 'Invalid request');
-
-//     if (post.comment != 'public')
-//       return response_400(res, 'Invalid request');
-
-//     const comment = await Comment.create({
-//       content,
-//       author,
-//       postId,
-//       private: false,
-//     });
-
-//     post.publicComments.push(comment);
-//     post.status = 'unread';
-//     post.save();
-//     return response_200(res, post);
-//   } catch (error) {
-//     return response_500(res, error);
-//   }
-// }
-
-// export async function addPrivateComment(req, res) {
-//   try {
-//     const { content, postId, author } = req.body;
-//     const post = await Post.findById(postId);
-//     if (!post || !content || !author)
-//       return response_400(res, 'Invalid request');
-
-//     if (post.comment != 'private')
-//       return response_400(res, 'Invalid request');
-
-//     const comment = await Comment.create({
-//       content,
-//       author,
-//       postId,
-//       private: true,
-//     });
-
-//     post.privateComments.push(comment);
-//     post.status = 'unread';
-//     post.save();
-//     return response_200(res, post);
-//   } catch (error) {
-//     return response_500(res, error);
-//   }
-// }
-
 export async function getComments(req, res) {
   try {
     const { id } = req.params;
@@ -214,25 +149,17 @@ export async function getComments(req, res) {
         },
       },
       {
+        $unwind: '$author',
+      },
+      {
         $project: {
           _id: 1,
           content: 1,
-          author: {
-            $arrayElemAt: [
-              {
-                $map: {
-                  input: '$author',
-                  in: {
-                    name: '$$this.name',
-                    rollNumber: '$$this.rollNumber',
-                  },
-                },
-              },
-              0,
-            ],
-          },
+          'author.name': 1,
+          'author.rollNumber': 1,
           private: 1,
           createdAt: 1,
+          madeByAdmin: 1,
         },
       },
     ]);
@@ -252,12 +179,25 @@ export async function getReplies(req, res) {
         },
       },
       {
+        $lookup: {
+          from: 'users',
+          localField: 'author',
+          foreignField: '_id',
+          as: 'author',
+        },
+      },
+      {
+        $unwind: '$author',
+      },
+      {
         $project: {
           _id: 1,
           content: 1,
-          author: 1,
+          'author.name': 1,
+          'author.rollNumber': 1,
           private: 1,
           createdAt: 1,
+          madeByAdmin: 1,
         },
       },
     ]);
@@ -269,93 +209,90 @@ export async function getReplies(req, res) {
 
 export async function addComment(req, res) {
   try {
-    const { content, postId, replyTo, userId } = req.body;
+    const { content, postId, replyTo } = req.body;
     if (!content || !postId) return response_400(res, 'Invalid request');
 
     if (!replyTo) {
       const post = await Post.findById(postId);
-      if (!post) return response_400(res, 'Invalid request');
-
-      const user = req.user;
-
-      const comment = await Comment.create({
-        content,
-        author: user._id,
-        postId,
-        private: false,
-      });
-
-      const comments = await Comment.aggregate([
-        {
-          $match: {
-            postId: new mongoose.Types.ObjectId(postId),
-            replyTo: null,
-          },
-        },
-        {
-          $lookup: {
-            from: 'users',
-            localField: 'author',
-            foreignField: '_id',
-            as: 'author',
-          },
-        },
-        {
-          $project: {
-            _id: 1,
-            content: 1,
-            author: {
-              $arrayElemAt: [
-                {
-                  $map: {
-                    input: '$author',
-                    in: {
-                      name: '$$this.name',
-                      rollNumber: '$$this.rollNumber',
-                    },
-                  },
-                },
-                0,
-              ],
-            },
-            private: 1,
-            createdAt: 1,
-          },
-        },
-      ]);
-      return response_200(res, comments);
-    } else {
-      const user = req.user;
-
-      const comment = await Comment.findById(replyTo);
-      if (!comment) return response_400(res, 'Invalid request');
-
-      const reply = await Comment.create({
-        content,
-        author: user._id,
-        postId: comment.postId,
-        replyTo,
-        private: comment.private,
-      });
-
-      const replies = await Comment.aggregate([
-        {
-          $match: {
-            postId: new mongoose.Types.ObjectId(comment.postId),
-            replyTo: new mongoose.Types.ObjectId(replyTo),
-          },
-        },
-        {
-          $project: {
-            content: 1,
-            author: 1,
-            private: 1,
-            createdAt: 1,
-          },
-        },
-      ]);
-      return response_200(res, replies);
     }
+
+    const user = req.user;
+
+    let comment = await Comment.create({
+      content,
+      author: user._id,
+      postId,
+      private: false,
+      replyTo,
+      madeByAdmin: true,
+    });
+
+    [comment] = await Comment.aggregate([
+      {
+        $match: {
+          _id: comment._id,
+        },
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'author',
+          foreignField: '_id',
+          as: 'author',
+        },
+      },
+      {
+        $unwind: '$author',
+      },
+      {
+        $project: {
+          _id: 1,
+          content: 1,
+          'author.name': 1,
+          'author.rollNumber': 1,
+          private: 1,
+          createdAt: 1,
+          madeByAdmin: 1,
+        },
+      },
+    ]);
+    if (!comment) return response_400(res, 'Invalid request');
+    return response_200(res, comment);
+  } catch (error) {
+    return response_500(res, error);
+  }
+}
+
+export async function deleteCommentById(req, res) {
+  try {
+    const { id } = req.params;
+    const comment = await Comment.findByIdAndDelete(id);
+    if (!comment) return response_400(res, 'Invalid request');
+    return response_200(res, 'Comment deleted successfully');
+  } catch (error) {
+    return response_500(res, error);
+  }
+}
+
+export async function updateCommentById(req, res) {
+  try {
+    const { id } = req.params;
+    const { content } = req.body;
+    const author = req.user._id;
+    const comment = await Comment.findOneAndUpdate(
+      {
+        _id: new mongoose.Types.ObjectId(id),
+        author,
+      },
+      {
+        content,
+      },
+      {
+        new: true,
+      }
+    );
+    if (!comment) return response_400(res, 'Invalid request');
+    return response_200(res, comment);
   } catch (error) {
     return response_500(res, error);
   }

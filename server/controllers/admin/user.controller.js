@@ -41,25 +41,6 @@ export async function addCompany(req, res) {
   }
 }
 
-// export async function getFilteredUsers(req, res) {
-//   /*
-//     request data should be :-
-//     targets : {
-//       2021 : ['it' , 'ece' , 'bi']
-//     }
-//   */
-//   const targets = req.body.targets;
-
-//   const keys = Object.keys(targets);
-
-//   const userList = await User.find({ admissionYear: { $in: keys } });
-
-//   const filteredUserList = userList.filter((user) => {
-//     return targets[user.admissionYear].includes(user.program);
-//   });
-//   console.log(filteredUserList);
-//   return response_200(res, 'OK', filteredUserList);
-// }
 
 export async function getUserGroups(req, res) {
   const data = await User.aggregate([

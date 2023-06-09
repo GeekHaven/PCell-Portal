@@ -55,6 +55,7 @@ const IndividualCompany = ({ params }) => {
       </Container>
     );
   }
+  
   return (
     <>
       <Container
@@ -194,7 +195,9 @@ const IndividualCompany = ({ params }) => {
       {user.user && (
         <Paper
           className={`absolute bottom-0 w-full flex justify-end ${
-            companyData.userStatus ? 'hidden' : 'block'
+            companyData.userStatus || companyData.isSelected
+              ? 'hidden'
+              : 'block'
           }`}
           sx={{
             borderRadius: 0,
