@@ -42,7 +42,6 @@ export default function Discussion({
     },
     onSuccess: (data) => {
       setComments(data);
-      console.log(data);
     },
     enabled: showDiscussion,
   });
