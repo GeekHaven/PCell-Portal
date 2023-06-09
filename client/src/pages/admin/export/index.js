@@ -15,6 +15,7 @@ import {
   TableBody,
   Paper,
 } from '@mui/material';
+import { LoadingButton } from '@mui/lab';
 import { debounce } from '@mui/material/utils';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import { useState, useCallback, useMemo, useEffect } from 'react';
@@ -70,6 +71,7 @@ export default function ExportUsers() {
   let router = useRouter();
 
   let [columns, setColumns] = useState([allColumns.at(0), allColumns.at(1)]);
+  let [exportingCSV, setExportingCSV] = useState(false);
   let [users, setUsers] = useState([]);
   let [targets, setTargets] = useState({
     groups: [],
@@ -109,6 +111,23 @@ export default function ExportUsers() {
     [targets]
   );
 
+  function exportCSV() {
+    setExportingCSV(true);
+    let csvContent = 'data:text/csv;charset=utf-8,';
+    csvContent += columns.map((col) => col.headerName).join(',') + '\n';
+    users.forEach((user) => {
+      csvContent += columns.map((col) => user[col.field]).join(',') + '\n';
+    });
+    let encodedUri = encodeURI(csvContent);
+    let link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', 'users.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    setExportingCSV(false);
+  }
+
   useEffect(() => {
     getUserList((users) => {
       setUsers(users);
@@ -127,13 +146,15 @@ export default function ExportUsers() {
       <SelectTargets target={targets} setTarget={setTargets} />
       <Box className="flex flex-row justify-between items-baseline flex-wrap my-4">
         <Typography variant="body2">{users.length} Students Shown</Typography>
-        <Button
+        <LoadingButton
           variant="contained"
           color="success"
           endIcon={<FileDownloadIcon />}
+          loading={exportingCSV}
+          onClick={exportCSV}
         >
           Export to CSV
-        </Button>
+        </LoadingButton>
       </Box>
       <FormControl fullWidth>
         <InputLabel>Select Columns</InputLabel>
