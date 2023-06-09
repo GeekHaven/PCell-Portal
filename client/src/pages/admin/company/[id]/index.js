@@ -192,6 +192,22 @@ export default function IndividualCompanyAdmin({ params }) {
     deleteCompanyMutation.mutate(params.id);
   }
 
+  function exportUsers() {
+    let targets = JSON.stringify({
+      groups: [],
+      exclude: [],
+      include: studentList
+        .filter((student) => student.status === studentListOpenWith)
+        .map((student) => student.userId.rollNumber),
+    });
+    router.push({
+      pathname: '/admin/export',
+      query: {
+        targets,
+      },
+    });
+  }
+
   if (isLoading) {
     return (
       <Container className="h-96 w-full flex justify-center items-center">
@@ -538,6 +554,7 @@ export default function IndividualCompanyAdmin({ params }) {
                   variant="contained"
                   size="small"
                   endIcon={<ArrowRightAltIcon />}
+                  onClick={exportUsers}
                 >
                   Export Users
                 </Button>
