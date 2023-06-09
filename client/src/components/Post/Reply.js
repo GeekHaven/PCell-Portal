@@ -36,6 +36,7 @@ export default function Reply(props) {
           postId={props.postId}
           commentId={props.reply._id}
           setComments={props.setReplies}
+          isAdmin={props.isAdmin}
         />
       </div>
       <p className="text-gray-500 dark:text-gray-400">{props.reply.content}</p>

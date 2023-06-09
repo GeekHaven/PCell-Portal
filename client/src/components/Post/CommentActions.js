@@ -10,7 +10,7 @@ const options = ['Edit', 'Delete'];
 
 const ITEM_HEIGHT = 48;
 
-export default function LongMenu({ postId, commentId, setComments }) {
+export default function LongMenu({ postId, commentId, setComments, isAdmin }) {
   const { mutateAsync: editCommentMutate } = useMutation(editComment, {
     onSuccess: (data) => {
       setComments((prev) => {

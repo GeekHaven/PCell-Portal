@@ -42,9 +42,9 @@ export default function Comment(props) {
     queryKey: ['replies', router.query.id, props.comment._id],
     queryFn: () => {
       const reply = {
-        postId : router.query.id,
-        replyTo : props.comment._id
-      }
+        postId: router.query.id,
+        replyTo: props.comment._id,
+      };
       if (props.isAdmin) return getReplies(reply);
       else return getRepliesUser(reply);
     },
@@ -81,6 +81,7 @@ export default function Comment(props) {
             postId={router.query.id}
             commentId={props.comment._id}
             setComments={props.setComments}
+            isAdmin={props.isAdmin}
           />
         </div>
 
@@ -88,22 +89,28 @@ export default function Comment(props) {
           {props.comment.content}
         </p>
         <div className="flex items-center mt-4 space-x-4">
-          {props.isEnabled && <button
-            type="button"
-            className={`flex items-center text-sm text-gray-500 hover:underline dark:text-gray-400 ${
-              mode === 'dark' && `bg-[#1e2a3a]`
-            } ${mode === 'light' && `bg-[#fefeff]`}`}
-            onClick={() => setShowReply(!showReply)}
-          >
-            <ReplyIcon className="mr-1" />
-            Reply
-          </button>}
+          {props.isEnabled && (
+            <button
+              type="button"
+              className={`flex items-center text-sm text-gray-500 hover:underline dark:text-gray-400 ${
+                mode === 'dark' && `bg-[#1e2a3a]`
+              } ${mode === 'light' && `bg-[#fefeff]`}`}
+              onClick={() => setShowReply(!showReply)}
+            >
+              <ReplyIcon className="mr-1" />
+              Reply
+            </button>
+          )}
         </div>
       </Paper>
 
       {showReply && (
         <>
-          <NewReply setReplies={setReplies} replyTo={replyTo} isAdmin={props.isAdmin}/>
+          <NewReply
+            setReplies={setReplies}
+            replyTo={replyTo}
+            isAdmin={props.isAdmin}
+          />
           {replies.map((reply) => (
             <Reply
               key={reply._id}

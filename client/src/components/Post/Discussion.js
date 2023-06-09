@@ -16,7 +16,12 @@ import ThemeContext from '@/contexts/theme.context';
 import { isUserAuthenticated } from '@/utils/API/auth';
 import { getCommentsUser } from '@/utils/API/post';
 
-export default function Discussion({ params, showDiscussion, commentsType, isAdmin }) {
+export default function Discussion({
+  params,
+  showDiscussion,
+  commentsType,
+  isAdmin,
+}) {
   const router = useRouter();
   const [comments, setComments] = useState([]);
   const [replies, setReplies] = useState([]);
@@ -25,18 +30,15 @@ export default function Discussion({ params, showDiscussion, commentsType, isAdm
   const [mode, setMode] = useState(theme.palette.mode);
   const [isEnabled, setIsEnabled] = useState(true);
 
- 
-
   useEffect(() => {
     setMode(theme.palette.mode);
   }, [theme]);
 
-
   const { data: allComments, commentsLoading } = useQuery({
     queryKey: ['comments'],
     queryFn: () => {
-      if(isAdmin) return getComments(router.query.id);
-       return getCommentsUser(router.query.id);
+      if (isAdmin) return getComments(router.query.id);
+      return getCommentsUser(router.query.id);
     },
     onSuccess: (data) => {
       setComments(data);
@@ -62,21 +64,20 @@ export default function Discussion({ params, showDiscussion, commentsType, isAdm
   return (
     <Paper className="p-4 rounded-md">
       <div className="flex flex-col gap-4">
-        {
-          (isEnabled || isAdmin) && (
-            <>
-              <NewComment setComments={setComments} isAdmin={isAdmin}/>
-              <Divider className='mb-4' />
-            </>
-          )
-        }
-        
+        {(isEnabled || isAdmin) && (
+          <>
+            <NewComment setComments={setComments} isAdmin={isAdmin} />
+            <Divider className="mb-4" />
+          </>
+        )}
+
         {comments.map((comment) => (
           <Comment
             key={comment.id}
             comment={comment}
             isEnabled={isEnabled}
             isAdmin={isAdmin}
+            setComments={setComments}
           />
         ))}
       </div>
