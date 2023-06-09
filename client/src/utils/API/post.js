@@ -1,4 +1,4 @@
-import { post, get } from './request';
+import { post, get, update, remove } from './request';
 
 export async function getAllPosts({ search = '' }) {
   let res = await get('/post', null, {
@@ -43,6 +43,27 @@ export async function getCommentsUser(id) {
 
 export async function getRepliesUser({ postId, replyTo }) {
   let res = await get(`/post/${postId}/comment/${replyTo}`);
+  if (res.status === 200) {
+    return Promise.resolve(res.data.message);
+  }
+  return Promise.reject(res.data.error);
+}
+
+export async function editCommentUser({ postId, commentId, content }) {
+  let body = {
+    postId,
+    commentId,
+    content,
+  };
+  let res = await update(`/post/${postId}/comment/${commentId}`, body);
+  if (res.status === 200 || res.status === 201) {
+    return Promise.resolve(res.data.message);
+  }
+  return Promise.reject(res.data.error);
+}
+
+export async function deleteCommentUser({ postId, commentId }) {
+  let res = await remove(`/post/${postId}/comment/${commentId}`);
   if (res.status === 200) {
     return Promise.resolve(res.data.message);
   }

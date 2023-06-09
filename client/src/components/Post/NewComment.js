@@ -9,7 +9,7 @@ import { useSnackbar } from 'notistack';
 import { LoadingButton } from '@mui/lab';
 import { addCommentUser } from '@/utils/API/post';
 
-export default function NewComment({setComments, isAdmin}) {
+export default function NewComment({ setComments, isAdmin }) {
   const { enqueueSnackbar } = useSnackbar();
   const router = useRouter();
   const [content, setContent] = useState('');
@@ -23,22 +23,22 @@ export default function NewComment({setComments, isAdmin}) {
 
   let postComment;
 
- if(isAdmin){
+  if (isAdmin) {
     postComment = useMutation(addComment, {
-     onSuccess: (data) => {
-       enqueueSnackbar('Comment added successfully', { variant: 'success' });
-       setComments(data);
-       setContent('');
-     },
-     onError: (err) => {
-       enqueueSnackbar(err, { variant: 'error' });
-     },
-   });
-  }else{
+      onSuccess: (data) => {
+        enqueueSnackbar('Comment added successfully', { variant: 'success' });
+        setComments((prev) => [...prev, data]);
+        setContent('');
+      },
+      onError: (err) => {
+        enqueueSnackbar(err, { variant: 'error' });
+      },
+    });
+  } else {
     postComment = useMutation(addCommentUser, {
       onSuccess: (data) => {
         enqueueSnackbar('Comment added successfully', { variant: 'success' });
-        setComments(data);
+        setComments((prev) => [...prev, data]);
         setContent('');
       },
       onError: (err) => {
@@ -46,7 +46,7 @@ export default function NewComment({setComments, isAdmin}) {
       },
     });
   }
-  
+
   async function handleSubmit(e) {
     e.preventDefault();
     postComment.mutate({
@@ -55,7 +55,6 @@ export default function NewComment({setComments, isAdmin}) {
       content,
     });
   }
-
 
   return (
     <Container
@@ -68,7 +67,7 @@ export default function NewComment({setComments, isAdmin}) {
         <h2 className="text-lg lg:text-2xl ml-2 font-bold">Discussion</h2>
       </div>
       <Paper className="py-2 px-4 mb-4 rounded-lg rounded-t-lg" elevation={3}>
-        <label for="comment" className="sr-only">
+        <label htmlFor="comment" className="sr-only">
           Your comment
         </label>
 

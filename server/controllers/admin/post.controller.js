@@ -159,6 +159,7 @@ export async function getComments(req, res) {
           'author.rollNumber': 1,
           private: 1,
           createdAt: 1,
+          madeByAdmin: 1,
         },
       },
     ]);
@@ -196,6 +197,7 @@ export async function getReplies(req, res) {
           'author.rollNumber': 1,
           private: 1,
           createdAt: 1,
+          madeByAdmin: 1,
         },
       },
     ]);
@@ -212,92 +214,50 @@ export async function addComment(req, res) {
 
     if (!replyTo) {
       const post = await Post.findById(postId);
-      if (!post) return response_400(res, 'Invalid request');
-
-      const user = req.user;
-
-      const comment = await Comment.create({
-        content,
-        author: user._id,
-        postId,
-        private: false,
-      });
-
-      const comments = await Comment.aggregate([
-        {
-          $match: {
-            postId: new mongoose.Types.ObjectId(postId),
-            replyTo: null,
-          },
-        },
-        {
-          $lookup: {
-            from: 'users',
-            localField: 'author',
-            foreignField: '_id',
-            as: 'author',
-          },
-        },
-        {
-          $unwind: '$author',
-        },
-        {
-          $project: {
-            _id: 1,
-            content: 1,
-            'author.name': 1,
-            'author.rollNumber': 1,
-            private: 1,
-            createdAt: 1,
-          },
-        },
-      ]);
-      return response_200(res, comments);
-    } else {
-      const user = req.user;
-
-      const comment = await Comment.findById(replyTo);
-      if (!comment) return response_400(res, 'Invalid request');
-
-      const reply = await Comment.create({
-        content,
-        author: user._id,
-        postId: comment.postId,
-        replyTo,
-        private: comment.private,
-      });
-
-      const replies = await Comment.aggregate([
-        {
-          $match: {
-            postId: new mongoose.Types.ObjectId(comment.postId),
-            replyTo: new mongoose.Types.ObjectId(replyTo),
-          },
-        },
-        {
-          $lookup: {
-            from: 'users',
-            localField: 'author',
-            foreignField: '_id',
-            as: 'author',
-          },
-        },
-        {
-          $unwind: '$author',
-        },
-        {
-          $project: {
-            _id: 1,
-            content: 1,
-            'author.name': 1,
-            'author.rollNumber': 1,
-            private: 1,
-            createdAt: 1,
-          },
-        },
-      ]);
-      return response_200(res, replies);
     }
+
+    const user = req.user;
+
+    let comment = await Comment.create({
+      content,
+      author: user._id,
+      postId,
+      private: false,
+      replyTo,
+      madeByAdmin: true,
+    });
+
+    [comment] = await Comment.aggregate([
+      {
+        $match: {
+          _id: comment._id,
+        },
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'author',
+          foreignField: '_id',
+          as: 'author',
+        },
+      },
+      {
+        $unwind: '$author',
+      },
+      {
+        $project: {
+          _id: 1,
+          content: 1,
+          'author.name': 1,
+          'author.rollNumber': 1,
+          private: 1,
+          createdAt: 1,
+          madeByAdmin: 1,
+        },
+      },
+    ]);
+    if (!comment) return response_400(res, 'Invalid request');
+    return response_200(res, comment);
   } catch (error) {
     return response_500(res, error);
   }

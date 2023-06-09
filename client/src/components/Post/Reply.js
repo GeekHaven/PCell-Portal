@@ -5,6 +5,7 @@ import { Avatar } from '@mui/material';
 import moment from 'moment';
 import { useRouter } from 'next/router';
 import CommentActions from './CommentActions';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 
 export default function Reply(props) {
   const router = useRouter();
@@ -25,6 +26,9 @@ export default function Reply(props) {
           <p className="inline-flex items-center mr-3 text-md capitalize">
             <Avatar {...stringAvatar(author)} className="mr-2" />
             {author}
+            {props.reply.madeByAdmin && (
+              <AdminPanelSettingsIcon className="ml-2" />
+            )}
           </p>
           <p className="text-sm text-gray-600 dark:text-gray-400">
             <time pubdate datetime="2022-02-08" title="February 8th, 2022">
@@ -36,7 +40,8 @@ export default function Reply(props) {
           postId={props.postId}
           commentId={props.reply._id}
           setComments={props.setReplies}
-          isAdmin={props.isAdmin}
+          adminRoute={router.pathname.includes('admin')}
+          authorRollNumber={props.reply.author.rollNumber}
         />
       </div>
       <p className="text-gray-500 dark:text-gray-400">{props.reply.content}</p>

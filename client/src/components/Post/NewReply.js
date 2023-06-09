@@ -22,26 +22,22 @@ export default function NewReply({ setReplies, replyTo, isAdmin }) {
 
   let postReply;
 
-
-  if(isAdmin)
-  {
+  if (isAdmin) {
     postReply = useMutation(addComment, {
       onSuccess: (data) => {
         enqueueSnackbar('Reply added successfully', { variant: 'success' });
-        setReplies(data);
+        setReplies((prev) => [...prev, data]);
         setContent('');
       },
       onError: (err) => {
         enqueueSnackbar(err, { variant: 'error' });
       },
     });
-  }
-  else
-  {
+  } else {
     postReply = useMutation(addCommentUser, {
       onSuccess: (data) => {
         enqueueSnackbar('Reply added successfully', { variant: 'success' });
-        setReplies(data);
+        setReplies((prev) => [...prev, data]);
         setContent('');
       },
       onError: (err) => {
@@ -54,7 +50,7 @@ export default function NewReply({ setReplies, replyTo, isAdmin }) {
     e.preventDefault();
     postReply.mutate({
       postId: router.query.id,
-      replyTo : replyTo,
+      replyTo: replyTo,
       content,
     });
   }
@@ -66,11 +62,8 @@ export default function NewReply({ setReplies, replyTo, isAdmin }) {
       component="form"
       onSubmit={handleSubmit}
     >
-      {/* <div className="flex justify-between items-center mb-6">
-        <h2 className="text-md lg:text-2xl font-bold">Add Reply</h2>
-      </div> */}
       <Paper className="py-2 px-4 mb-4 rounded-lg rounded-t-lg" elevation={3}>
-        <label for="comment" className="sr-only">
+        <label htmlFor="comment" className="sr-only">
           Your reply
         </label>
 

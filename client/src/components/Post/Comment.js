@@ -14,6 +14,7 @@ import { useRouter } from 'next/router';
 import { CircularProgress, Container } from '@mui/material';
 import CommentActions from './CommentActions';
 import { getRepliesUser } from '@/utils/API/post';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 
 export default function Comment(props) {
   const router = useRouter();
@@ -70,6 +71,9 @@ export default function Comment(props) {
             <p className="inline-flex items-center mr-3 text-md capitalize">
               <Avatar {...stringAvatar(author)} className="mr-2" />
               {author}
+              {props.comment.madeByAdmin && (
+                <AdminPanelSettingsIcon className="ml-2" />
+              )}
             </p>
             <p className="text-sm text-gray-600 dark:text-gray-400">
               <time pubdate datetime="2022-02-08" title="February 8th, 2022">
@@ -81,7 +85,8 @@ export default function Comment(props) {
             postId={router.query.id}
             commentId={props.comment._id}
             setComments={props.setComments}
-            isAdmin={props.isAdmin}
+            adminRoute={router.pathname.includes('admin')}
+            authorRollNumber={props.comment.author.rollNumber}
           />
         </div>
 

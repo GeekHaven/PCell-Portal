@@ -16,13 +16,11 @@ import { isUserAuthenticated } from '@/utils/API/auth';
 export default function IndividialPostAdmin({ params }) {
   const [showDiscussion, setShowDiscussion] = useState(false);
 
-
   let { data: user } = useQuery({
     queryKey: 'user',
     queryFn: isUserAuthenticated,
     staleTime: 1000 * 60 * 60 * 24 * 30,
   });
-
 
   let { data: post, isLoading } = useQuery({
     queryKey: ['post', params.id],
@@ -30,8 +28,6 @@ export default function IndividialPostAdmin({ params }) {
       return getPostById(params.id);
     },
   });
-
-
 
   if (isLoading) {
     return (
@@ -43,7 +39,6 @@ export default function IndividialPostAdmin({ params }) {
 
   return (
     <div className="flex flex-col gap-4">
-      
       <Paper className="sm:p-4 p-2 rounded-md">
         <Typography variant="h4" className="text-2xl font-semibold mb-1">
           {post.title}
@@ -59,21 +54,27 @@ export default function IndividialPostAdmin({ params }) {
           ></div>
         </Box>
       </Paper>
-        <Box className="flex">
-          <ToggleButton
-            className="ml-auto"
-            size="small"
-            value="check"
-            color="primary"
-            selected={!showDiscussion}
-            onChange={() => {
-              setShowDiscussion(!showDiscussion);
-            }}
-          >
-            {showDiscussion ? 'Hide Discussion' : 'Show Discussion'}
-          </ToggleButton>
-        </Box>
-        {showDiscussion && <Discussion showDiscussion={showDiscussion} commentsType={post.comments} isAdmin={user.isAdmin}/>}
+      <Box className="flex">
+        <ToggleButton
+          className="ml-auto"
+          size="small"
+          value="check"
+          color="primary"
+          selected={!showDiscussion}
+          onChange={() => {
+            setShowDiscussion(!showDiscussion);
+          }}
+        >
+          {showDiscussion ? 'Hide Discussion' : 'Show Discussion'}
+        </ToggleButton>
+      </Box>
+      {showDiscussion && (
+        <Discussion
+          showDiscussion={showDiscussion}
+          commentsType={post.comments}
+          isAdmin={false}
+        />
+      )}
     </div>
   );
 }

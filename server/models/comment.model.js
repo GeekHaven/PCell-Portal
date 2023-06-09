@@ -22,6 +22,10 @@ const commentSchema = Schema({
     default: null,
     required: false,
   },
+  madeByAdmin: {
+    type: Boolean,
+    default: false,
+  },
   private: {
     type: Boolean,
     required: false,

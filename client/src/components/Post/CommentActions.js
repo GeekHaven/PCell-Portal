@@ -4,32 +4,50 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import { editComment, deleteComment } from '@/utils/API/admin/post';
+import { editCommentUser, deleteCommentUser } from '@/utils/API/post';
 import { useMutation } from 'react-query';
+import useUser from '@/customHooks/useUser';
 
 const options = ['Edit', 'Delete'];
 
 const ITEM_HEIGHT = 48;
 
-export default function LongMenu({ postId, commentId, setComments, isAdmin }) {
-  const { mutateAsync: editCommentMutate } = useMutation(editComment, {
-    onSuccess: (data) => {
-      setComments((prev) => {
-        return prev.map((comment) => {
-          if (comment._id === commentId) {
-            comment.content = data.content;
-          }
-          return comment;
+export default function LongMenu({
+  postId,
+  commentId,
+  setComments,
+  adminRoute,
+  authorRollNumber,
+}) {
+  const { user } = useUser();
+  if (!adminRoute && authorRollNumber !== user.rollNumber) {
+    return null;
+  }
+  const { mutateAsync: editCommentMutate } = useMutation(
+    adminRoute ? editComment : editCommentUser,
+    {
+      onSuccess: (data) => {
+        setComments((prev) => {
+          return prev.map((comment) => {
+            if (comment._id === commentId) {
+              comment.content = data.content;
+            }
+            return comment;
+          });
         });
-      });
-    },
-  });
-  const { mutateAsync: deleteCommentMutate } = useMutation(deleteComment, {
-    onSuccess: (data) => {
-      setComments((prev) => {
-        return prev.filter((comment) => comment._id !== commentId);
-      });
-    },
-  });
+      },
+    }
+  );
+  const { mutateAsync: deleteCommentMutate } = useMutation(
+    adminRoute ? deleteComment : deleteCommentUser,
+    {
+      onSuccess: (data) => {
+        setComments((prev) => {
+          return prev.filter((comment) => comment._id !== commentId);
+        });
+      },
+    }
+  );
 
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);

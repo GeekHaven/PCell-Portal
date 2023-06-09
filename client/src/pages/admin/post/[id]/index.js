@@ -23,7 +23,6 @@ export default function IndividialPostAdmin({ params }) {
   const [showDiscussion, setShowDiscussion] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
 
-
   let { data: user } = useQuery({
     queryKey: 'user',
     queryFn: isUserAuthenticated,
@@ -112,7 +111,13 @@ export default function IndividialPostAdmin({ params }) {
             {showDiscussion ? 'Hide Discussion' : 'Show Discussion'}
           </ToggleButton>
         </Box>
-        {showDiscussion && <Discussion showDiscussion={showDiscussion} commentsType={post.comments} isAdmin={user.isAdmin}/>}
+        {showDiscussion && (
+          <Discussion
+            showDiscussion={showDiscussion}
+            commentsType={post.comments}
+            isAdmin={user.isAdmin}
+          />
+        )}
       </div>
     </>
   );
