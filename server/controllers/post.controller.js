@@ -332,7 +332,9 @@ export async function getComments(req, res) {
 export async function getReplies(req, res) {
   try {
     const { commentId } = req.params;
+    const { postId } = req.params;
     if (!commentId) return response_400(res, 'Invalid request');
+
 
     const comment = await Comment.findById(commentId);
     if (!comment) return response_400(res, 'Invalid request');
@@ -379,9 +381,8 @@ export async function getReplies(req, res) {
     } else {
       const user = req.user;
       if (!user) return response_400(res, 'Invalid request');
-      if (comment.author.toString() !== user._id.toString())
-        return response_400(res, 'Invalid request');
-
+      
+      let admins = await User.find({ isAdmin: true });
       admins = admins.map(user => new mongoose.Types.ObjectId(user._id));
       const userId = new mongoose.Types.ObjectId(user._id);
 
@@ -390,7 +391,7 @@ export async function getReplies(req, res) {
         {
           $match: {
             postId: new mongoose.Types.ObjectId(postId),
-            replyTo: null,
+            replyTo: new mongoose.Types.ObjectId(commentId),
             author: {
               $in: [...admins, userId]
             }

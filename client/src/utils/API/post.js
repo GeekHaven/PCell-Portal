@@ -43,7 +43,6 @@ export async function getCommentsUser(id) {
 
 export async function getRepliesUser({ postId, replyTo }) {
   let res = await get(`/post/${postId}/comment/${replyTo}`);
-  console.log(res);
   if (res.status === 200) {
     return Promise.resolve(res.data.message);
   }

@@ -40,7 +40,6 @@ export default function Discussion({ params, showDiscussion, commentsType, isAdm
     },
     onSuccess: (data) => {
       setComments(data);
-      console.log(data);
     },
     enabled: showDiscussion,
   });
