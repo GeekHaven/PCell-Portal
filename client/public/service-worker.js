@@ -1,4 +1,4 @@
-STATIC_CACHE_NAME = 'dev-static-v3';
+STATIC_CACHE_NAME = 'dev-static-v4';
 
 function isCacheable(request) {
   return (
@@ -56,4 +56,4 @@ let updateServiceWorker = () => {
 
 deleteOldCache();
 updateServiceWorker();
-cacheUI();
+// cacheUI();
