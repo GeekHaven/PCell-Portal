@@ -1,6 +1,7 @@
 import Company from '../../models/company.model.js';
 import companyUserRelationModel from '../../models/relations/companyUser.relation.model.js';
 import { uploadImage, deleteImage } from '../../utils/image.js';
+import { companyStatusPriority } from '../../utils/queries/companyStatusPriority.js';
 import {
   response_200,
   response_500,
@@ -73,6 +74,11 @@ export const getPaginatedCompanies = async (req, res) => {
       {
         $match: {
           name: { $regex: new RegExp(q), $options: 'i' },
+        },
+      },
+      {
+        $addFields: {
+          priority: companyStatusPriority('currentStatus'),
         },
       },
       {

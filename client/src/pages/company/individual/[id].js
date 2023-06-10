@@ -55,7 +55,6 @@ const IndividualCompany = ({ params }) => {
       </Container>
     );
   }
-  
   return (
     <>
       <Container
@@ -161,8 +160,14 @@ const IndividualCompany = ({ params }) => {
                 >
                   Application Status :
                   <Chip
-                    label={companyData.userStatus || 'Not Registered'}
+                    label={
+                      companyData.currentStatus === 'completed' &&
+                      companyData.userStatus !== 'selected'
+                        ? 'rejected'
+                        : companyData.userStatus || 'not registered'
+                    }
                     sx={{
+                      // \
                       textTransform: 'capitalize',
                     }}
                     variant="outlined"
@@ -173,7 +178,7 @@ const IndividualCompany = ({ params }) => {
                         ? 'info'
                         : companyData.userStatus === 'selected'
                         ? 'success'
-                        : companyData.userStatus === 'rejected'
+                        : companyData.currentStatus === 'completed'
                         ? 'error'
                         : 'warning'
                     }
@@ -195,7 +200,11 @@ const IndividualCompany = ({ params }) => {
       {user.user && (
         <Paper
           className={`absolute bottom-0 w-full flex justify-end ${
-            companyData.userStatus || companyData.isSelected
+            // (companyData.currentStatus === 'completed' &&
+            //   !companyData.isSelected) ||
+            companyData.userStatus ||
+            companyData.currentStatus !== 'registration open' ||
+            companyData.isSelected
               ? 'hidden'
               : 'block'
           }`}

@@ -165,7 +165,12 @@ const AllCompanies = () => {
                     {company.name}
                   </Typography>
                   <Chip
-                    label={company.userStatus}
+                    label={
+                      company.currentStatus === 'completed' &&
+                      company.userStatus !== 'selected'
+                        ? 'rejected'
+                        : company.userStatus
+                    }
                     sx={{
                       textTransform: 'capitalize',
                     }}
@@ -173,13 +178,13 @@ const AllCompanies = () => {
                     variant="outlined"
                     color={
                       company.userStatus === 'registered'
-                        ? 'info'
-                        : company.userStatus === 'accepted'
-                        ? 'success'
-                        : company.userStatus === 'rejected'
-                        ? 'error'
+                        ? 'primary'
                         : company.userStatus === 'shortlisted'
-                        ? 'secondary'
+                        ? 'info'
+                        : company.userStatus === 'selected'
+                        ? 'success'
+                        : company.currentStatus === 'completed'
+                        ? 'error'
                         : 'warning'
                     }
                     icon={
