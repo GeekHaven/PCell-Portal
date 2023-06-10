@@ -7,6 +7,7 @@ import {
   IconButton,
   InputLabel,
   MenuItem,
+  Pagination,
   Paper,
   Select,
   TextField,
@@ -35,7 +36,7 @@ const AllCompanies = () => {
 
   const searchMutation = useMutation(getPaginatedCompanies, {
     onSuccess: (data) => {
-      setCompanyData(data.docs);
+      setCompanyData(data);
     },
   });
 
@@ -44,8 +45,8 @@ const AllCompanies = () => {
       sort,
       search,
       sortBy,
-      page: '1',
-      limit: '10',
+      page,
+      limit,
     });
   };
 
@@ -127,7 +128,7 @@ const AllCompanies = () => {
         </Container>
       ) : (
         <div className="grid gap-2 grid-cols-1 p-0 sm:grid-cols-[repeat(auto-fill,minmax(300px,1fr))]">
-          {companyData.map((company) => (
+          {companyData?.docs?.map((company) => (
             <Button
               variant="outlined"
               className="px-2 w-full h-full"
@@ -193,6 +194,23 @@ const AllCompanies = () => {
           ))}
         </div>
       )}
+
+      <Container className="flex justify-center items-center py-4">
+        <Pagination
+          shape="rounded"
+          color="primary"
+          variant="outlined"
+          boundaryCount={2}
+          count={companyData.totalPages}
+          hideNextButton={!companyData.hasNextPage}
+          hidePrevButton={!companyData.hasPrevPage}
+          page={page}
+          onChange={(event, page) => {
+            setPage(page);
+          }}
+          hidden={companyData.totalPages === 1}
+        />
+      </Container>
     </>
   );
 };
