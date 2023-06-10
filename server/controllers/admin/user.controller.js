@@ -41,7 +41,6 @@ export async function addCompany(req, res) {
   }
 }
 
-
 export async function getUserGroups(req, res) {
   const data = await User.aggregate([
     {
@@ -77,18 +76,27 @@ export const searchUserByRollNumberOrName = async (req, res) => {
               ],
             },
             {
-              rollNumber: { $nin: req?.query?.exclude?.split(';') },
+              $and: [
+                {
+                  rollNumber: { $nin: req?.query?.exclude?.split(';') },
+                },
+                {
+                  rollNumber: { $nin: req?.query?.include?.split(';') },
+                },
+              ],
             },
           ],
-        },
-        {
-          rollNumber: { $in: req?.query?.include?.split(';') },
         },
       ],
     })
       .select('rollNumber name -_id')
       .limit(10);
-    return response_200(res, 'OK', users);
+
+    const includeUsers = await User.find({
+      rollNumber: { $in: req?.query?.include?.split(';') },
+    }).select('rollNumber name -_id');
+
+    return response_200(res, 'OK', [...users, ...includeUsers]);
   } catch (err) {
     return response_500(res, err);
   }

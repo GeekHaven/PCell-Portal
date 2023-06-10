@@ -61,6 +61,7 @@ export default function SearchUserInput({
       getOptionLabel={(option) => `${names[option]}(${option})`}
       noOptionsText="No Users"
       filterSelectedOptions
+      limitTags={5}
       autoHighlight
       includeInputInList
       autoComplete
