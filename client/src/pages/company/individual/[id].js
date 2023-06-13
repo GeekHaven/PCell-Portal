@@ -18,6 +18,7 @@ import {
 } from '@/utils/API/company';
 import { getPublicIndividualCompany } from '@/utils/API/public/company';
 import useUser from '@/customHooks/useUser';
+import SEO from '@/components/SEO';
 
 const IndividualCompany = ({ params }) => {
   const user = useUser();
@@ -57,6 +58,11 @@ const IndividualCompany = ({ params }) => {
   }
   return (
     <>
+      <SEO
+        title={`${companyData.name} | Placement Cell IIIT Allahabad`}
+        desc={`${companyData.name} | Placement Cell IIIT Allahabad`}
+        img={companyData.logo}
+      />
       <Container
         maxWidth="xl"
         sx={{
