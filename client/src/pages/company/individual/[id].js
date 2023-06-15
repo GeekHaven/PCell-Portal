@@ -35,6 +35,7 @@ const IndividualCompany = ({ params }) => {
     isSuccess,
   } = useQuery(['company', params.id], () => fetchCompany(params.id), {
     enabled: !!params.id,
+    staleTime: 1000 * 60 * 5,
   });
 
   const { mutate: registerUser, isLoading: isRegistering } = useMutation(

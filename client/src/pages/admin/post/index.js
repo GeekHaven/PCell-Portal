@@ -11,8 +11,7 @@ import {
 import React, { useEffect, useState } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 import { getAllPosts } from '@/utils/API/admin/post';
-import { useMutation } from 'react-query';
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import { useMutation, useQuery } from 'react-query';
 
 export default function AllPosts() {
   const [allPosts, setAllPosts] = useState([]);
@@ -25,9 +24,17 @@ export default function AllPosts() {
       console.log(error);
     },
   });
+
+  const query = useQuery(
+    ['getAllPosts', 'admin'],
+    () => getAllPosts({ search }),
+    {
+      staleTime: 1000 * 60 * 60 * 5,
+    }
+  );
   useEffect(() => {
-    searchMutation.mutate({ search });
-  }, []);
+    setAllPosts(query.data);
+  }, [query.data]);
   const handleSearch = () => {
     searchMutation.mutate({ search });
   };
@@ -65,7 +72,7 @@ export default function AllPosts() {
             </IconButton>
           </div>
         </Box>
-        {searchMutation.isLoading && (
+        {(query.isLoading || searchMutation.isLoading) && (
           <Container className="h-96 w-full flex justify-center items-center">
             <CircularProgress />
           </Container>

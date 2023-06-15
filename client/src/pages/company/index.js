@@ -17,16 +17,17 @@ import {
 } from '@mui/material';
 import { Container } from '@mui/material';
 import { useRouter } from 'next/router';
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import FiberManualRecordTwoToneIcon from '@mui/icons-material/FiberManualRecordTwoTone';
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import Tooltip from '@mui/material/Tooltip';
 import SearchIcon from '@mui/icons-material/Search';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { getPaginatedCompanies } from '@/utils/API/company';
-import { useMutation } from 'react-query';
+import { useMutation, useQuery } from 'react-query';
 import SEO from '@/components/SEO';
+import { useNotOnRenderUseEffect } from '@/customHooks/useNotOnRenderUseEffect';
 
 const AllCompanies = () => {
   const router = useRouter();
@@ -55,8 +56,24 @@ const AllCompanies = () => {
     });
   };
 
+  const query = useQuery(
+    ['getPaginatedCompanies', 'user'],
+    () => getPaginatedCompanies({ page, limit }),
+    {
+      onSuccess: (data) => {
+        setCompanyData((prev) => data);
+      },
+      staleTime: 1000 * 60 * 5,
+    }
+  );
+
   useEffect(() => {
+    setCompanyData(query.data);
+  }, [query.data]);
+
+  useNotOnRenderUseEffect(() => {
     handleSearch();
+    console.log('useNotOnRenderUseEffect');
   }, [onlyEligible, sort, sortBy, page, limit]);
 
   return (
@@ -141,7 +158,7 @@ const AllCompanies = () => {
           />
         </div>
       </Paper>
-      {searchMutation.isLoading ? (
+      {query.isLoading || searchMutation.isLoading ? (
         <Container className="h-96 w-full flex justify-center items-center">
           <CircularProgress />
         </Container>
@@ -215,22 +232,24 @@ const AllCompanies = () => {
           ))}
         </div>
       )}
-      <Container className="flex justify-center items-center py-4">
-        <Pagination
-          shape="rounded"
-          color="primary"
-          variant="outlined"
-          boundaryCount={2}
-          count={companyData.totalPages}
-          hideNextButton={!companyData.hasNextPage}
-          hidePrevButton={!companyData.hasPrevPage}
-          page={page}
-          onChange={(event, page) => {
-            setPage(page);
-          }}
-          hidden={companyData.totalPages === 1}
-        />
-      </Container>
+      {companyData?.totalDocs > 0 && (
+        <Container className="flex justify-center items-center py-4">
+          <Pagination
+            shape="rounded"
+            color="primary"
+            variant="outlined"
+            boundaryCount={2}
+            count={companyData.totalPages}
+            hideNextButton={!companyData.hasNextPage}
+            hidePrevButton={!companyData.hasPrevPage}
+            page={page}
+            onChange={(event, page) => {
+              setPage(page);
+            }}
+            hidden={companyData.totalPages === 1}
+          />
+        </Container>
+      )}
     </>
   );
 };

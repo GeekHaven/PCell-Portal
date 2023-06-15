@@ -23,7 +23,8 @@ import Tooltip from '@mui/material/Tooltip';
 import SearchIcon from '@mui/icons-material/Search';
 import { useState, useEffect } from 'react';
 import { getRegisteredCompanies } from '@/utils/API/company';
-import { useMutation } from 'react-query';
+import { useMutation, useQuery } from 'react-query';
+import { useNotOnRenderUseEffect } from '@/customHooks/useNotOnRenderUseEffect';
 
 const AllCompanies = () => {
   const router = useRouter();
@@ -50,7 +51,22 @@ const AllCompanies = () => {
     });
   };
 
+  const query = useQuery(
+    ['getRegisteredCompanies', 'user'],
+    () => getRegisteredCompanies({ sort, search, sortBy, page, limit }),
+    {
+      onSuccess: (data) => {
+        setCompanyData(data);
+      },
+      staleTime: 1000 * 60 * 5,
+    }
+  );
+
   useEffect(() => {
+    setCompanyData(query.data);
+  }, [query.data]);
+
+  useNotOnRenderUseEffect(() => {
     handleSearch();
   }, [sort, sortBy, page, limit]);
 
@@ -122,7 +138,7 @@ const AllCompanies = () => {
           </div>
         </div>
       </Paper>
-      {searchMutation.isLoading ? (
+      {query.isLoading || searchMutation.isLoading ? (
         <Container className="h-96 w-full flex justify-center items-center">
           <CircularProgress />
         </Container>
@@ -201,22 +217,24 @@ const AllCompanies = () => {
           ))}
         </div>
       )}
-      <Container className="flex justify-center items-center py-4">
-        <Pagination
-          shape="rounded"
-          color="primary"
-          variant="outlined"
-          boundaryCount={2}
-          count={companyData.totalPages}
-          hideNextButton={!companyData.hasNextPage}
-          hidePrevButton={!companyData.hasPrevPage}
-          page={page}
-          onChange={(event, page) => {
-            setPage(page);
-          }}
-          hidden={companyData.totalPages === 1}
-        />
-      </Container>
+      {companyData?.totalDocs > 0 && (
+        <Container className="flex justify-center items-center py-4">
+          <Pagination
+            shape="rounded"
+            color="primary"
+            variant="outlined"
+            boundaryCount={2}
+            count={companyData.totalPages}
+            hideNextButton={!companyData.hasNextPage}
+            hidePrevButton={!companyData.hasPrevPage}
+            page={page}
+            onChange={(event, page) => {
+              setPage(page);
+            }}
+            hidden={companyData.totalPages === 1}
+          />
+        </Container>
+      )}
     </>
   );
 };

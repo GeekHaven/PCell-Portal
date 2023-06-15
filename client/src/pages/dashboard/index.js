@@ -11,7 +11,8 @@ import {
 import React, { useEffect, useState } from 'react';
 import SearchIcon from '@mui/icons-material/Search';
 import { getAllPosts } from '@/utils/API/post';
-import { useMutation } from 'react-query';
+import { useMutation, useQuery } from 'react-query';
+import { useNotOnRenderUseEffect } from '@/customHooks/useNotOnRenderUseEffect';
 
 export const Notification = () => {
   const [allPosts, setAllPosts] = useState([]);
@@ -25,14 +26,21 @@ export const Notification = () => {
     },
   });
 
-
-
-  useEffect(() => {
-    searchMutation.mutate({ search });
-  }, []);
   const handleSearch = () => {
     searchMutation.mutate({ search });
   };
+
+  const query = useQuery(
+    ['getAllPosts', 'user'],
+    () => getAllPosts({ search }),
+    {
+      staleTime: 1000 * 60 * 60 * 5,
+    }
+  );
+
+  useEffect(() => {
+    setAllPosts(query.data);
+  }, [query.data]);
 
   return (
     <>
@@ -68,7 +76,7 @@ export const Notification = () => {
             </IconButton>
           </div>
         </Box>
-        {searchMutation.isLoading && (
+        {(query.isLoading || searchMutation.isLoading) && (
           <Container className="h-96 w-full flex justify-center items-center">
             <CircularProgress />
           </Container>

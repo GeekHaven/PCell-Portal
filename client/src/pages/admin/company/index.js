@@ -23,7 +23,8 @@ import Tooltip from '@mui/material/Tooltip';
 import SearchIcon from '@mui/icons-material/Search';
 import { useState, useEffect } from 'react';
 import { getPaginatedCompanies } from '@/utils/API/admin/company';
-import { useMutation } from 'react-query';
+import { useMutation, useQuery } from 'react-query';
+import { useNotOnRenderUseEffect } from '@/customHooks/useNotOnRenderUseEffect';
 
 const AllCompanies = () => {
   const router = useRouter();
@@ -50,7 +51,19 @@ const AllCompanies = () => {
     });
   };
 
+  const query = useQuery(
+    ['getPaginatedCompanies', 'admin'],
+    () => getPaginatedCompanies({ sort, search, sortBy, page, limit }),
+    {
+      staleTime: 1000 * 60 * 5,
+    }
+  );
+
   useEffect(() => {
+    setCompanyData(query.data);
+  }, [query.data]);
+
+  useNotOnRenderUseEffect(() => {
     handleSearch();
   }, [sort, sortBy, page, limit]);
 
@@ -195,22 +208,24 @@ const AllCompanies = () => {
         </div>
       )}
 
-      <Container className="flex justify-center items-center py-4">
-        <Pagination
-          shape="rounded"
-          color="primary"
-          variant="outlined"
-          boundaryCount={2}
-          count={companyData.totalPages}
-          hideNextButton={!companyData.hasNextPage}
-          hidePrevButton={!companyData.hasPrevPage}
-          page={page}
-          onChange={(event, page) => {
-            setPage(page);
-          }}
-          hidden={companyData.totalPages === 1}
-        />
-      </Container>
+      {companyData?.totalDocs > 0 && (
+        <Container className="flex justify-center items-center py-4">
+          <Pagination
+            shape="rounded"
+            color="primary"
+            variant="outlined"
+            boundaryCount={2}
+            count={companyData.totalPages}
+            hideNextButton={!companyData.hasNextPage}
+            hidePrevButton={!companyData.hasPrevPage}
+            page={page}
+            onChange={(event, page) => {
+              setPage(page);
+            }}
+            hidden={companyData.totalPages === 1}
+          />
+        </Container>
+      )}
     </>
   );
 };

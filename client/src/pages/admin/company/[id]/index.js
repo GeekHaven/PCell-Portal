@@ -72,7 +72,7 @@ export default function IndividualCompanyAdmin({ params }) {
     [confirmDeleteModalOpen, setConfirmDeleteModalOpen] = useState(false);
 
   const { data: companyData, isLoading } = useQuery(
-    ['company', params.id],
+    ['company', 'admin', params.id],
     () => getCompanyById(params.id),
     {
       enabled: !!params.id,
