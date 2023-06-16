@@ -12,9 +12,11 @@ import { getPostById } from '@/utils/API/post';
 import { CircularProgress } from '@mui/material';
 import Discussion from '@/components/Post/Discussion';
 import { isUserAuthenticated } from '@/utils/API/auth';
+import { useQueryClient } from 'react-query';
 
-export default function IndividialPostAdmin({ params }) {
+export default function IndividualPost({ params }) {
   const [showDiscussion, setShowDiscussion] = useState(false);
+  const queryClient = useQueryClient();
 
   let { data: user } = useQuery({
     queryKey: 'user',
@@ -36,7 +38,9 @@ export default function IndividialPostAdmin({ params }) {
       </Container>
     );
   }
-
+  if (!post.isViewed) {
+    queryClient.invalidateQueries(['getAllPosts', 'user']);
+  }
   return (
     <div className="flex flex-col gap-4">
       <Paper className="sm:p-4 p-2 rounded-md">

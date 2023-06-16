@@ -28,6 +28,13 @@ export async function getPostById(req, res) {
         },
       },
       {
+        $addFields: {
+          isViewed: {
+            $in: [user._id, '$viewedBy'],
+          },
+        },
+      },
+      {
         $project: {
           _id: 1,
           title: 1,
@@ -36,9 +43,16 @@ export async function getPostById(req, res) {
           company: 1,
           createdAt: 1,
           comments: 1,
+          isViewed: 1,
         },
       },
     ]);
+    if (!post.isViewed) {
+      Post.updateOne(
+        { _id: new mongoose.Types.ObjectId(postId) },
+        { $push: { viewedBy: user._id } }
+      ).then((res) => {});
+    }
 
     if (!post) return response_400(res, 'Invalid request');
     return response_200(res, post);
@@ -77,6 +91,13 @@ export async function getAllPosts(req, res) {
         },
       },
       {
+        $addFields: {
+          isViewed: {
+            $in: [user._id, '$viewedBy'],
+          },
+        },
+      },
+      {
         $project: {
           _id: 1,
           title: 1,
@@ -84,6 +105,7 @@ export async function getAllPosts(req, res) {
           company: 1,
           createdAt: 1,
           comments: 1,
+          isViewed: 1,
         },
       },
       {

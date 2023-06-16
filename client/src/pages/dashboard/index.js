@@ -94,6 +94,7 @@ export const Notification = () => {
                   company={post.company}
                   status={post.status}
                   createdAt={post.createdAt}
+                  isViewed={post.isViewed}
                 />
               ))}
           </Box>

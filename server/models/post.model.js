@@ -33,6 +33,11 @@ const PostSchema = Schema(
     targets: {
       type: targetSchema,
     },
+    viewedBy: {
+      type: [Schema.Types.ObjectId],
+      ref: 'User',
+      default: [],
+    },
   },
   { timestamps: true }
 );

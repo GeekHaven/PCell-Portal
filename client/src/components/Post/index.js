@@ -10,9 +10,10 @@ import Box from '@mui/material/Box';
 import moment from 'moment';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
-
 export const Post = (props) => {
   const router = useRouter();
+
+  const isAdmin = router.pathname.includes('admin');
   return (
     <Button
       className="w-full h-full"
@@ -26,13 +27,13 @@ export const Post = (props) => {
     >
       <div className="w-full">
         <Box
-          // elevation={1}
           className="border-[1px] border-solid rounded-md py-1 px-2 gap-2 w-full"
           sx={{
-            borderColor: 'divider',
-            // '&:hover': {
-            //   backgroundColor: 'divider',
-            // },
+            borderColor: isAdmin
+              ? 'divider'
+              : props.isViewed
+              ? 'divider'
+              : 'primary.main',
           }}
         >
           <Container className="flex flex-col gap-1 p-2 w-full" maxWidth="xl">
@@ -60,7 +61,9 @@ export const Post = (props) => {
               {props.description}
             </Typography>
             <Box className="flex flex-wrap gap-2 pt-2 pb-1">
-              <Link href={props.baseUrl + props.id}>
+              <Link
+                href={props.baseUrl + props.id}
+              >
                 <Chip
                   variant="outlined"
                   label="Read More"
