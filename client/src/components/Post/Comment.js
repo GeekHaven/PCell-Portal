@@ -24,8 +24,8 @@ export default function Comment(props) {
     .toLowerCase()
     .replace(/(^|\s)\S/g, (letter) => letter.toUpperCase())
     .split(' ');
-  if (nameParts.length > 2) {
-    nameParts.splice(1, 1);
+  if (nameParts.length > 3) {
+    nameParts.splice(3, 1);
   }
   const author = nameParts.join(' ');
 
@@ -68,15 +68,15 @@ export default function Comment(props) {
       <Paper className="p-4 text-base" elevation={3}>
         <div className="flex justify-between items-center mb-2">
           <div className="flex items-center">
-            <p className="inline-flex items-center mr-3 text-md capitalize">
+            <div className="inline-flex items-center mr-3 text-md capitalize">
               <Avatar {...stringAvatar(author)} className="mr-2" />
               {author}
               {props.comment.madeByAdmin && (
                 <AdminPanelSettingsIcon className="ml-2" />
               )}
-            </p>
+            </div>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              <time pubdate datetime="2022-02-08" title="February 8th, 2022">
+              <time dateTime="2022-02-08" title="February 8th, 2022">
                 {createdAt}
               </time>
             </p>
@@ -87,6 +87,7 @@ export default function Comment(props) {
             setComments={props.setComments}
             adminRoute={router.pathname.includes('admin')}
             authorRollNumber={props.comment.author.rollNumber}
+            madeByAdmin={props.comment.madeByAdmin}
           />
         </div>
 

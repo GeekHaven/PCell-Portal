@@ -23,15 +23,15 @@ export default function Reply(props) {
     <Paper className="p-6 mb-2 ml-6 lg:ml-12 text-base" elevation={2}>
       <div className="flex justify-between items-center mb-2">
         <div className="flex items-center">
-          <p className="inline-flex items-center mr-3 text-md capitalize">
+          <div className="inline-flex items-center mr-3 text-md capitalize">
             <Avatar {...stringAvatar(author)} className="mr-2" />
             {author}
             {props.reply.madeByAdmin && (
               <AdminPanelSettingsIcon className="ml-2" />
             )}
-          </p>
+          </div>
           <p className="text-sm text-gray-600 dark:text-gray-400">
-            <time pubdate datetime="2022-02-08" title="February 8th, 2022">
+            <time datetime="2022-02-08" title="February 8th, 2022">
               {createdAt}
             </time>
           </p>
@@ -42,6 +42,7 @@ export default function Reply(props) {
           setComments={props.setReplies}
           adminRoute={router.pathname.includes('admin')}
           authorRollNumber={props.reply.author.rollNumber}
+          madeByAdmin={props.reply.madeByAdmin}
         />
       </div>
       <p className="text-gray-500 dark:text-gray-400">{props.reply.content}</p>

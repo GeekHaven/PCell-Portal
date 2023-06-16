@@ -8,7 +8,8 @@ import { editCommentUser, deleteCommentUser } from '@/utils/API/post';
 import { useMutation } from 'react-query';
 import useUser from '@/customHooks/useUser';
 
-const options = ['Edit', 'Delete'];
+let options = ['Edit', 'Delete'];
+let optionsAdmin = ['Delete'];
 
 const ITEM_HEIGHT = 48;
 
@@ -18,10 +19,20 @@ export default function LongMenu({
   setComments,
   adminRoute,
   authorRollNumber,
+  madeByAdmin,
 }) {
   const { user } = useUser();
-  if (!adminRoute && authorRollNumber !== user.rollNumber) {
+  if (!adminRoute && (authorRollNumber !== user.rollNumber || madeByAdmin)) {
     return null;
+  }
+
+  // if (authorRollNumber !== user.rollNumber) {
+  //remove 1st element from options array
+  // options.shift();
+  // console.log(options);
+  // }
+  if (authorRollNumber !== user.rollNumber) {
+    options = optionsAdmin;
   }
   const { mutateAsync: editCommentMutate } = useMutation(
     adminRoute ? editComment : editCommentUser,

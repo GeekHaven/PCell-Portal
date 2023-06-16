@@ -59,7 +59,6 @@ export default function Discussion({
       </Container>
     );
   }
-
   return (
     <Paper className="p-4 rounded-md">
       <div className="flex flex-col gap-4">
@@ -72,7 +71,7 @@ export default function Discussion({
 
         {comments.map((comment) => (
           <Comment
-            key={comment.id}
+            key={comment._id}
             comment={comment}
             isEnabled={isEnabled}
             isAdmin={isAdmin}
